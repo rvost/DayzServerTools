@@ -1,0 +1,319 @@
+﻿<UserControl x:Class="DayzServerTools.Windows.Views.ItemTypesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DayzServerTools.Windows.Views" 
+             xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="1080" d:DesignWidth="1920">
+    <UserControl.Resources>
+        <Style TargetType="ComboBox">
+            <Setter Property="IsEditable" Value="True"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ItemsSource.Count}"
+                             Value="0">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Gesture="CTRL+S" Command="{Binding SaveCommand}"/>
+        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding SaveAsCommand}"/>
+        <KeyBinding Gesture="CTRL+SHIFT+A" Command="{Binding AddEmptyItemCommand}"/>
+        <KeyBinding Gesture="CTRL+SHIFT+V" Command="{Binding ValidateCommand}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <Button DockPanel.Dock="Left" VerticalAlignment="Center" Margin="15" Padding="15"
+                    Command="{Binding AddEmptyItemCommand}">
+                <TextBlock TextAlignment="Center">
+                    <Run Text="Add Item"/>
+                    <LineBreak/>
+                    <Run FontSize="8" FontStyle="Italic" Text="Ctrl+Shift+A"/>
+                </TextBlock>
+            </Button>
+            <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="15" Padding="15"
+                    Command="{Binding ValidateCommand}">
+                <TextBlock TextAlignment="Center">
+                    <Run Text="Validate"/>
+                    <LineBreak/>
+                    <Run FontSize="8" FontStyle="Italic" Text="Ctrl+Shift+V"/>
+                </TextBlock>
+            </Button>
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:PercentageChangeControl Grid.Column="0" Header="Quantity" MinValue="0" MaxValue="4" Width="250"
+                                                  Percentage="{Binding QuantityPercentage, Mode=TwoWay}"
+                                                  Command="{Binding AdjustQuantityCommand}" 
+                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
+                <controls:PercentageChangeControl Grid.Column="1" Header="Restock" MinValue="0.05" MaxValue="2" Width="250"
+                                                  Percentage="{Binding RestockPercentage, Mode=TwoWay}"
+                                                  Command="{Binding AdjustRestockCommand}" 
+                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
+                <controls:PercentageChangeControl Grid.Column="2" Header="Lifetime" MinValue="0.05" MaxValue="2" Width="250"
+                                                  Percentage="{Binding LifetimePercentage, Mode=TwoWay}"
+                                                  Command="{Binding AdjustLifetimeCommand}" 
+                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
+            </Grid>
+
+        </DockPanel>
+        <DataGrid x:Name="LootTable" Grid.Row="1" ItemsSource="{Binding Items}" Margin="0 5 0 0" 
+                  AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Resources>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2"  DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}, Path=(Validation.Errors)}">
+                        <Grid.ToolTip>
+                            <ToolTip>
+                                <ListView ItemsSource="{Binding}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=ErrorContent}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ToolTip>
+                        </Grid.ToolTip>
+                        <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Export selected to new file"
+                              Command="{Binding ExportToNewFileCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
+                    <MenuItem Header="Export to Trader Config..."
+                              Command="{Binding ExportToTraderCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Class" Binding="{Binding Path=Name}" 
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesNameTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Nominal" Binding="{Binding Path=Nominal}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesNominalTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Min" Binding="{Binding Path=Min}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesMinTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Lifetime" Binding="{Binding Path=Lifetime}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesLifetimeTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Restock" Binding="{Binding Path=Restock}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesRestockTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Quantmin" Binding="{Binding Path=Quantmin}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesQuantminTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Quantmax" Binding="{Binding Path=Quantmax}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesQuantmaxTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Cost" Binding="{Binding Path=Cost}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCostTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <!-- Flags Columns -->
+                <DataGridCheckBoxColumn Header="Count in Map" Binding="{Binding CountInMap}"/>
+                <DataGridCheckBoxColumn Header="Count in Hoarder" Binding="{Binding CountInHoarder}"/>
+                <DataGridCheckBoxColumn Header="Count in Cargo" Binding="{Binding CountInCargo}"/>
+                <DataGridCheckBoxColumn Header="Count in Player" Binding="{Binding CountInPlayer}"/>
+                <DataGridCheckBoxColumn Header="Crafted" Binding="{Binding Crafted}"/>
+                <DataGridCheckBoxColumn Header="Deloot" Binding="{Binding Deloot}"/>
+                <!-- Category -->
+                <DataGridTemplateColumn Header="Category" SortMemberPath="Category"
+                                        CellStyle="{StaticResource ComboBoxErrorTooltipStyle}">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCategoryTooltip}" />
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border>
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding Path=Category.Value, Converter={StaticResource FlagColorConverter}, Mode=OneWay}"/>
+                                </Border.Background>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                           Text="{Binding Path=Category.Value}" />
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox IsEditable="False" SelectedValue="{Binding Path=Category}" 
+                                DisplayMemberPath="Value"
+                                ItemTemplate="{StaticResource VanillaFlagTemplate}"
+                                ItemsSource="{Binding DataContext.Categories, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <!-- Usage -->
+                <DataGridTemplateColumn Header="Usage" CellStyle="{StaticResource ItemsErrorTooltipStyle}">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesUsageTooltip}" />
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <controls:UserFlagCollectionControl Items="{Binding Path=Usages}"
+                                                                NewItemOptions="{Binding DataContext.Usages, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                AddItemCommand="{Binding Path=DataContext.AddUsageFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                RemoveItemCommand="{Binding Path=DataContext.RemoveUsageFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                ShowNewItemControl="False"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <controls:UserFlagCollectionControl Items="{Binding Path=Usages}"
+                                                                NewItemOptions="{Binding DataContext.Usages, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                AddItemCommand="{Binding Path=DataContext.AddUsageFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                RemoveItemCommand="{Binding Path=DataContext.RemoveUsageFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                ShowNewItemControl="True"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <!-- Value -->
+                <DataGridTemplateColumn Header="Value" CellStyle="{StaticResource ItemsErrorTooltipStyle}">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesValueTooltip}" />
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <controls:UserFlagCollectionControl Items="{Binding Path=Value}"
+                                                                NewItemOptions="{Binding DataContext.Values, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                AddItemCommand="{Binding Path=DataContext.AddValueFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                RemoveItemCommand="{Binding Path=DataContext.RemoveValueFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                ShowNewItemControl="False"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <controls:UserFlagCollectionControl Items="{Binding Path=Value}"
+                                                                NewItemOptions="{Binding DataContext.Values, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                                                AddItemCommand="{Binding Path=DataContext.AddValueFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                RemoveItemCommand="{Binding Path=DataContext.RemoveValueFlagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"
+                                                                ShowNewItemControl="True"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <!-- Tags -->
+                <DataGridTemplateColumn Width="*" Header="Tags" CellStyle="{StaticResource ItemsErrorTooltipStyle}">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesTagTooltip}" />
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding Path=Tags}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:UserFlagControl Command="{Binding Path=DataContext.RemoveTagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding Path=Tags}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:UserFlagControl Command="{Binding Path=DataContext.RemoveTagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <StackPanel Orientation="Horizontal">
+                                    <ComboBox x:Name="NewTag" IsEditable="False" SelectedIndex="0" 
+                                        ItemsSource="{Binding DataContext.Tags, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                        IsSynchronizedWithCurrentItem="True"
+                                        ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
+                                    <Button Content="+" Command="{Binding Path=DataContext.AddTagCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}}" CommandParameter="{Binding ElementName=NewTag, Path=SelectedItem}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <controls:ErrorsPanelControl Grid.Row="2" Items="{Binding Errors}"/>
+
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0 2 0 2"
+                      ShowsPreview="true" ResizeDirection="Rows" BorderThickness="1" BorderBrush="Gray"/>
+    </Grid>
+</UserControl>

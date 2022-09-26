@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="DayzServerTools.Windows.Controls.TraderCategoryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DayzServerTools.Windows.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Remove" Command="{Binding PlacementTarget.Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                      CommandParameter="{Binding}"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Expander>
+        <Expander.Header>
+            <TextBox Text="{Binding CategoryName}" d:Text="Category Name"
+                     FontSize="18" FontWeight="SemiBold"
+                     VerticalContentAlignment="Center"
+                     VerticalAlignment="Center"
+                     BorderThickness="0 0 0 2"
+                     Background="Transparent"/>
+        </Expander.Header>
+        <DataGrid ItemsSource="{Binding Path=TraderItems}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Item Class Name" Binding="{Binding Name}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource TraderItemNameTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Modifier}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource TraderQuantityModifierTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Buy Price" Binding="{Binding BuyPrice}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource TraderBuyPriceTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource TraderSellPriceTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Expander>
+</UserControl>

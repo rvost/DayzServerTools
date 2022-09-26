@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="DayzServerTools.Windows.Controls.UserFlagCollectionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DayzServerTools.Windows.Controls"
+             mc:Ignorable="d" 
+             x:Name="root"
+             d:DesignHeight="150" d:DesignWidth="200">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    <WrapPanel Orientation="Horizontal">
+        <ItemsControl ItemsSource="{Binding Path=Items, ElementName=root}" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:UserFlagControl Command="{Binding Path=RemoveItemCommand, ElementName=root}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Margin="10 0" Orientation="Horizontal"
+                    Visibility="{Binding ElementName=root, Path=ShowNewItemControl, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ComboBox x:Name="NewFlag" IsEditable="False" SelectedIndex="0"
+                      IsSynchronizedWithCurrentItem="True"
+                      ItemsSource="{Binding Path=NewItemOptions, ElementName=root}" 
+                      ItemTemplate="{StaticResource UserFlagTemplate}"/>
+            <Button Content="+" Width="32"
+                    Command="{Binding Path=AddItemCommand, ElementName=root}" 
+                    CommandParameter="{Binding ElementName=NewFlag, Path=SelectedItem}"/>
+        </StackPanel>
+    </WrapPanel>
+</UserControl>

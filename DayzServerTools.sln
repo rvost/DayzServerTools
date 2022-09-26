@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayzServerTools.Library", "src\DayzServerTools.Library\DayzServerTools.Library.csproj", "{9B89EF97-1DB2-4C39-A315-72ED24D48134}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayzServerTools.Library.Test", "tests\DayzServerTools.Library.Test\DayzServerTools.Library.Test.csproj", "{6D625D15-69A7-4744-BB85-A3E047449D2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayzServerTools.Windows", "src\DayzServerTools.Windows\DayzServerTools.Windows.csproj", "{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8DDEA038-1BA3-43FA-875B-0C7CC9C3D5D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DC0197E6-921B-462E-A846-CD24FF6237D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E894AD5F-4DD2-4B0B-B704-0D5A5B308C4C}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayzServerTools.Application", "src\DayzServerTools.Application\DayzServerTools.Application.csproj", "{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B89EF97-1DB2-4C39-A315-72ED24D48134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B89EF97-1DB2-4C39-A315-72ED24D48134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B89EF97-1DB2-4C39-A315-72ED24D48134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B89EF97-1DB2-4C39-A315-72ED24D48134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D625D15-69A7-4744-BB85-A3E047449D2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D625D15-69A7-4744-BB85-A3E047449D2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D625D15-69A7-4744-BB85-A3E047449D2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D625D15-69A7-4744-BB85-A3E047449D2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9B89EF97-1DB2-4C39-A315-72ED24D48134} = {8DDEA038-1BA3-43FA-875B-0C7CC9C3D5D3}
+		{6D625D15-69A7-4744-BB85-A3E047449D2D} = {DC0197E6-921B-462E-A846-CD24FF6237D9}
+		{0A645D0D-D0CC-4238-8591-CFB60C9E8EB6} = {8DDEA038-1BA3-43FA-875B-0C7CC9C3D5D3}
+		{B5BA6537-7E07-4CE3-BBA9-BCA99BB16D7F} = {8DDEA038-1BA3-43FA-875B-0C7CC9C3D5D3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3C31C6C0-0F0E-415C-A381-42A8F3638A81}
+	EndGlobalSection
+EndGlobal

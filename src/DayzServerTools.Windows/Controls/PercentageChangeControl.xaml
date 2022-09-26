@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="DayzServerTools.Windows.Controls.PercentageChangeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DayzServerTools.Windows.Controls"
+             mc:Ignorable="d"
+             x:Name="root"
+             d:DesignHeight="150" d:DesignWidth="400">
+    <Grid MinWidth="200">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="{Binding Header, ElementName=root}" d:Text="Item Presence"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="18" FontWeight="Bold"/>
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="{Binding Percentage, ElementName=root, StringFormat={}{0:P}}" 
+                       d:Text="100%" HorizontalAlignment="Center"/>
+            <Slider VerticalAlignment="Center" TickPlacement="BottomRight" Margin="20 5"
+                    Value="{Binding Percentage, ElementName=root}" 
+                    Minimum="{Binding MinValue, ElementName=root}" Maximum="{Binding MaxValue, ElementName=root}"
+                    SmallChange="0.05" LargeChange="0.1" IsSnapToTickEnabled="True" TickFrequency="0.05"/>
+        </StackPanel>
+
+        <Button Grid.Row="2" Content="Apply"
+                CommandParameter="{Binding CommandParameter, ElementName=root}"
+                Command="{Binding Command, ElementName=root}"/>
+    </Grid>
+</UserControl>

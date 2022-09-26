@@ -1,0 +1,83 @@
+﻿<Application x:Class="DayzServerTools.Windows.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DayzServerTools.Windows" 
+             
+             xmlns:converters="clr-namespace:DayzServerTools.Windows.Converters"
+             StartupUri="Views\MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes\Generic.xaml"/>
+                <ResourceDictionary Source="Resources\Strings.xaml"/>
+                
+                <ResourceDictionary>
+                    <converters:StringToRandomColorConverter x:Key="FlagColorConverter"/>
+
+                    <DataTemplate x:Key="UserFlagTemplate">
+                        <Border Padding="3 2" Margin="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding Path=Value, Converter={StaticResource FlagColorConverter}, Mode=OneWay}"/>
+                            </Border.Background>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                        <Binding Path="DefinitionType"/>
+                                        <Binding Path="Value"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Border>
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="VanillaFlagTemplate">
+                        <Border Padding="3 2" Margin="2">
+                            <Border.Background>
+                                <SolidColorBrush Color="{Binding Path=Value, Converter={StaticResource FlagColorConverter}, Mode=OneWay}"/>
+                            </Border.Background>
+                            <TextBlock Text="{Binding Path=Value}"/>
+                        </Border>
+                    </DataTemplate>
+
+                    <Style TargetType="TextBox" x:Key="TextBoxErrorTooltipStyle">
+                        <Style.Triggers>
+                            <Trigger Property="Validation.HasError" Value="true">
+                                <Setter Property="ToolTip"
+                                        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="ComboBoxErrorTooltipStyle">
+                        <Style.Resources>
+                            <Style TargetType="{x:Type ComboBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="true">
+                                        <Setter Property="ToolTip"
+                                        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+
+                    <Style x:Key="ItemsErrorTooltipStyle">
+                        <Style.Resources>
+                            <Style TargetType="{x:Type ItemsControl}">
+                                <Style.Triggers>
+                                    <Trigger Property="Validation.HasError" Value="true">
+                                        <Setter Property="ToolTip"
+                                        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                                        Path=(Validation.Errors)[0].ErrorContent}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

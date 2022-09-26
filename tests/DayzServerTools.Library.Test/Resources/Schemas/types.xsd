@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="types">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" name="type">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:choice maxOccurs="unbounded">
+								<xs:element name="nominal" type="xs:unsignedByte" />
+								<xs:element name="lifetime" type="xs:unsignedShort" />
+								<xs:element name="restock" type="xs:unsignedShort" />
+								<xs:element name="min" type="xs:unsignedByte" />
+								<xs:element name="quantmin" type="xs:byte" />
+								<xs:element name="quantmax" type="xs:byte" />
+								<xs:element name="cost" type="xs:unsignedByte" />
+								<xs:element name="flags">
+									<xs:complexType>
+										<xs:attribute name="count_in_cargo" type="xs:unsignedByte" use="required" />
+										<xs:attribute name="count_in_hoarder" type="xs:unsignedByte" use="required" />
+										<xs:attribute name="count_in_map" type="xs:unsignedByte" use="required" />
+										<xs:attribute name="count_in_player" type="xs:unsignedByte" use="required" />
+										<xs:attribute name="crafted" type="xs:unsignedByte" use="required" />
+										<xs:attribute name="deloot" type="xs:unsignedByte" use="required" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="category">
+									<xs:complexType>
+										<xs:attribute name="name" type="xs:string" use="required" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element maxOccurs="unbounded" name="usage">
+									<xs:complexType>
+										<xs:attribute name="name" type="xs:string" use="optional" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element maxOccurs="unbounded" name="value">
+									<xs:complexType>
+										<xs:attribute name="name" type="xs:string" use="optional" />
+										<xs:attribute name="user" type="xs:string" use="optional" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="tag">
+									<xs:complexType>
+										<xs:attribute name="name" type="xs:string" use="required" />
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

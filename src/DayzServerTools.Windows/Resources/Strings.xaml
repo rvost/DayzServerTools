@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <system:String x:Key="ItemTypesNameTooltip">The class name. Item unique identifier.</system:String>
+    <system:String x:Key="ItemTypesNominalTooltip">How many of this item that can be on the map.</system:String>
+    <system:String x:Key="ItemTypesMinTooltip">The minimum amount of an item that will spawn on the map.</system:String>
+    <system:String x:Key="ItemTypesLifetimeTooltip" xml:space="preserve">The lifetime of an item once it is spawned.&#13;Time in seconds.</system:String>
+    <system:String x:Key="ItemTypesRestockTooltip" xml:space="preserve">The amount of time that will need to pass before an item is allowed to spawn again.&#13;Time in seconds.</system:String>
+    <system:String x:Key="ItemTypesQuantminTooltip" xml:space="preserve">Dictates the minimum quantity of consumable within the item.&#13;This is how many bullets are in an Ammo box, or how much water is in a bottle.&#13;Percentage value (0-100).&#13;-1 for non-consumable items.</system:String>
+    <system:String x:Key="ItemTypesQuantmaxTooltip" xml:space="preserve">Dictates the maximum quantity of consumable within the item.&#13;This is how many bullets are in an Ammo box, or how much water is in a bottle.&#13;Percentage value (0-100).&#13;-1 for non-consumable items.</system:String>
+    <system:String x:Key="ItemTypesCostTooltip" xml:space="preserve">Determines the spawn chance of an item.&#13;Percentage value (0-100).</system:String>
+    <system:String x:Key="ItemTypesCategoryTooltip">The category of an item. Effects on how and where the item spawns.</system:String>
+    <system:String x:Key="ItemTypesUsageTooltip">The group in which area an item will spawn.</system:String>
+    <system:String x:Key="ItemTypesValueTooltip">The value group of an item. Effects on how and where the item spawns.</system:String>
+    <system:String x:Key="ItemTypesTagTooltip">The tags of an item. Effects on how and where the item spawns.</system:String>
+    
+    <system:String x:Key="TraderItemNameTooltip">Item Class Name (as in types.xml)</system:String>
+    <system:String x:Key="TraderQuantityModifierTooltip" xml:space="preserve">Quantity Modifier:&#13;0..X - Number items in stack&#13;* - Maximum items in stack&#13;W - Weapon&#13;M - Weapon magazin&#13;S - Stack Meat&#13;V - Vehicle&#13;VNK - Vehicle without Key&#13;K - Key Duplication</system:String>
+    <system:String x:Key="TraderBuyPriceTooltip" xml:space="preserve">Buy price in currency units.&#13;-1 means item can not be bought.</system:String>
+    <system:String x:Key="TraderSellPriceTooltip" xml:space="preserve">Sell price in currency units.&#13;-1 means item can not be sold.</system:String>
+</ResourceDictionary>

@@ -1,0 +1,50 @@
+﻿<Window x:Class="DayzServerTools.Windows.Views.ExportDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DayzServerTools.Windows.Views"
+        xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
+        xmlns:trader="clr-namespace:DayzServerTools.Library.Trader;assembly=DayzServerTools.Library"
+        mc:Ignorable="d"
+        Title="Select destination category"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow"
+        Height="450" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <TreeView Grid.Row="0" ItemsSource="{Binding Options}" x:Name="PathTree">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}"
+                                          ItemsSource="{Binding Traders}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type viewmodels:TraderViewModel}"
+                                          ItemsSource="{Binding Categories}">
+                    <TextBlock Text="{Binding Name}"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type trader:TraderCategory}">
+                    <TextBlock Text="{Binding CategoryName}"/>
+                </DataTemplate>
+            </TreeView.Resources>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Style.Triggers>
+                        <Trigger Property="HasItems" Value="True">
+                            <Setter Property="Focusable" Value="False" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+        <Button Grid.Row="1" Margin="10"
+                Command="{Binding ExportCommand}"
+                CommandParameter="{Binding ElementName=PathTree, Path=SelectedItem}">
+            Export
+        </Button>
+    </Grid>
+</Window>

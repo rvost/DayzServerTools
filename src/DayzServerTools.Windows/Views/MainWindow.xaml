@@ -1,0 +1,125 @@
+﻿<Window x:Class="DayzServerTools.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DayzServerTools.Windows"
+        xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
+        xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
+        xmlns:viewmodelBase="clr-namespace:DayzServerTools.Application.ViewModels.Base;assembly=DayzServerTools.Application"
+        xmlns:views="clr-namespace:DayzServerTools.Windows.Views"
+        mc:Ignorable="d"
+        Title="DayzServerTools"
+        WindowState="Maximized"
+        d:Height="800" d:Width="1200">
+    <Window.Resources>
+        <Style TargetType="MenuItem" x:Key="OnNullCommandStyle">
+            <Style.Triggers>
+                <Trigger Property="Command" Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="CTRL+N" Command="{Binding NewTabCommand}" CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}"/>
+        <KeyBinding Gesture="CTRL+O" Command="{Binding NewTabCommand}" CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
+        <KeyBinding Gesture="CTRL+S" Command="{Binding Path=ActiveTab.SaveCommand}"/>
+        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding Path=ActiveTab.SaveAsCommand}"/>
+    </Window.InputBindings>
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="New">
+                    <MenuItem Header="New types.xml" 
+                          Command="{Binding NewTabCommand}" 
+                          CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}" 
+                          InputGestureText="Ctrl+N"/>
+                    <MenuItem Header="New user flags" 
+                          Command="{Binding NewTabCommand}" 
+                          CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
+                </MenuItem>
+                <MenuItem Header="Open">
+                    <MenuItem Header="Open types.xml" 
+                          Command="{Binding NewTabCommand}" 
+                          CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"
+                          InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="Open user flags" 
+                          Command="{Binding NewTabCommand}" 
+                          CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
+                    <MenuItem Header="Open Trader Config" 
+                          Command="{Binding NewTabCommand}" 
+                          CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTraderConfig}"/>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Save"
+                          Command="{Binding Path=ActiveTab.SaveCommand}"
+                          InputGestureText="Ctrl+S"
+                          Style="{StaticResource OnNullCommandStyle}"/>
+                <MenuItem Header="Save As"
+                          Command="{Binding Path=ActiveTab.SaveAsCommand}"
+                          InputGestureText="Ctrl+Shift+S"
+                          Style="{StaticResource OnNullCommandStyle}"/>
+                <MenuItem Header="Save All"
+                          Command="{Binding SaveAllCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Workspace">
+                <MenuItem Command="{Binding LoadLimitsDefinitionsCommand}" Header="Load Limits Definitions">
+                    <MenuItem.Icon>
+                        <Ellipse StrokeThickness="0" Width="10" Height="10">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="Red"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding LimitsDefinitionsLoaded, Mode=OneWay}" Value="true">
+                                            <Setter Property="Fill" Value="LawnGreen"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding LoadUserDefinitionsCommand}" Header="Load User Definitions">
+                    <MenuItem.Icon>
+                        <Ellipse StrokeThickness="0" Width="10" Height="10">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="Red"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding UserDefinitionsLoaded, Mode=OneWay}" Value="true">
+                                            <Setter Property="Fill" Value="LawnGreen"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <controls:TabControlEx ItemsSource="{Binding Tabs}" SelectedItem="{Binding ActiveTab}" 
+                               SelectedIndex="0" IsSynchronizedWithCurrentItem="True">
+            <TabControl.Resources>
+                <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
+                    <views:ItemTypesView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewmodels:UserDefinitionsViewModel}">
+                    <views:UserDefinitionsView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}">
+                    <views:TraderConfigView/>
+                </DataTemplate>
+            </TabControl.Resources>
+
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type viewmodelBase:IProjectFileTab}">
+                    <TextBlock>
+                        <Run Text="{Binding Name, Mode=OneWay}"/>
+                        <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
+                    </TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </controls:TabControlEx>
+    </DockPanel>
+</Window>
