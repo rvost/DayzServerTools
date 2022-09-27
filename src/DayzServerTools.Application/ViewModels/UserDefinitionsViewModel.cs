@@ -29,7 +29,7 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     public UserDefinitionsViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
         Model = new();
-        Name = "cfglimitsdefinitionuser.xml";
+        FileName = "cfglimitsdefinitionuser.xml";
 
         NewValueFlagCommand = new RelayCommand(
             () => ValueFlags.Add(new(new ValueUserDefinition()))
@@ -51,7 +51,6 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
         UsageFlags.AddRange(
             userDefinitions.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag))
             );
-        Name = filename;
     }
     protected override IFileDialog CreateOpenFileDialog()
     {

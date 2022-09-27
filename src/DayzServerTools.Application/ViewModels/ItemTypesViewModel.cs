@@ -49,7 +49,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public ItemTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
         Model = new();
-        Name = "types.xml";
+        FileName = "types.xml";
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
         AdjustQuantityCommand = new RelayCommand<object>(AdjustQuantity);
@@ -139,7 +139,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     protected override void OnLoad(Stream input, string filename)
     {
         var newItems = ItemTypes.ReadFromStream(input);
-        Name = filename;
         Items.Clear();
         Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, workspace)));
     }

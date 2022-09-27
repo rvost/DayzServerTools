@@ -13,10 +13,12 @@ namespace DayzServerTools.Application.ViewModels.Base
         protected readonly IDialogFactory _dialogFactory;
 
         [ObservableProperty]
-        protected string name = "";
+        [NotifyPropertyChangedFor(nameof(Name))]
+        protected string fileName = "";
         [ObservableProperty]
         protected T model;
 
+        public string Name => Path.GetFileName(FileName);
         public IRelayCommand SaveCommand { get; }
         public IRelayCommand SaveAsCommand { get; }
         public IRelayCommand CloseCommand { get; }
@@ -36,9 +38,9 @@ namespace DayzServerTools.Application.ViewModels.Base
         public void Load()
         {
             var dialog = CreateOpenFileDialog();
-            
+
             dialog.ShowDialog();
-            
+
             var filename = dialog.FileName;
             if (File.Exists(filename))
             {
@@ -46,6 +48,7 @@ namespace DayzServerTools.Application.ViewModels.Base
                 try
                 {
                     OnLoad(input, filename);
+                    FileName = filename;
                 }
                 catch (InvalidOperationException e)
                 {
@@ -56,6 +59,10 @@ namespace DayzServerTools.Application.ViewModels.Base
                     errorDialog.Show();
                     CloseCommand.Execute(null);
                 }
+            }
+            else
+            {
+                CloseCommand.Execute(null);
             }
         }
         public void Save()
@@ -71,10 +78,12 @@ namespace DayzServerTools.Application.ViewModels.Base
             {
                 var dialog = _dialogFactory.CreateSaveFileDialog();
                 dialog.FileName = Name;
-                dialog.ShowDialog();
-                var filename = dialog.FileName;
-
-                SaveTo(filename);
+                if (dialog.ShowDialog() ?? false)
+                {
+                    var filename = dialog.FileName;
+                    SaveTo(filename);
+                    FileName = filename;
+                }
             }
         }
         public void Close()

@@ -23,7 +23,7 @@ namespace DayzServerTools.Application.ViewModels
         public TraderConfigViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
         {
             Model = new();
-            Name = "TraderConfig.txt";
+            FileName = "TraderConfig.txt";
 
             Traders.CollectionChanged += TradersCollectionChanged;
         }
@@ -33,7 +33,6 @@ namespace DayzServerTools.Application.ViewModels
             var newModel = TraderConfig.ReadFromStream(input);
             CurrencyCategory = newModel.CurrencyCategory;
             Traders.AddRange(newModel.Traders.Select(t => new TraderViewModel(t)));
-            Name = filename;
         }
         protected override IFileDialog CreateOpenFileDialog()
         {
