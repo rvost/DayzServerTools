@@ -12,7 +12,10 @@ namespace DayzServerTools.Application.ViewModels
         [NotifyPropertyChangedFor(nameof(Categories), nameof(Name))]
         private Trader model;
 
-        public string Name { get => Model.TraderName; }
+        public string Name { 
+            get => model.TraderName; 
+            set => SetProperty(model.TraderName, value, model, (m, n) => m.TraderName = n);
+        }
         public ObservableCollection<TraderCategory> Categories { get => model.TraderCategories; }
         public IRelayCommand<string> AddCategoryCommand { get; }
         public IRelayCommand<TraderCategory> RemoveCategoryCommand { get; }

@@ -12,12 +12,17 @@
         <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding SaveAsCommand}"/>
     </UserControl.InputBindings>
     <Grid>
-        <TabControl ItemsSource="{Binding Traders}" TabStripPlacement="Left"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock FontSize="20" FontWeight="SemiBold" Margin="0 5">Trader Config</TextBlock>
+        <TabControl Grid.Row="1" ItemsSource="{Binding Traders}" TabStripPlacement="Left"
                     SelectedIndex="0" IsSynchronizedWithCurrentItem="True">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
-                    <Setter Property="Header" Value="{Binding Name}"/>
-                    <Setter Property="FontSize" Value="24"/>
+                    <Setter Property="FontSize" Value="16"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="FontWeight" Value="SemiBold" />
@@ -25,6 +30,14 @@
                     </Style.Triggers>
                 </Style>
             </TabControl.ItemContainerStyle>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBox Text="{Binding Name, Mode=TwoWay}" 
+                             BorderThickness="0" Margin="5"
+                             VerticalContentAlignment="Center"
+                             Background="Transparent"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <Grid>
@@ -60,5 +73,35 @@
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
+        <Expander Grid.Row="2" Padding="5">
+            <Expander.Header>
+                <TextBlock  Text="Currency Config" FontSize="16"/>
+            </Expander.Header>
+            <StackPanel>
+                <DockPanel Margin="0 0 0 5">
+                    <Label Content="Currency Name:"/>
+                    <TextBox Text="{Binding Path=CurrencyCategory.CurrencyName, Mode=TwoWay}"
+                             VerticalContentAlignment="Center"/>
+                </DockPanel>
+                <DataGrid ItemsSource="{Binding Path=CurrencyCategory.CurrencyTypes}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Currency Class Name" Binding="{Binding CurrencyName}">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="ToolTip" Value="{StaticResource TraderCurrencyNameTooltip}" />
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Value" Binding="{Binding CurrencyValue}">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="ToolTip" Value="{StaticResource TraderCurrencyValueTooltip}" />
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Expander>
     </Grid>
 </UserControl>

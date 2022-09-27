@@ -14,6 +14,11 @@ namespace DayzServerTools.Application.ViewModels
     public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>, IDisposable
     {
         public ObservableCollection<TraderViewModel> Traders { get; } = new();
+        public CurrencyCategory CurrencyCategory
+        {
+            get => model.CurrencyCategory;
+            set => SetProperty(model.CurrencyCategory, value, model, (m, n) => m.CurrencyCategory = n);
+        }
 
         public TraderConfigViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
         {
@@ -26,7 +31,7 @@ namespace DayzServerTools.Application.ViewModels
         protected override void OnLoad(Stream input, string filename)
         {
             var newModel = TraderConfig.ReadFromStream(input);
-            Model.CurrencyCategory = newModel.CurrencyCategory;
+            CurrencyCategory = newModel.CurrencyCategory;
             Traders.AddRange(newModel.Traders.Select(t => new TraderViewModel(t)));
             Name = filename;
         }
@@ -38,7 +43,7 @@ namespace DayzServerTools.Application.ViewModels
             return dialog;
         }
         protected override bool CanSave() => true;
-        
+
         private void TradersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)

@@ -18,4 +18,6 @@
     <system:String x:Key="TraderQuantityModifierTooltip" xml:space="preserve">Quantity Modifier:&#13;0..X - Number items in stack&#13;* - Maximum items in stack&#13;W - Weapon&#13;M - Weapon magazin&#13;S - Stack Meat&#13;V - Vehicle&#13;VNK - Vehicle without Key&#13;K - Key Duplication</system:String>
     <system:String x:Key="TraderBuyPriceTooltip" xml:space="preserve">Buy price in currency units.&#13;-1 means item can not be bought.</system:String>
     <system:String x:Key="TraderSellPriceTooltip" xml:space="preserve">Sell price in currency units.&#13;-1 means item can not be sold.</system:String>
+    <system:String x:Key="TraderCurrencyNameTooltip">Class Name of the currency note (as in types.xml)</system:String>
+    <system:String x:Key="TraderCurrencyValueTooltip">Denomination of the currency note</system:String>
 </ResourceDictionary>
