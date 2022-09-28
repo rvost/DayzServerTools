@@ -8,6 +8,7 @@ using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Application.Stores;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -131,7 +132,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         var items = viewModels.Select(vm => vm.Model);
 
         var dialog = _dialogFactory.CreateExportDialog();
-        dialog.Items = items;
+        dialog.Store = new ItemTypesToTraderExportStore(items);
         dialog.ShowDialog();
     }
 

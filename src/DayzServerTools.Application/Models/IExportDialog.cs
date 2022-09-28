@@ -1,9 +1,9 @@
-﻿using DayzServerTools.Library.Xml;
+﻿using DayzServerTools.Application.Stores;
 
 namespace DayzServerTools.Application.Models;
 
 public interface IExportDialog
 {
-    IEnumerable<ItemType> Items { get; set; }
+    ITraderCategoryExport Store { get; set; }
     bool? ShowDialog();
 }

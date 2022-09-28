@@ -21,11 +21,21 @@ namespace DayzServerTools.Windows.Views
     /// </summary>
     public partial class ExportDialogWindow : Window
     {
+        private readonly ExportViewModel _model;
+
         public ExportDialogWindow(ExportViewModel model)
         {
             InitializeComponent();
+            _model = model;
             DataContext = model;
-            model.CloseRequested += (o, e) => Close();
+            model.CloseRequested += OnCloseRequested;
+        }
+
+        private void OnCloseRequested(object sender, EventArgs e)
+        {
+            DialogResult = true;
+            _model.CloseRequested -= OnCloseRequested;
+            Close();
         }
     }
 }

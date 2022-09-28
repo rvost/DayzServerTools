@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Trader;
-using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -12,7 +11,7 @@ public partial class ExportViewModel : ObservableObject
     private readonly WorkspaceViewModel _workspace;
 
     public IEnumerable<TraderConfigViewModel> Options { get; }
-    public IEnumerable<ItemType> Items { get; set; }
+    public ITraderCategoryExport Store { get; set; }
     public IRelayCommand<TraderCategory> ExportCommand { get; }
     
     public event EventHandler CloseRequested;
@@ -31,9 +30,7 @@ public partial class ExportViewModel : ObservableObject
 
     public void Export(TraderCategory category)
     {
-        category?.TraderItems.AddRange(
-            Items.Select(i => new TraderItem { Name = i.Name })
-            );
+        Store.ExportTo(category);
 
         CloseRequested?.Invoke(this, EventArgs.Empty);
     }
