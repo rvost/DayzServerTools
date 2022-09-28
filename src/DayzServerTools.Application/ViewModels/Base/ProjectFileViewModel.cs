@@ -69,7 +69,7 @@ namespace DayzServerTools.Application.ViewModels.Base
         {
             if (CanSave())
             {
-                SaveTo(Name);
+                SaveTo(FileName);
             }
         }
         public void SaveAs()
