@@ -27,8 +27,8 @@
                                           ItemsSource="{Binding Categories}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type trader:TraderCategory}">
-                    <TextBlock Text="{Binding CategoryName}"/>
+                <DataTemplate DataType="{x:Type viewmodels:TraderCategoryViewModel}">
+                    <TextBlock Text="{Binding Name}"/>
                 </DataTemplate>
             </TreeView.Resources>
             <TreeView.ItemContainerStyle>
@@ -43,7 +43,7 @@
         </TreeView>
         <Button Grid.Row="1" Margin="10"
                 Command="{Binding ExportCommand}"
-                CommandParameter="{Binding ElementName=PathTree, Path=SelectedItem}">
+                CommandParameter="{Binding ElementName=PathTree, Path=SelectedItem.Model}">
             Export
         </Button>
     </Grid>

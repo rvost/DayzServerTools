@@ -14,14 +14,28 @@
     </UserControl.ContextMenu>
     <Expander>
         <Expander.Header>
-            <TextBox Text="{Binding CategoryName}" d:Text="Category Name"
+            <TextBox Text="{Binding Name}" d:Text="Category Name"
                      FontSize="18" FontWeight="SemiBold"
                      VerticalContentAlignment="Center"
                      VerticalAlignment="Center"
                      BorderThickness="0 0 0 2"
                      Background="Transparent"/>
         </Expander.Header>
-        <DataGrid ItemsSource="{Binding Path=TraderItems}" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding Path=Items}" AutoGenerateColumns="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy items to..."
+                              Command="{Binding CopyItemsCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
+                    <MenuItem Header="Move items..."
+                              Command="{Binding MoveItemsCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Item Class Name" Binding="{Binding Name}">
                     <DataGridTextColumn.HeaderStyle>
