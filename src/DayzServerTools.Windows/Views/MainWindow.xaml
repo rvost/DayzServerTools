@@ -114,7 +114,7 @@
 
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type viewmodelBase:IProjectFileTab}">
-                    <TextBlock>
+                    <TextBlock ToolTip="{Binding FileName}">
                         <Run Text="{Binding Name, Mode=OneWay}"/>
                         <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
                     </TextBlock>

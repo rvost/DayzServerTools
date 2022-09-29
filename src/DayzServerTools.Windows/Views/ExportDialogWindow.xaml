@@ -8,7 +8,7 @@
         xmlns:trader="clr-namespace:DayzServerTools.Library.Trader;assembly=DayzServerTools.Library"
         mc:Ignorable="d"
         Title="Select destination category"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="ToolWindow"
         Height="450" Width="400">
     <Grid>
@@ -37,6 +37,9 @@
                         <Trigger Property="HasItems" Value="True">
                             <Setter Property="Focusable" Value="False" />
                         </Trigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
+                            <Setter Property="IsExpanded" Value="True"/>
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </TreeView.ItemContainerStyle>
