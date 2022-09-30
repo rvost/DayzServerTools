@@ -16,7 +16,7 @@ namespace DayzServerTools.Windows
     /// </summary>
     public partial class App : System.Windows.Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
@@ -25,7 +25,6 @@ namespace DayzServerTools.Windows
                 onAppUninstall: OnAppUninstall,
                 onEveryRun: OnAppRun
                 );
-
 
             Ioc.Default.ConfigureServices
                 (new ServiceCollection()
@@ -37,13 +36,8 @@ namespace DayzServerTools.Windows
                     .AddTransient<ExportViewModel>()
                     .BuildServiceProvider()
                 );
-        }
 
-        protected override async void OnExit(ExitEventArgs e)
-        {
             await UpdateApp();
-
-            base.OnExit(e);
         }
 
         private static void OnAppInstall(SemanticVersion version, IAppTools tools)
