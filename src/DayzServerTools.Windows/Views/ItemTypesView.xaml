@@ -313,7 +313,7 @@
         </DataGrid>
         <controls:ErrorsPanelControl Grid.Row="2" Items="{Binding Errors}"/>
 
-        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0 2 0 2"
-                      ShowsPreview="true" ResizeDirection="Rows" BorderThickness="1" BorderBrush="Gray"/>
+        <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                      ShowsPreview="true" ResizeDirection="Rows" BorderThickness="3" BorderBrush="LightGray"/>
     </Grid>
 </UserControl>
