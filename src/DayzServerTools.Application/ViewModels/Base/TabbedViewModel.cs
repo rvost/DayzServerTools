@@ -8,8 +8,6 @@ public abstract partial class TabbedViewModel : ObservableObject
 {
     [ObservableProperty]
     protected ObservableCollection<IProjectFileTab> tabs = new();
-    [ObservableProperty]
-    protected IProjectFileTab activeTab;
 
     public TabbedViewModel()
     {

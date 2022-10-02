@@ -2,15 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:DayzServerTools.Windows" 
-             
+             xmlns:viewmodelPanes="clr-namespace:DayzServerTools.Application.ViewModels.Panes;assembly=DayzServerTools.Application"
+             xmlns:panes="clr-namespace:DayzServerTools.Windows.Views.Panes"
              xmlns:converters="clr-namespace:DayzServerTools.Windows.Converters"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes\Generic.xaml"/>
                 <ResourceDictionary Source="Resources\Strings.xaml"/>
-                
+
                 <ResourceDictionary>
                     <converters:StringToRandomColorConverter x:Key="FlagColorConverter"/>
 
@@ -76,6 +76,10 @@
                             </Style>
                         </Style.Resources>
                     </Style>
+
+                    <DataTemplate DataType="{x:Type viewmodelPanes:ErrorsPaneViewModel}">
+                        <panes:ErrorsPaneView/>
+                    </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

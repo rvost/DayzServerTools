@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
 

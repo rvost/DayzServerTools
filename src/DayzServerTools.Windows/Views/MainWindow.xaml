@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DayzServerTools.Windows"
-        xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
-        xmlns:viewmodelBase="clr-namespace:DayzServerTools.Application.ViewModels.Base;assembly=DayzServerTools.Application"
+        xmlns:dockView="clr-namespace:DayzServerTools.Windows.Views.Dock"
         xmlns:views="clr-namespace:DayzServerTools.Windows.Views"
         mc:Ignorable="d"
         Title="DayzServerTools"
@@ -20,12 +19,22 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
+            <views:ItemTypesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:UserDefinitionsViewModel}">
+            <views:UserDefinitionsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}">
+            <views:TraderConfigView/>
+        </DataTemplate>
+        <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Gesture="CTRL+N" Command="{Binding NewTabCommand}" CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}"/>
         <KeyBinding Gesture="CTRL+O" Command="{Binding NewTabCommand}" CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
-        <KeyBinding Gesture="CTRL+S" Command="{Binding Path=ActiveTab.SaveCommand}"/>
-        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding Path=ActiveTab.SaveAsCommand}"/>
+        <KeyBinding Gesture="CTRL+S" Command="{Binding Path=ActiveFile.SaveCommand}"/>
+        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding Path=ActiveFile.SaveAsCommand}"/>
     </Window.InputBindings>
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
@@ -53,11 +62,11 @@
                 </MenuItem>
                 <Separator/>
                 <MenuItem Header="Save"
-                          Command="{Binding Path=ActiveTab.SaveCommand}"
+                          Command="{Binding Path=ActiveFile.SaveCommand}"
                           InputGestureText="Ctrl+S"
                           Style="{StaticResource OnNullCommandStyle}"/>
                 <MenuItem Header="Save As"
-                          Command="{Binding Path=ActiveTab.SaveAsCommand}"
+                          Command="{Binding Path=ActiveFile.SaveAsCommand}"
                           InputGestureText="Ctrl+Shift+S"
                           Style="{StaticResource OnNullCommandStyle}"/>
                 <MenuItem Header="Save All"
@@ -97,29 +106,50 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Validation Errors" Command="{Binding ToogleErrorsPaneCommand}"/>
+            </MenuItem>
         </Menu>
-        <controls:TabControlEx ItemsSource="{Binding Tabs}" SelectedItem="{Binding ActiveTab}" 
-                               SelectedIndex="0" IsSynchronizedWithCurrentItem="True">
-            <TabControl.Resources>
-                <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
-                    <views:ItemTypesView/>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type viewmodels:UserDefinitionsViewModel}">
-                    <views:UserDefinitionsView/>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}">
-                    <views:TraderConfigView/>
-                </DataTemplate>
-            </TabControl.Resources>
+        <xcad:DockingManager AllowMixedOrientation="True"
+                             DocumentsSource="{Binding Tabs}"
+                             AnchorablesSource="{Binding Panes}"
+                             ActiveContent="{Binding ActivePane, Mode=TwoWay}">
+            <xcad:DockingManager.Theme>
+                <xcad:GenericTheme/>
+            </xcad:DockingManager.Theme>
 
-            <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type viewmodelBase:IProjectFileTab}">
-                    <TextBlock ToolTip="{Binding FileName}">
-                        <Run Text="{Binding Name, Mode=OneWay}"/>
-                        <Hyperlink Command="{Binding CloseCommand}">X</Hyperlink>
-                    </TextBlock>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-        </controls:TabControlEx>
+            <xcad:DockingManager.LayoutItemContainerStyleSelector>
+                <dockView:PanesStyleSelector>
+                    <dockView:PanesStyleSelector.PaneStyle>
+                        <Style TargetType="{x:Type xcad:LayoutAnchorableItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}"/>
+                            <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource AvalonBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"/>
+                            <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}"/>
+                        </Style>
+                    </dockView:PanesStyleSelector.PaneStyle>
+                    <dockView:PanesStyleSelector.DocumentStyle>
+                        <Style TargetType="{x:Type xcad:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Name}"/>
+                            <Setter Property="ToolTip" Value="{Binding Model.FileName}"/>
+                            <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
+                        </Style>
+                    </dockView:PanesStyleSelector.DocumentStyle>
+                </dockView:PanesStyleSelector>
+            </xcad:DockingManager.LayoutItemContainerStyleSelector>
+            
+            <xcad:DockingManager.LayoutUpdateStrategy>
+                <dockView:LayoutInitializer />
+            </xcad:DockingManager.LayoutUpdateStrategy>
+            
+            <xcad:LayoutRoot>
+                <xcad:LayoutPanel Orientation="Horizontal">
+                    <xcad:LayoutPanel Orientation="Vertical">
+                        <xcad:LayoutDocumentPane/>
+                        <xcad:LayoutAnchorablePane Name="ErrorsPane" DockHeight="200" />
+                    </xcad:LayoutPanel>
+                </xcad:LayoutPanel>
+            </xcad:LayoutRoot>
+
+        </xcad:DockingManager>
     </DockPanel>
 </Window>
