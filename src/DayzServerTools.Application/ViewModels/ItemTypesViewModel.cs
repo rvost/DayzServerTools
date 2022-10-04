@@ -28,7 +28,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     [ObservableProperty]
     private WorkspaceViewModel workspace = null;
 
-    public ObservableCollection<ValidationErrorInfo> Errors { get; } = new();
     public IRelayCommand AddEmptyItemCommand { get; }
     public IRelayCommand<object> AdjustQuantityCommand { get; }
     public IRelayCommand<object> AdjustLifetimeCommand { get; }
@@ -94,7 +93,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     }
     public void Validate()
     {
-        Errors.Clear();
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
         Items.AsParallel().ForAll(item => item.ValidateSelf());
@@ -107,8 +105,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
                     return new ValidationErrorInfo(this, item.Name, errorMessages);
                 }
             );
-
-        Errors.AddRange(allErrors);
         allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
     public void ExportToNewFile(object cmdParam)
