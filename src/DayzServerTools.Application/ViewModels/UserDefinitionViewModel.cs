@@ -25,8 +25,8 @@ public class UserDefinitionViewModel : ObservableValidator
     public IRelayCommand<UserDefinableFlag> AddDefinitionCommand { get; }
     public IRelayCommand<UserDefinableFlag> RemoveDefinitionCommand { get; }
 
-    public UserDefinitionViewModel(UserDefinition model, IEnumerable<UserDefinableFlag> availableDefinitions)
-        : base(new Dictionary<object, object>() { { "definitions", availableDefinitions } })
+    public UserDefinitionViewModel(UserDefinition model, Func<IEnumerable<UserDefinableFlag>> getAvailableDefinitions)
+        : base(new Dictionary<object, object>() { { "definitions", getAvailableDefinitions } })
     {
         _model = model;
 
@@ -41,7 +41,8 @@ public class UserDefinitionViewModel : ObservableValidator
     public void ValidateSelf() => ValidateAllProperties();
     public static ValidationResult ValidateDefinitions(ObservableCollection<UserDefinableFlag> definitions, ValidationContext context)
     {
-        var availableDefinitions = (IEnumerable<UserDefinableFlag>)context.Items["definitions"] ?? Enumerable.Empty<UserDefinableFlag>();
+        var getAvailableDefinitions = (Func<IEnumerable<UserDefinableFlag>>)context.Items["definitions"];
+        var availableDefinitions = getAvailableDefinitions();
         var validator = new UserFlagDefinitionValidator(availableDefinitions);
         return validator.Validate(definitions);
     }

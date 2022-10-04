@@ -40,10 +40,10 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
         FileName = "cfglimitsdefinitionuser.xml";
 
         NewValueFlagCommand = new RelayCommand(
-            () => ValueFlags.Add(new(new ValueUserDefinition(), AvailableValueFlags))
+            () => ValueFlags.Add(new(new ValueUserDefinition(), () => AvailableValueFlags))
             );
         NewUsageFlagCommand = new RelayCommand(
-            () => UsageFlags.Add(new(new UsageUserDefinition(), AvailableUsageFlags))
+            () => UsageFlags.Add(new(new UsageUserDefinition(), () => AvailableUsageFlags))
             );
         ValidateCommand = new RelayCommand(Validate);
 
@@ -66,10 +66,10 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     {
         var userDefinitions = UserDefinitions.ReadFromStream(input);
         ValueFlags.AddRange(
-            userDefinitions.ValueFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, AvailableValueFlags))
+            userDefinitions.ValueFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableValueFlags))
             );
         UsageFlags.AddRange(
-            userDefinitions.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, AvailableUsageFlags))
+            userDefinitions.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableUsageFlags))
             );
     }
     protected override IFileDialog CreateOpenFileDialog()
@@ -121,10 +121,10 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
                 return new ValidationErrorInfo(this, flag.Name, errorMessages);
             }
             );
-        
+
         allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
-    
+
     public void Dispose()
     {
         ValueFlags.CollectionChanged -= FlagsCollectionChanged;
