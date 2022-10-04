@@ -3,12 +3,14 @@ using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.ViewModels.Panes;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
@@ -27,9 +29,6 @@ public partial class WorkspaceViewModel : TabbedViewModel
     private readonly IDialogFactory _dialogFactory;
     private readonly ErrorsPaneViewModel _errorsPaneViewModel;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(LimitsDefinitionsLoaded))]
-    [NotifyCanExecuteChangedFor(nameof(LoadLimitsDefinitionsCommand))]
     private LimitsDefinitions limitsDefinitions = null;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(UserDefinitionsLoaded))]
@@ -60,6 +59,22 @@ public partial class WorkspaceViewModel : TabbedViewModel
     [ObservableProperty]
     private ObservableCollection<VanillaFlag> tags = new();
 
+    public LimitsDefinitions LimitsDefinitions
+    {
+        get => limitsDefinitions;
+        set
+        {
+            var oldValue = limitsDefinitions;
+            if(SetProperty(ref limitsDefinitions, value))
+            {
+                OnPropertyChanged(nameof(LimitsDefinitionsLoaded));
+                LoadLimitsDefinitionsCommand.NotifyCanExecuteChanged();
+                WeakReferenceMessenger.Default.Send(
+                    new LimitsDefinitionsChengedMaessage(this, nameof(LimitsDefinitions), oldValue, value)
+                    );
+            }
+        }
+    }
     public bool LimitsDefinitionsLoaded { get => LimitsDefinitions is not null; }
     public bool UserDefinitionsLoaded { get => UserDefinitions is not null; }
     public IEnumerable<IPane> Panes { get; }
@@ -188,13 +203,13 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public void CreateUserDefinitions()
     {
         var newUserDefinitionVM = Ioc.Default.GetService<UserDefinitionsViewModel>();
-        newUserDefinitionVM.Workspace = this;
+        newUserDefinitionVM.LimitsDefinitions = LimitsDefinitions;
         Tabs.Add(newUserDefinitionVM);
     }
     public void OpenUserDefinitions()
     {
         var newUserDefinitionVM = Ioc.Default.GetService<UserDefinitionsViewModel>();
-        newUserDefinitionVM.Workspace = this;
+        newUserDefinitionVM.LimitsDefinitions = LimitsDefinitions;
         Tabs.Add(newUserDefinitionVM);
         newUserDefinitionVM.Load();
     }

@@ -17,13 +17,18 @@ namespace DayzServerTools.Application.ViewModels;
 public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinitions>, IDisposable
 {
     [ObservableProperty]
-    private WorkspaceViewModel workspace = null;
+    [NotifyPropertyChangedFor(nameof(AvailableValueFlags), nameof(AvailableUsageFlags))]
+    private LimitsDefinitions limitsDefinitions = null;
 
     public ObservableCollection<UserDefinitionViewModel> ValueFlags { get; } = new();
     public ObservableCollection<UserDefinitionViewModel> UsageFlags { get; } = new();
 
-    public IEnumerable<UserDefinableFlag> AvailableValueFlags { get => Workspace.LimitsDefinitions?.ValueFlags; }
-    public IEnumerable<UserDefinableFlag> AvailableUsageFlags { get => Workspace.LimitsDefinitions?.UsageFlags; }
+    public IEnumerable<UserDefinableFlag> AvailableValueFlags
+         => limitsDefinitions?.ValueFlags ?? Enumerable.Empty<UserDefinableFlag>();
+
+    public IEnumerable<UserDefinableFlag> AvailableUsageFlags
+        => limitsDefinitions?.UsageFlags ?? Enumerable.Empty<UserDefinableFlag>();
+
 
     public IRelayCommand NewValueFlagCommand { get; }
     public IRelayCommand NewUsageFlagCommand { get; }
@@ -44,6 +49,9 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
 
         ValueFlags.CollectionChanged += FlagsCollectionChanged;
         UsageFlags.CollectionChanged += FlagsCollectionChanged;
+        WeakReferenceMessenger.Default.Register<UserDefinitionsViewModel, LimitsDefinitionsChengedMaessage>(
+            this, (r, m) => r.LimitsDefinitions = m.NewValue
+            );
     }
 
     public void Validate()
@@ -121,5 +129,6 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     {
         ValueFlags.CollectionChanged -= FlagsCollectionChanged;
         UsageFlags.CollectionChanged -= FlagsCollectionChanged;
+        WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 }
