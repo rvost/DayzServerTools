@@ -8,16 +8,18 @@
              x:Name="root"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" FontSize="16" FontWeight="Bold" Margin="2 5">Erorrs:</TextBlock>
-        <ListView Grid.Row="1" ItemsSource="{Binding ElementName=root, Path=Items}"
+        <ListView ItemsSource="{Binding ElementName=root, Path=Items}"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.CanContentScroll="True">
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Header="File">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Sender.Name}" ToolTip="{Binding Path=Sender.FileName}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Identifier}" Header="Error Source" Width="auto"/>
                     <GridViewColumn Header="Errors">
                         <GridViewColumn.CellTemplate>

@@ -2,27 +2,17 @@
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
-using DayzServerTools.Library.Xml;
 using DayzServerTools.Application.Stores;
+using DayzServerTools.Application.Messages;
+using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
-
-public class ValidationErrorInfo
-{
-    public string Identifier { get; set; }
-    public IEnumerable<string> Errors { get; set; }
-
-    public ValidationErrorInfo(string identifier, IEnumerable<string> errors)
-    {
-        Identifier = identifier;
-        Errors = errors;
-    }
-}
 
 public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisposable
 {
@@ -38,7 +28,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     [ObservableProperty]
     private WorkspaceViewModel workspace = null;
 
-    public ObservableCollection<ValidationErrorInfo> Errors { get; } = new();
     public IRelayCommand AddEmptyItemCommand { get; }
     public IRelayCommand<object> AdjustQuantityCommand { get; }
     public IRelayCommand<object> AdjustLifetimeCommand { get; }
@@ -66,7 +55,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public void CopyItemTypes(IEnumerable<ItemType> source)
     {
         Items.AddRange(
-            source.Select(obj => new ItemTypeViewModel(obj.Copy(), workspace))
+            source.Select(obj => new ItemTypeViewModel(obj.Copy(), Workspace))
         );
     }
     public void AddEmptyItem()
@@ -104,17 +93,19 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     }
     public void Validate()
     {
-        Errors.Clear();
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
         Items.AsParallel().ForAll(item => item.ValidateSelf());
+
         var allErrors = Items.AsParallel()
             .Where(item => item.HasErrors)
             .Select(item =>
                 {
                     var errorMessages = item.GetErrors().Select(r => r.ErrorMessage);
-                    return new ValidationErrorInfo(item.Name, errorMessages);
+                    return new ValidationErrorInfo(this, item.Name, errorMessages);
                 }
             );
-        Errors.AddRange(allErrors);
+        allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
     public void ExportToNewFile(object cmdParam)
     {
@@ -141,7 +132,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     {
         var newItems = ItemTypes.ReadFromStream(input);
         Items.Clear();
-        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, workspace)));
+        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, Workspace)));
     }
     protected override IFileDialog CreateOpenFileDialog()
     {

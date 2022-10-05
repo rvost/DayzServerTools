@@ -8,6 +8,7 @@ using Squirrel;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels;
 using DayzServerTools.Windows.Services;
+using DayzServerTools.Application.ViewModels.Panes;
 
 namespace DayzServerTools.Windows
 {
@@ -29,7 +30,9 @@ namespace DayzServerTools.Windows
             Ioc.Default.ConfigureServices
                 (new ServiceCollection()
                     .AddSingleton<IDialogFactory, WindowsDialogFactory>()
+                    .AddSingleton<IDispatcherService, DispatcherService>()
                     .AddSingleton<WorkspaceViewModel>()
+                    .AddSingleton<ErrorsPaneViewModel>()
                     .AddTransient<ItemTypesViewModel>()
                     .AddTransient<UserDefinitionsViewModel>()
                     .AddTransient<TraderConfigViewModel>()

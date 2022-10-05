@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validation;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -18,12 +19,14 @@ public class UserDefinitionViewModel : ObservableValidator
         get => _model.Name;
         set => SetProperty(_model.Name, value, _model, (m, v) => m.Name = v, true);
     }
+    [CustomValidation(typeof(UserDefinitionViewModel), nameof(ValidateDefinitions))]
     public ObservableCollection<UserDefinableFlag> Definitions { get => _model.Definitions; }
 
     public IRelayCommand<UserDefinableFlag> AddDefinitionCommand { get; }
     public IRelayCommand<UserDefinableFlag> RemoveDefinitionCommand { get; }
 
-    public UserDefinitionViewModel(UserDefinition model)
+    public UserDefinitionViewModel(UserDefinition model, Func<IEnumerable<UserDefinableFlag>> getAvailableDefinitions)
+        : base(new Dictionary<object, object>() { { "definitions", getAvailableDefinitions } })
     {
         _model = model;
 
@@ -33,5 +36,14 @@ public class UserDefinitionViewModel : ObservableValidator
         RemoveDefinitionCommand = new RelayCommand<UserDefinableFlag>(
             flag => Definitions.Remove(flag)
             );
+    }
+
+    public void ValidateSelf() => ValidateAllProperties();
+    public static ValidationResult ValidateDefinitions(ObservableCollection<UserDefinableFlag> definitions, ValidationContext context)
+    {
+        var getAvailableDefinitions = (Func<IEnumerable<UserDefinableFlag>>)context.Items["definitions"];
+        var availableDefinitions = getAvailableDefinitions();
+        var validator = new UserFlagDefinitionValidator(availableDefinitions);
+        return validator.Validate(definitions);
     }
 }
