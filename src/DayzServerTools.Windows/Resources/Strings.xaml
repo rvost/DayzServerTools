@@ -13,6 +13,12 @@
     <system:String x:Key="ItemTypesUsageTooltip">The group in which area an item will spawn.</system:String>
     <system:String x:Key="ItemTypesValueTooltip">The value group of an item. Effects on how and where the item spawns.</system:String>
     <system:String x:Key="ItemTypesTagTooltip">The tags of an item. Effects on how and where the item spawns.</system:String>
+    <system:String x:Key="ItemTypesCountInMapTooltip">Does the spawner count items on the map (e.g. in buildings) when setting items to nominal and minimum values.</system:String>
+    <system:String x:Key="ItemTypesCountInHoarderTooltip">Does the spawner count items in  tents, barrels or undeground stashes when setting items to nominal and minimum values</system:String>
+    <system:String x:Key="ItemTypesCountInCargoTooltip">Does the spawner count counts all items in cargo - i.e. containers (including cars), crates, backpacks when setting items to nominal and minimum values.</system:String>
+    <system:String x:Key="ItemTypesCountInPlayerTooltip">Does the spawner count items in players inventory when setting items to nominal and minimum values.</system:String>
+    <system:String x:Key="ItemTypesCraftedTooltip">Mark player craftable items.</system:String>
+    <system:String x:Key="ItemTypesDelootTooltip">Mark dynamic event loot objects (e.g. in helicrashes).</system:String>
     
     <system:String x:Key="TraderItemNameTooltip">Item Class Name (as in types.xml)</system:String>
     <system:String x:Key="TraderQuantityModifierTooltip" xml:space="preserve">Quantity Modifier:&#13;0..X - Number items in stack&#13;* - Maximum items in stack&#13;W - Weapon&#13;M - Weapon magazin&#13;S - Stack Meat&#13;V - Vehicle&#13;VNK - Vehicle without Key&#13;K - Key Duplication</system:String>

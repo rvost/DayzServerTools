@@ -172,12 +172,49 @@
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
                 <!-- Flags Columns -->
-                <DataGridCheckBoxColumn Header="Count in Map" Binding="{Binding CountInMap}"/>
-                <DataGridCheckBoxColumn Header="Count in Hoarder" Binding="{Binding CountInHoarder}"/>
-                <DataGridCheckBoxColumn Header="Count in Cargo" Binding="{Binding CountInCargo}"/>
-                <DataGridCheckBoxColumn Header="Count in Player" Binding="{Binding CountInPlayer}"/>
-                <DataGridCheckBoxColumn Header="Crafted" Binding="{Binding Crafted}"/>
-                <DataGridCheckBoxColumn Header="Deloot" Binding="{Binding Deloot}"/>
+                <DataGridCheckBoxColumn Header="Count in Map" Binding="{Binding CountInMap}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCountInMapTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn Header="Count in Hoarder" Binding="{Binding CountInHoarder}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCountInHoarderTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn Header="Count in Cargo" Binding="{Binding CountInCargo}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCountInCargoTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn Header="Count in Player" Binding="{Binding CountInPlayer}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCountInPlayerTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn Header="Crafted" Binding="{Binding Crafted}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesCraftedTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridCheckBoxColumn Header="DE Loot" Binding="{Binding Deloot}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource ItemTypesDelootTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                
                 <!-- Category -->
                 <DataGridTemplateColumn Header="Category" SortMemberPath="Category"
                                         CellStyle="{StaticResource ComboBoxErrorTooltipStyle}">
