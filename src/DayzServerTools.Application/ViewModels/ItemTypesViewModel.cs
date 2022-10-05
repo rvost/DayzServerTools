@@ -55,7 +55,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public void CopyItemTypes(IEnumerable<ItemType> source)
     {
         Items.AddRange(
-            source.Select(obj => new ItemTypeViewModel(obj.Copy(), workspace))
+            source.Select(obj => new ItemTypeViewModel(obj.Copy(), Workspace))
         );
     }
     public void AddEmptyItem()
@@ -132,7 +132,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     {
         var newItems = ItemTypes.ReadFromStream(input);
         Items.Clear();
-        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, workspace)));
+        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, Workspace)));
     }
     protected override IFileDialog CreateOpenFileDialog()
     {

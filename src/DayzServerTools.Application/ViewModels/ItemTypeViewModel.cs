@@ -12,7 +12,6 @@ namespace DayzServerTools.Application.ViewModels;
 public class ItemTypeViewModel : ObservableValidator
 {
     private ItemType _model;
-    private WorkspaceViewModel _workspace;
 
     public ItemType Model { get => _model; }
 
@@ -130,7 +129,6 @@ public class ItemTypeViewModel : ObservableValidator
         : base(new Dictionary<object, object>() { { "workspace", workspace } })
     {
         _model = model;
-        _workspace = workspace;
 
         AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag);
         RemoveUsageFlagCommand = new RelayCommand<UserDefinableFlag>(RemoveUsageFlag);
