@@ -30,14 +30,14 @@ public class ItemTypeViewModel : ObservableValidator
         set => SetProperty(_model.Nominal, value, _model, (m, v) => m.Nominal = v, true);
     }
 
-    [Range(0, int.MaxValue)]
+    [Range(0, 3888000)]
     public int Lifetime
     {
         get => _model.Lifetime;
         set => SetProperty(_model.Lifetime, value, _model, (m, v) => m.Lifetime = v, true);
     }
 
-    [Range(0, int.MaxValue)]
+    [Range(0, 3888000)]
     public int Restock
     {
         get => _model.Restock;
@@ -51,14 +51,14 @@ public class ItemTypeViewModel : ObservableValidator
         set => SetProperty(_model.Min, value, _model, (m, v) => m.Min = v, true);
     }
 
-    [Range(-1, int.MaxValue)]
+    [Range(-1, 100)]
     public int Quantmin
     {
         get => _model.Quantmin;
         set => SetProperty(_model.Quantmin, value, _model, (m, v) => m.Quantmin = v, true);
     }
 
-    [Range(-1, int.MaxValue)]
+    [Range(-1, 100)]
     public int Quantmax
     {
         get => _model.Quantmax;
