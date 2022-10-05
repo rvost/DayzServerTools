@@ -39,8 +39,8 @@
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="New">
-                    <MenuItem Header="New types.xml" 
+                <MenuItem Header="New" Icon="{StaticResource NewIcon}">
+                    <MenuItem Header="New types.xml" Icon="{StaticResource NewItemTypesIcon}"
                           Command="{Binding NewTabCommand}" 
                           CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}" 
                           InputGestureText="Ctrl+N"/>
@@ -48,9 +48,9 @@
                           Command="{Binding NewTabCommand}" 
                           CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
                 </MenuItem>
-                <MenuItem Header="Open">
+                <MenuItem Header="Open" Icon="{StaticResource OpenIcon}">
                     <MenuItem Header="Open types.xml" 
-                          Command="{Binding NewTabCommand}" 
+                          Command="{Binding NewTabCommand}"
                           CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"
                           InputGestureText="Ctrl+O"/>
                     <MenuItem Header="Open user flags" 
@@ -61,15 +61,15 @@
                           CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTraderConfig}"/>
                 </MenuItem>
                 <Separator/>
-                <MenuItem Header="Save"
+                <MenuItem Header="Save" Icon="{StaticResource SaveIcon}"
                           Command="{Binding Path=ActiveFile.SaveCommand}"
                           InputGestureText="Ctrl+S"
                           Style="{StaticResource OnNullCommandStyle}"/>
-                <MenuItem Header="Save As"
+                <MenuItem Header="Save As" Icon="{StaticResource SaveAsIcon}"
                           Command="{Binding Path=ActiveFile.SaveAsCommand}"
                           InputGestureText="Ctrl+Shift+S"
                           Style="{StaticResource OnNullCommandStyle}"/>
-                <MenuItem Header="Save All"
+                <MenuItem Header="Save All" Icon="{StaticResource SaveAllIcon}"
                           Command="{Binding SaveAllCommand}"/>
             </MenuItem>
             <MenuItem Header="Workspace">
@@ -107,7 +107,8 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Validation Errors" Command="{Binding ToogleErrorsPaneCommand}"/>
+                <MenuItem Header="Validation Errors" Icon="{StaticResource ErrorListIcon}"
+                          Command="{Binding ToogleErrorsPaneCommand}"/>
             </MenuItem>
         </Menu>
         <xcad:DockingManager AllowMixedOrientation="True"

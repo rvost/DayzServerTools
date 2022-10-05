@@ -29,7 +29,8 @@
                       IsSynchronizedWithCurrentItem="True"
                       ItemsSource="{Binding Path=NewItemOptions, ElementName=root}" 
                       ItemTemplate="{StaticResource UserFlagTemplate}"/>
-            <Button Content="+" Width="32"
+            <Button Content="{StaticResource AddIcon}" Width="24"
+                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                     Command="{Binding Path=AddItemCommand, ElementName=root}" 
                     CommandParameter="{Binding ElementName=NewFlag, Path=SelectedItem}"/>
         </StackPanel>

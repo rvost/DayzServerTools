@@ -14,6 +14,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Icons\Add.png" />
+    <None Remove="Resources\Icons\BuildErrorList.png" />
+    <None Remove="Resources\Icons\Copy.png" />
+    <None Remove="Resources\Icons\Export.png" />
+    <None Remove="Resources\Icons\ExportTrader.png" />
+    <None Remove="Resources\Icons\New.png" />
+    <None Remove="Resources\Icons\NewTable.png" />
+    <None Remove="Resources\Icons\Open.png" />
+    <None Remove="Resources\Icons\Remove.png" />
+    <None Remove="Resources\Icons\Save.png" />
+    <None Remove="Resources\Icons\SaveAll.png" />
+    <None Remove="Resources\Icons\SaveAs.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Clowd.Squirrel" Version="2.9.42" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
@@ -23,6 +38,21 @@
   <ItemGroup>
     <ProjectReference Include="..\DayzServerTools.Application\DayzServerTools.Application.csproj" />
     <ProjectReference Include="..\DayzServerTools.Library\DayzServerTools.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Add.png" />
+    <Resource Include="Resources\Icons\BuildErrorList.png" />
+    <Resource Include="Resources\Icons\Copy.png" />
+    <Resource Include="Resources\Icons\Export.png" />
+    <Resource Include="Resources\Icons\ExportTrader.png" />
+    <Resource Include="Resources\Icons\New.png" />
+    <Resource Include="Resources\Icons\NewTable.png" />
+    <Resource Include="Resources\Icons\Open.png" />
+    <Resource Include="Resources\Icons\Remove.png" />
+    <Resource Include="Resources\Icons\Save.png" />
+    <Resource Include="Resources\Icons\SaveAll.png" />
+    <Resource Include="Resources\Icons\SaveAs.png" />
   </ItemGroup>
 
 </Project>

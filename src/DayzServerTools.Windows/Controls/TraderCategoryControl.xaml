@@ -8,7 +8,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="Remove" Command="{Binding PlacementTarget.Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            <MenuItem Header="Remove" Icon="{StaticResource RemoveIcon}"
+                      Command="{Binding PlacementTarget.Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding}"/>
         </ContextMenu>
     </UserControl.ContextMenu>
@@ -25,11 +26,13 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy items to..."
+                              Icon="{StaticResource CopyIcon}"
                               Command="{Binding CopyItemsCommand}"
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,
                                                          AncestorType={x:Type ContextMenu}}}"/>
                     <MenuItem Header="Move items..."
+                              Icon="{StaticResource ExportIcon}"
                               Command="{Binding MoveItemsCommand}"
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,

@@ -8,7 +8,8 @@
              d:DesignHeight="50" d:DesignWidth="120">
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="Remove" Command="{Binding PlacementTarget.Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            <MenuItem Header="Remove" Icon="{StaticResource RemoveIcon}" 
+                      Command="{Binding PlacementTarget.Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                       CommandParameter="{Binding}"/>
         </ContextMenu>
     </UserControl.ContextMenu>

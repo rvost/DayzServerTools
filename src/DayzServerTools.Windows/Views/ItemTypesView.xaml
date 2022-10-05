@@ -95,11 +95,13 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Export selected to new file"
+                              Icon="{StaticResource NewItemTypesIcon}"
                               Command="{Binding ExportToNewFileCommand}"
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,
                                                          AncestorType={x:Type ContextMenu}}}"/>
                     <MenuItem Header="Export to Trader Config..."
+                              Icon="{StaticResource ExportTraderIcon}"
                               Command="{Binding ExportToTraderCommand}"
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,

@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Add.png" x:Key="AddIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/BuildErrorList.png" x:Key="ErrorListIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Copy.png" x:Key="CopyIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Export.png" x:Key="ExportIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/ExportTrader.png" x:Key="ExportTraderIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/New.png" x:Key="NewIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/NewTable.png" x:Key="NewItemTypesIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Open.png" x:Key="OpenIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Remove.png" x:Key="RemoveIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/Save.png" x:Key="SaveIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/SaveAs.png" x:Key="SaveAsIcon" x:Shared="false"/>
+    <Image Source="/DayzServerTools.Windows;component/Resources/Icons/SaveAll.png" x:Key="SaveAllIcon" x:Shared="false"/>
+</ResourceDictionary>
