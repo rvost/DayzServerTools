@@ -7,7 +7,7 @@
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
                      xmlns:dockView="clr-namespace:DayzServerTools.Windows.Views.Dock"
-                     xmlns:views="clr-namespace:DayzServerTools.Windows.Views"
+                     xmlns:views="clr-namespace:DayzServerTools.Windows.Views" xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
                      mc:Ignorable="d"
                      Title="DayzServerTools"
                      WindowState="Maximized"
@@ -88,6 +88,11 @@
                                                  BorderBrush="OrangeRed"
                                                  x:Name="UserDefinitionsToolsGroup"
                                                  Visibility="{Binding ActiveFileIsUserDefinitions, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
+                <fluent:RibbonContextualTabGroup Header="Types"
+                                                 Background="Orange"
+                                                 BorderBrush="Orange"
+                                                 x:Name="ItemTypesToolsGroup"
+                                                 Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
             </fluent:Ribbon.ContextualGroups>
             <fluent:RibbonTabItem Header="Workspace">
                 <fluent:RibbonGroupBox Header="Limits Definitions" MinWidth="100"
@@ -153,6 +158,7 @@
                                          IsChecked="{Binding ErrorsPaneViewModel.IsVisible}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
+            <!-- User Definitions Tools Group -->
             <fluent:RibbonTabItem Header="User Definitions Tools" Group="{Binding ElementName=UserDefinitionsToolsGroup}"
                                   Visibility="{Binding ActiveFileIsUserDefinitions, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
                 <fluent:RibbonGroupBox Header="Value Flags" MinWidth="100"
@@ -164,6 +170,48 @@
                                        HorizontalContentAlignment="Center">
                     <fluent:Button Header="Add" Icon="{StaticResource AddUsageFlagVecIcon}"
                                    Command="{Binding ActiveFile.NewUsageFlagCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
+                                   Command="{Binding ActiveFile.ValidateCommand}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <!-- Item Types Tools Group -->
+            <fluent:RibbonTabItem Header="Types Tools" Group="{Binding ElementName=ItemTypesToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
+                <fluent:RibbonGroupBox Header="Edit">
+                    <fluent:Button Header="Add New Item" Icon="{StaticResource AddVecIcon}"
+                                   Command="{Binding ActiveFile.AddEmptyItemCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Quantity">
+                    <controls:PercentageChangeControl MinValue="0" MaxValue="4" Width="250"
+                                                      Percentage="{Binding ActiveFile.QuantityPercentage, Mode=TwoWay}"/>
+                    <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.AdjustQuantityCommand}" 
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Restock">
+                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
+                                                      Percentage="{Binding ActiveFile.RestockPercentage, Mode=TwoWay}"/>
+                    <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.AdjustRestockCommand}" 
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Lifetime">
+                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
+                                                      Percentage="{Binding ActiveFile.LifetimePercentage, Mode=TwoWay}"/>
+                    <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.AdjustLifetimeCommand}" 
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Export">
+                    <fluent:Button Header="To New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToNewFileCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                    <fluent:Button Header="To Trader Config" Icon="{StaticResource ExportTraderVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToTraderCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
                                        HorizontalContentAlignment="Center">

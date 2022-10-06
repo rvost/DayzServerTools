@@ -6,27 +6,22 @@
              xmlns:local="clr-namespace:DayzServerTools.Windows.Controls"
              mc:Ignorable="d"
              x:Name="root"
-             d:DesignHeight="150" d:DesignWidth="400">
-    <Grid MinWidth="200">
+             d:DesignHeight="80" d:DesignWidth="160">
+    <Grid MinWidth="160" Margin="0 8 0 0">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding Header, ElementName=root}" d:Text="Item Presence"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                   FontSize="18" FontWeight="Bold"/>
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="{Binding Percentage, ElementName=root, StringFormat={}{0:P}}" 
-                       d:Text="100%" HorizontalAlignment="Center"/>
-            <Slider VerticalAlignment="Center" TickPlacement="BottomRight" Margin="20 5"
-                    Value="{Binding Percentage, ElementName=root}" 
-                    Minimum="{Binding MinValue, ElementName=root}" Maximum="{Binding MaxValue, ElementName=root}"
-                    SmallChange="0.05" LargeChange="0.1" IsSnapToTickEnabled="True" TickFrequency="0.05"/>
-        </StackPanel>
-
-        <Button Grid.Row="2" Content="Apply"
-                CommandParameter="{Binding CommandParameter, ElementName=root}"
-                Command="{Binding Command, ElementName=root}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" VerticalAlignment="Center"
+                   Text="{Binding Percentage, ElementName=root, StringFormat={}{0:P}}" 
+                   FontSize="14" FontWeight="Bold"
+                   d:Text="100%" HorizontalAlignment="Center"/>
+        <Slider Grid.Row="1" VerticalAlignment="Center" TickPlacement="BottomRight" Margin="10 5"
+                Value="{Binding Percentage, ElementName=root}" 
+                Minimum="{Binding MinValue, ElementName=root}" Maximum="{Binding MaxValue, ElementName=root}"
+                SmallChange="0.05" LargeChange="0.1" IsSnapToTickEnabled="True" TickFrequency="0.05"/>
     </Grid>
 </UserControl>

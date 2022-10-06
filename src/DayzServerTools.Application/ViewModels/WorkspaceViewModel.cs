@@ -35,7 +35,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
     [NotifyCanExecuteChangedFor(nameof(LoadUserDefinitionsCommand))]
     private UserDefinitions userDefinitions = null;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions))]
+    [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes))]
     private IProjectFileTab activeFile;
     private object activePane;
 
@@ -52,6 +52,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
         }
     }
     public bool ActiveFileIsUserDefinitions => ActiveFile is UserDefinitionsViewModel;
+    public bool ActiveFileIsItemTypes => ActiveFile is ItemTypesViewModel;
     public ErrorsPaneViewModel ErrorsPaneViewModel => _errorsPaneViewModel;
     [ObservableProperty]
     private ObservableCollection<UserDefinableFlag> usages = new();

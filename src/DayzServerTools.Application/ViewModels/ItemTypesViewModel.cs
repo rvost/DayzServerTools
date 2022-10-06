@@ -11,6 +11,7 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
+using System.Collections;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -27,6 +28,11 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     private float restockPercentage = 1;
     [ObservableProperty]
     private WorkspaceViewModel workspace = null;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor( nameof(AdjustLifetimeCommand),
+        nameof(AdjustQuantityCommand), nameof(AdjustRestockCommand),
+        nameof(ExportToNewFileCommand), nameof(ExportToTraderCommand))]
+    private IList selectedItems;
 
     public IRelayCommand AddEmptyItemCommand { get; }
     public IRelayCommand<object> AdjustQuantityCommand { get; }
@@ -42,11 +48,11 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         FileName = "types.xml";
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
-        AdjustQuantityCommand = new RelayCommand<object>(AdjustQuantity);
-        AdjustLifetimeCommand = new RelayCommand<object>(AdjustLifetime);
-        AdjustRestockCommand = new RelayCommand<object>(AdjustRestock);
-        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile);
-        ExportToTraderCommand = new RelayCommand<object>(ExportToTrader);
+        AdjustQuantityCommand = new RelayCommand<object>(AdjustQuantity, CanExecuteBatchCommand);
+        AdjustLifetimeCommand = new RelayCommand<object>(AdjustLifetime, CanExecuteBatchCommand);
+        AdjustRestockCommand = new RelayCommand<object>(AdjustRestock, CanExecuteBatchCommand);
+        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteBatchCommand);
+        ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteBatchCommand);
         ValidateCommand = new RelayCommand(Validate);
 
         Items.CollectionChanged += ItemsCollectionChanged;
@@ -61,6 +67,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public void AddEmptyItem()
         => Items.Add(new(new ItemType(), Workspace));
 
+    public bool CanExecuteBatchCommand(object param) => param is not null;
     public void AdjustQuantity(object cmdParam)
     {
         var list = (System.Collections.IList)cmdParam;
