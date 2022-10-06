@@ -82,6 +82,13 @@
                     </fluent:BackstageTabControl>
                 </fluent:Backstage>
             </fluent:Ribbon.Menu>
+            <fluent:Ribbon.ContextualGroups>
+                <fluent:RibbonContextualTabGroup Header="User Definitions"
+                                                 Background="OrangeRed"
+                                                 BorderBrush="OrangeRed"
+                                                 x:Name="UserDefinitionsToolsGroup"
+                                                 Visibility="{Binding ActiveFileIsUserDefinitions, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
+            </fluent:Ribbon.ContextualGroups>
             <fluent:RibbonTabItem Header="Workspace">
                 <fluent:RibbonGroupBox Header="Limits Definitions" MinWidth="100"
                                        HorizontalContentAlignment="Center">
@@ -100,7 +107,7 @@
                     <fluent:Button Header="Load" Command="{Binding LoadLimitsDefinitionsCommand}" Size="Large"
                                    Icon="{StaticResource OpenVecIcon}"/>
                 </fluent:RibbonGroupBox>
-            
+
                 <fluent:RibbonGroupBox Header="User Limits Definitions">
                     <Ellipse StrokeThickness="0" Width="16" Height="16" Margin="0 16 16 0" 
                              VerticalAlignment="Center">
@@ -144,6 +151,24 @@
                                          Icon="{StaticResource ErrorListVecIcon}" 
                                          LargeIcon="{StaticResource ErrorListVecIcon}" 
                                          IsChecked="{Binding ErrorsPaneViewModel.IsVisible}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <fluent:RibbonTabItem Header="User Definitions Tools" Group="{Binding ElementName=UserDefinitionsToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsUserDefinitions, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
+                <fluent:RibbonGroupBox Header="Value Flags" MinWidth="100"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Add" Icon="{StaticResource AddValueFlagVecIcon}"
+                                   Command="{Binding ActiveFile.NewValueFlagCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Usage Flags" MinWidth="100"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Add" Icon="{StaticResource AddUsageFlagVecIcon}"
+                                   Command="{Binding ActiveFile.NewUsageFlagCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
+                                   Command="{Binding ActiveFile.ValidateCommand}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
