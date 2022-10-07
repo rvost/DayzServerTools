@@ -35,6 +35,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
     [NotifyCanExecuteChangedFor(nameof(LoadUserDefinitionsCommand))]
     private UserDefinitions userDefinitions = null;
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes))]
     private IProjectFileTab activeFile;
     private object activePane;
 
@@ -50,6 +51,9 @@ public partial class WorkspaceViewModel : TabbedViewModel
             }
         }
     }
+    public bool ActiveFileIsUserDefinitions => ActiveFile is UserDefinitionsViewModel;
+    public bool ActiveFileIsItemTypes => ActiveFile is ItemTypesViewModel;
+    public ErrorsPaneViewModel ErrorsPaneViewModel => _errorsPaneViewModel;
     [ObservableProperty]
     private ObservableCollection<UserDefinableFlag> usages = new();
     [ObservableProperty]
@@ -83,7 +87,6 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public IRelayCommand LoadUserDefinitionsCommand { get; }
     public IRelayCommand<NewTabOptions> NewTabCommand { get; }
     public IRelayCommand SaveAllCommand { get; }
-    public IRelayCommand ToogleErrorsPaneCommand { get; }
 
     public WorkspaceViewModel(IDialogFactory dialogFactory, ErrorsPaneViewModel errorsPaneViewModel) : base()
     {
@@ -96,7 +99,6 @@ public partial class WorkspaceViewModel : TabbedViewModel
         LoadUserDefinitionsCommand = new RelayCommand(LoadUserDefinitions, () => UserDefinitions is null);
         NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
         SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
-        ToogleErrorsPaneCommand = new RelayCommand(() => _errorsPaneViewModel.IsVisible ^= true);
     }
 
     public void LoadLimitsDefinitions()

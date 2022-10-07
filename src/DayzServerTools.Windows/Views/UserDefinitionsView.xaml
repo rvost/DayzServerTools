@@ -8,8 +8,6 @@
              x:Name="root"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.InputBindings>
-        <KeyBinding Gesture="CTRL+S" Command="{Binding SaveCommand}"/>
-        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding SaveAsCommand}"/>
         <KeyBinding Gesture="CTRL+SHIFT+V" Command="{Binding ValidateCommand}"/>
     </UserControl.InputBindings>
     <Grid>
@@ -21,22 +19,12 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="18" 
-                HorizontalAlignment="Center" Margin="0 5" Padding="5"
-                Command="{Binding ValidateCommand}">
-            <TextBlock TextAlignment="Center">
-                    <Run Text="Validate"/>
-                    <LineBreak/>
-                    <Run FontSize="8" FontStyle="Italic" Text="Ctrl+Shift+V"/>
-            </TextBlock>
-        </Button>
         <!-- Value Flags  -->
-        <Button Grid.Row="0" Grid.Column="0" FontSize="18" 
-                HorizontalAlignment="Center" Margin="0 5" Padding="5"
-                Command="{Binding NewValueFlagCommand}">
-            New Value Flag
-        </Button>
-        
+        <TextBlock Grid.Row="0" Grid.Column="0" 
+                   HorizontalAlignment="Center"
+                   FontSize="18" Margin="5 10">
+            Value Flags
+        </TextBlock>
         <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ValueFlags}" 
                   AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
@@ -65,11 +53,11 @@
         </DataGrid>
 
         <!-- Usage Flags  -->
-        <Button Grid.Row="0" Grid.Column="1" FontSize="18"
-                HorizontalAlignment="Center" Margin="0 5" Padding="5"
-                Command="{Binding NewUsageFlagCommand}">
-            New Usage Flag
-        </Button>
+        <TextBlock Grid.Row="0" Grid.Column="1" 
+                   HorizontalAlignment="Center"
+                   FontSize="18" Margin="10 10">
+            Usage Flags
+        </TextBlock>
         <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding UsageFlags}" 
                   AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
@@ -96,7 +84,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <GridSplitter Grid.Column="1" Grid.Row="1"  HorizontalAlignment="Left" VerticalAlignment="Stretch"
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"
                       ShowsPreview="true" ResizeDirection="Columns" BorderThickness="3" BorderBrush="LightGray"/>
     </Grid>
 </UserControl>

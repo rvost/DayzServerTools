@@ -20,12 +20,6 @@ namespace DayzServerTools.Windows.Controls
     /// </summary>
     public partial class PercentageChangeControl : UserControl
     {
-
-        public string Header
-        {
-            get { return (string)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
-        }
         public float Percentage
         {
             get { return (float)GetValue(PercentageProperty); }
@@ -41,34 +35,15 @@ namespace DayzServerTools.Windows.Controls
             get { return (float)GetValue(MaxValueProperty); }
             set { SetValue(MaxValueProperty, value); }
         }
-        public ICommand Command
-        {
-            get { return (ICommand)GetValue(CommandProperty); }
-            set { SetValue(CommandProperty, value); }
-        }
-       public object CommandParameter
-        {
-            get { return GetValue(CommandParameterProperty); }
-            set { SetValue(CommandParameterProperty, value); }
-        }
 
         public static readonly DependencyProperty PercentageProperty =
             DependencyProperty.Register("Percentage", typeof(float), typeof(PercentageChangeControl), new PropertyMetadata(default(float)));
-
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(string), typeof(PercentageChangeControl), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty MinValueProperty =
             DependencyProperty.Register("MinValue", typeof(float), typeof(PercentageChangeControl), new PropertyMetadata(default(float)));
 
         public static readonly DependencyProperty MaxValueProperty =
             DependencyProperty.Register("MaxValue", typeof(float), typeof(PercentageChangeControl), new PropertyMetadata(default(float)));
-
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(PercentageChangeControl), new PropertyMetadata(null));
-
-        public static readonly DependencyProperty CommandParameterProperty =
-            DependencyProperty.Register("CommandParameter", typeof(object), typeof(PercentageChangeControl), new PropertyMetadata(null));
 
         public PercentageChangeControl()
         {
