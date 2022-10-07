@@ -1,5 +1,6 @@
 ﻿<fluent:RibbonWindow x:Class="DayzServerTools.Windows.MainWindow" 
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:s="clr-namespace:System;assembly=mscorlib"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,6 +14,13 @@
                      WindowState="Maximized"
                      d:Height="800" d:Width="1200">
     <Window.Resources>
+        <Style x:Key="ScaleButton" TargetType="Button">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
         <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
             <views:ItemTypesView/>
         </DataTemplate>
@@ -23,6 +31,11 @@
             <views:TraderConfigView/>
         </DataTemplate>
         <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
+        <s:Single x:Key="x025">0.25</s:Single>
+        <s:Single x:Key="x05">0.5</s:Single>
+        <s:Single x:Key="x2">2.0</s:Single>
+        <s:Single x:Key="x3">3.0</s:Single>
+        <s:Single x:Key="x4">4.0</s:Single>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Gesture="CTRL+N" Command="{Binding NewTabCommand}" CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}"/>
@@ -185,25 +198,64 @@
                                    Command="{Binding ActiveFile.AddEmptyItemCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Quantity">
+                    <Button Content="×½" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustQuantityCommand}"
+                            CommandParameter="{StaticResource x05}"/>
+                    <Button Content="×3" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustQuantityCommand}"
+                            CommandParameter="{StaticResource x3}"/>
+                    <Button Content="×2" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustQuantityCommand}"
+                            CommandParameter="{StaticResource x2}"/>
+                    <Button Content="×4" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustQuantityCommand}"
+                            CommandParameter="{StaticResource x4}"/>
                     <controls:PercentageChangeControl MinValue="0" MaxValue="4" Width="250"
                                                       Percentage="{Binding ActiveFile.QuantityPercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustQuantityCommand}" 
-                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                                   CommandParameter="{x:Null}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Restock">
+                    <Button Content="×¼" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustRestockCommand}"
+                            CommandParameter="{StaticResource x025}"/>
+                    <Button Content="×½" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustRestockCommand}"
+                            CommandParameter="{StaticResource x05}"/>
                     <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
                                                       Percentage="{Binding ActiveFile.RestockPercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustRestockCommand}" 
-                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                                   CommandParameter="{x:Null}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Lifetime">
+                    <Button Content="×¼" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustLifetimeCommand}"
+                            CommandParameter="{StaticResource x025}"/>
+                    <Button Content="×2" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustLifetimeCommand}"
+                            CommandParameter="{StaticResource x2}"/>
+                    <Button Content="×½" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustLifetimeCommand}"
+                            CommandParameter="{StaticResource x05}"/>
+                    <Button Content="×4" Style="{StaticResource ScaleButton}"
+                            Command="{Binding ActiveFile.AdjustLifetimeCommand}"
+                            CommandParameter="{StaticResource x4}"/>
                     <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
                                                       Percentage="{Binding ActiveFile.LifetimePercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustLifetimeCommand}" 
-                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                                   CommandParameter="{x:Null}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Category">
+                    <fluent:ComboBox x:Name="setCategoryComboBox" ItemsSource="{Binding Categories}" 
+                                     IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
+                                     MinWidth="120" MinHeight="32" Margin="0 16" FontSize="14"
+                                     ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
+                    <fluent:Button Header="Set" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.SetCategoryCommand}" 
+                                   CommandParameter="{Binding ElementName=setCategoryComboBox, Path=SelectedItem}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Export">
                     <fluent:Button Header="To New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
