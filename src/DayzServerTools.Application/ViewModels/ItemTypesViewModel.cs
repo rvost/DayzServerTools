@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -27,13 +28,19 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     private float restockPercentage = 1;
     [ObservableProperty]
     private WorkspaceViewModel workspace = null;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AdjustLifetimeCommand), nameof(AdjustQuantityCommand),
+        nameof(AdjustRestockCommand), nameof(SetCategoryCommand),
+        nameof(ExportToNewFileCommand), nameof(ExportToTraderCommand))]
+    private IList selectedItems;
 
     public IRelayCommand AddEmptyItemCommand { get; }
-    public IRelayCommand<object> AdjustQuantityCommand { get; }
-    public IRelayCommand<object> AdjustLifetimeCommand { get; }
-    public IRelayCommand<object> AdjustRestockCommand { get; }
-    public IRelayCommand<object> ExportToNewFileCommand { get; }
-    public IRelayCommand<object> ExportToTraderCommand { get; }
+    public IRelayCommand<float?> AdjustQuantityCommand { get; }
+    public IRelayCommand<float?> AdjustLifetimeCommand { get; }
+    public IRelayCommand<float?> AdjustRestockCommand { get; }
+    public IRelayCommand ExportToNewFileCommand { get; }
+    public IRelayCommand ExportToTraderCommand { get; }
+    public IRelayCommand<VanillaFlag> SetCategoryCommand { get; }
     public IRelayCommand ValidateCommand { get; }
 
     public ItemTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
@@ -42,11 +49,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         FileName = "types.xml";
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
-        AdjustQuantityCommand = new RelayCommand<object>(AdjustQuantity);
-        AdjustLifetimeCommand = new RelayCommand<object>(AdjustLifetime);
-        AdjustRestockCommand = new RelayCommand<object>(AdjustRestock);
-        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile);
-        ExportToTraderCommand = new RelayCommand<object>(ExportToTrader);
+        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, CanExecuteAdjustCommand);
+        AdjustLifetimeCommand = new RelayCommand<float?>(AdjustLifetime, CanExecuteAdjustCommand);
+        AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, CanExecuteAdjustCommand);
+        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
+        ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteExportCommand);
+        SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, CanExecuteSetCategoryCommand);
         ValidateCommand = new RelayCommand(Validate);
 
         Items.CollectionChanged += ItemsCollectionChanged;
@@ -61,33 +69,33 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public void AddEmptyItem()
         => Items.Add(new(new ItemType(), Workspace));
 
-    public void AdjustQuantity(object cmdParam)
+    public bool CanExecuteAdjustCommand(float? param) => SelectedItems is not null;
+    public bool CanExecuteExportCommand(object param) => param is not null;
+    public bool CanExecuteSetCategoryCommand(VanillaFlag param) => SelectedItems is not null;
+    public void AdjustQuantity(float? factor)
     {
-        var list = (System.Collections.IList)cmdParam;
-        var viewModels = list.Cast<ItemTypeViewModel>();
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
         {
-            item.AdjustQuantity(QuantityPercentage);
+            item.AdjustQuantity(factor ?? QuantityPercentage);
         }
         QuantityPercentage = 1;
     }
-    public void AdjustLifetime(object cmdParam)
+    public void AdjustLifetime(float? factor)
     {
-        var list = (System.Collections.IList)cmdParam;
-        var viewModels = list.Cast<ItemTypeViewModel>();
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
         {
-            item.AdjustLifetime(LifetimePercentage);
+            item.AdjustLifetime(factor ?? LifetimePercentage);
         }
         LifetimePercentage = 1;
     }
-    public void AdjustRestock(object cmdParam)
+    public void AdjustRestock(float? factor)
     {
-        var list = (System.Collections.IList)cmdParam;
-        var viewModels = list.Cast<ItemTypeViewModel>();
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
         {
-            item.AdjustRestock(RestockPercentage);
+            item.AdjustRestock(factor ?? RestockPercentage);
         }
         RestockPercentage = 1;
     }
@@ -109,7 +117,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     }
     public void ExportToNewFile(object cmdParam)
     {
-        var list = (System.Collections.IList)cmdParam;
+        var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
 
         var items = viewModels.Select(vm => vm.Model);
@@ -117,7 +125,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     }
     public void ExportToTrader(object cmdParam)
     {
-        var list = (System.Collections.IList)cmdParam;
+        var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
 
         var items = viewModels.Select(vm => vm.Model);
@@ -125,6 +133,15 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.Store = new ItemTypesToTraderExportStore(items);
         dialog.ShowDialog();
+    }
+    public void SetCategory(VanillaFlag category)
+    {
+        if (category == null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
+        viewModels.AsParallel().ForAll(vm => vm.Category = category);
     }
 
 

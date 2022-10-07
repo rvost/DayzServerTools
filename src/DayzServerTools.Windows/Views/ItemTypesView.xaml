@@ -18,56 +18,13 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Gesture="CTRL+S" Command="{Binding SaveCommand}"/>
-        <KeyBinding Gesture="CTRL+SHIFT+S" Command="{Binding SaveAsCommand}"/>
         <KeyBinding Gesture="CTRL+SHIFT+A" Command="{Binding AddEmptyItemCommand}"/>
         <KeyBinding Gesture="CTRL+SHIFT+V" Command="{Binding ValidateCommand}"/>
     </UserControl.InputBindings>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0">
-            <Button DockPanel.Dock="Left" VerticalAlignment="Center" Margin="15" Padding="15"
-                    Command="{Binding AddEmptyItemCommand}">
-                <TextBlock TextAlignment="Center">
-                    <Run Text="Add Item"/>
-                    <LineBreak/>
-                    <Run FontSize="8" FontStyle="Italic" Text="Ctrl+Shift+A"/>
-                </TextBlock>
-            </Button>
-            <Button DockPanel.Dock="Right" VerticalAlignment="Center" Margin="15" Padding="15"
-                    Command="{Binding ValidateCommand}">
-                <TextBlock TextAlignment="Center">
-                    <Run Text="Validate"/>
-                    <LineBreak/>
-                    <Run FontSize="8" FontStyle="Italic" Text="Ctrl+Shift+V"/>
-                </TextBlock>
-            </Button>
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:PercentageChangeControl Grid.Column="0" Header="Quantity" MinValue="0" MaxValue="4" Width="250"
-                                                  Percentage="{Binding QuantityPercentage, Mode=TwoWay}"
-                                                  Command="{Binding AdjustQuantityCommand}" 
-                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
-                <controls:PercentageChangeControl Grid.Column="1" Header="Restock" MinValue="0.05" MaxValue="2" Width="250"
-                                                  Percentage="{Binding RestockPercentage, Mode=TwoWay}"
-                                                  Command="{Binding AdjustRestockCommand}" 
-                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
-                <controls:PercentageChangeControl Grid.Column="2" Header="Lifetime" MinValue="0.05" MaxValue="2" Width="250"
-                                                  Percentage="{Binding LifetimePercentage, Mode=TwoWay}"
-                                                  Command="{Binding AdjustLifetimeCommand}" 
-                                                  CommandParameter="{Binding ElementName=LootTable, Path=SelectedItems}"/>
-            </Grid>
-
-        </DockPanel>
-        <DataGrid x:Name="LootTable" Grid.Row="1" ItemsSource="{Binding Items}" Margin="0 5 0 0" 
-                  AutoGenerateColumns="False" CanUserAddRows="False">
+        <controls:BindableMultiSelectDataGrid x:Name="LootTable" ItemsSource="{Binding Items}"
+                                              SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}"
+                                              AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Resources>
                 <Style TargetType="ContentPresenter">
                     <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
@@ -347,6 +304,6 @@
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </controls:BindableMultiSelectDataGrid>
     </Grid>
 </UserControl>
