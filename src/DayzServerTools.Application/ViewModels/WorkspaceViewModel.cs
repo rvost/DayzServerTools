@@ -229,4 +229,12 @@ public partial class WorkspaceViewModel : TabbedViewModel
         SaveAllCommand.NotifyCanExecuteChanged();
     }
 
+    protected override void OnTabCloseRequested(object sender, EventArgs e)
+    {
+        if(sender == ActiveFile)
+        {
+            ActiveFile = null;
+        }
+        base.OnTabCloseRequested(sender, e);
+    }
 }

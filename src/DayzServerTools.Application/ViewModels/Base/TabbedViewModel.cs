@@ -33,8 +33,12 @@ public abstract partial class TabbedViewModel : ObservableObject
         }
     }
 
-    protected void OnTabCloseRequested(object sender, EventArgs e)
+    protected virtual void OnTabCloseRequested(object sender, EventArgs e)
     {
         Tabs.Remove((IProjectFileTab)sender);
+        if(sender is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }
