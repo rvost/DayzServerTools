@@ -21,6 +21,19 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
+        <Style x:Key="RibbonComboBox" TargetType="fluent:ComboBox">
+            <Setter Property="IsEnabled" Value="True"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Margin" Value="0 16"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=ItemsSource.Count}"
+                             Value="0">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
             <views:ItemTypesView/>
         </DataTemplate>
@@ -191,12 +204,29 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Item Types Tools Group -->
-            <fluent:RibbonTabItem Header="Types Tools" Group="{Binding ElementName=ItemTypesToolsGroup}"
+            <fluent:RibbonTabItem Header="General" Group="{Binding ElementName=ItemTypesToolsGroup}"
                                   Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
                 <fluent:RibbonGroupBox Header="Edit">
                     <fluent:Button Header="Add New Item" Icon="{StaticResource AddVecIcon}"
                                    Command="{Binding ActiveFile.AddEmptyItemCommand}"/>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Export">
+                    <fluent:Button Header="To New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToNewFileCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                    <fluent:Button Header="To Trader Config" Icon="{StaticResource ExportTraderVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToTraderCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
+                                   Command="{Binding ActiveFile.ValidateCommand}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            
+<fluent:RibbonTabItem Header="Batch Edit" Group="{Binding ElementName=ItemTypesToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
                 <fluent:RibbonGroupBox Header="Quantity">
                     <Button Content="×½" Style="{StaticResource ScaleButton}"
                             Command="{Binding ActiveFile.AdjustQuantityCommand}"
@@ -210,7 +240,7 @@
                     <Button Content="×4" Style="{StaticResource ScaleButton}"
                             Command="{Binding ActiveFile.AdjustQuantityCommand}"
                             CommandParameter="{StaticResource x4}"/>
-                    <controls:PercentageChangeControl MinValue="0" MaxValue="4" Width="250"
+                    <controls:PercentageChangeControl MinValue="0" MaxValue="4" Width="150"
                                                       Percentage="{Binding ActiveFile.QuantityPercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustQuantityCommand}" 
@@ -223,7 +253,7 @@
                     <Button Content="×½" Style="{StaticResource ScaleButton}"
                             Command="{Binding ActiveFile.AdjustRestockCommand}"
                             CommandParameter="{StaticResource x05}"/>
-                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
+                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="150"
                                                       Percentage="{Binding ActiveFile.RestockPercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustRestockCommand}" 
@@ -242,7 +272,7 @@
                     <Button Content="×4" Style="{StaticResource ScaleButton}"
                             Command="{Binding ActiveFile.AdjustLifetimeCommand}"
                             CommandParameter="{StaticResource x4}"/>
-                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="250"
+                    <controls:PercentageChangeControl MinValue="0.05" MaxValue="2" Width="150"
                                                       Percentage="{Binding ActiveFile.LifetimePercentage, Mode=TwoWay}"/>
                     <fluent:Button Header="Modify" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.AdjustLifetimeCommand}" 
@@ -251,24 +281,47 @@
                 <fluent:RibbonGroupBox Header="Category">
                     <fluent:ComboBox x:Name="setCategoryComboBox" ItemsSource="{Binding Categories}" 
                                      IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
-                                     MinWidth="120" MinHeight="32" Margin="0 16" FontSize="14"
+                                     Style="{StaticResource RibbonComboBox}"
                                      ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
                     <fluent:Button Header="Set" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.SetCategoryCommand}" 
                                    CommandParameter="{Binding ElementName=setCategoryComboBox, Path=SelectedItem}"/>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Export">
-                    <fluent:Button Header="To New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
-                                   Command="{Binding ActiveFile.ExportToNewFileCommand}"
-                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
-                    <fluent:Button Header="To Trader Config" Icon="{StaticResource ExportTraderVecIcon}"
-                                   Command="{Binding ActiveFile.ExportToTraderCommand}"
-                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                <fluent:RibbonGroupBox Header="Value Flags">
+                    <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
+                                   Command="{Binding ActiveFile.ClearFlagsCommand}" 
+                                   CommandParameter="{x:Static viewmodels:ClearTarget.ValueFlags}"/>
+                    <fluent:ComboBox x:Name="newValueFlagComboBox" ItemsSource="{Binding Values}" 
+                                     IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
+                                     Style="{StaticResource RibbonComboBox}"
+                                     ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
+                    <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
+                                   Command="{Binding ActiveFile.AddValueFlagCommand}" 
+                                   CommandParameter="{Binding ElementName=newValueFlagComboBox, Path=SelectedItem}"/>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
-                                       HorizontalContentAlignment="Center">
-                    <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
-                                   Command="{Binding ActiveFile.ValidateCommand}"/>
+                <fluent:RibbonGroupBox Header="Usage Flags">
+                    <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
+                                   Command="{Binding ActiveFile.ClearFlagsCommand}" 
+                                   CommandParameter="{x:Static viewmodels:ClearTarget.UsageFlags}"/>
+                    <fluent:ComboBox x:Name="newUsageFlagComboBox" ItemsSource="{Binding Usages}" 
+                                     IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
+                                     Style="{StaticResource RibbonComboBox}"
+                                     ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
+                    <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
+                                   Command="{Binding ActiveFile.AddUsageFlagCommand}" 
+                                   CommandParameter="{Binding ElementName=newUsageFlagComboBox, Path=SelectedItem}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Tags">
+                    <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
+                                   Command="{Binding ActiveFile.ClearFlagsCommand}" 
+                                   CommandParameter="{x:Static viewmodels:ClearTarget.Tags}"/>
+                    <fluent:ComboBox x:Name="newTagComboBox" ItemsSource="{Binding Tags}" 
+                                     IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
+                                     Style="{StaticResource RibbonComboBox}"
+                                     ItemTemplate="{StaticResource VanillaFlagTemplate}"/>
+                    <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
+                                   Command="{Binding ActiveFile.AddTagCommand}" 
+                                   CommandParameter="{Binding ElementName=newTagComboBox, Path=SelectedItem}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>

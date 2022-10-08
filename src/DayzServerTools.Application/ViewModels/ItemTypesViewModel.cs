@@ -15,6 +15,13 @@ using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
+public enum ClearTarget
+{
+    ValueFlags,
+    UsageFlags,
+    Tags
+}
+
 public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisposable
 {
 
@@ -30,8 +37,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     private WorkspaceViewModel workspace = null;
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AdjustLifetimeCommand), nameof(AdjustQuantityCommand),
-        nameof(AdjustRestockCommand), nameof(SetCategoryCommand),
-        nameof(ExportToNewFileCommand), nameof(ExportToTraderCommand))]
+        nameof(AdjustRestockCommand), nameof(SetCategoryCommand), nameof(ExportToNewFileCommand), 
+        nameof(ExportToTraderCommand), nameof(AddValueFlagCommand), nameof(AddUsageFlagCommand), 
+        nameof(AddTagCommand), nameof(ClearFlagsCommand))]
     private IList selectedItems;
 
     public IRelayCommand AddEmptyItemCommand { get; }
@@ -41,6 +49,10 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public IRelayCommand ExportToNewFileCommand { get; }
     public IRelayCommand ExportToTraderCommand { get; }
     public IRelayCommand<VanillaFlag> SetCategoryCommand { get; }
+    public IRelayCommand<UserDefinableFlag> AddValueFlagCommand { get; }
+    public IRelayCommand<UserDefinableFlag> AddUsageFlagCommand { get; }
+    public IRelayCommand<VanillaFlag> AddTagCommand { get; }
+    public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
     public IRelayCommand ValidateCommand { get; }
 
     public ItemTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
@@ -49,12 +61,16 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         FileName = "types.xml";
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
-        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, CanExecuteAdjustCommand);
-        AdjustLifetimeCommand = new RelayCommand<float?>(AdjustLifetime, CanExecuteAdjustCommand);
-        AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, CanExecuteAdjustCommand);
+        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, (param)=> CanExecuteBatchCommand());
+        AdjustLifetimeCommand = new RelayCommand<float?>(AdjustLifetime, (param) => CanExecuteBatchCommand());
+        AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, (param) => CanExecuteBatchCommand());
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteExportCommand);
-        SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, CanExecuteSetCategoryCommand);
+        SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, (param) => CanExecuteBatchCommand());
+        AddValueFlagCommand = new RelayCommand<UserDefinableFlag>(AddValueFlag, (param) => CanExecuteBatchCommand());
+        AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag, (param) => CanExecuteBatchCommand());
+        AddTagCommand = new RelayCommand<VanillaFlag>(AddTag, (param) => CanExecuteBatchCommand());
+        ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags, (param) => CanExecuteBatchCommand());
         ValidateCommand = new RelayCommand(Validate);
 
         Items.CollectionChanged += ItemsCollectionChanged;
@@ -66,13 +82,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
             source.Select(obj => new ItemTypeViewModel(obj.Copy(), Workspace))
         );
     }
-    public void AddEmptyItem()
-        => Items.Add(new(new ItemType(), Workspace));
 
-    public bool CanExecuteAdjustCommand(float? param) => SelectedItems is not null;
-    public bool CanExecuteExportCommand(object param) => param is not null;
-    public bool CanExecuteSetCategoryCommand(VanillaFlag param) => SelectedItems is not null;
-    public void AdjustQuantity(float? factor)
+    protected void AddEmptyItem()
+        => Items.Add(new(new ItemType(), Workspace));
+    protected bool CanExecuteBatchCommand() => SelectedItems is not null;
+    protected bool CanExecuteExportCommand(object param) => param is not null;
+    protected void AdjustQuantity(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -81,7 +96,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         }
         QuantityPercentage = 1;
     }
-    public void AdjustLifetime(float? factor)
+    protected void AdjustLifetime(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -90,7 +105,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         }
         LifetimePercentage = 1;
     }
-    public void AdjustRestock(float? factor)
+    protected void AdjustRestock(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -99,7 +114,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         }
         RestockPercentage = 1;
     }
-    public void Validate()
+    protected void Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
@@ -115,7 +130,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
             );
         allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
-    public void ExportToNewFile(object cmdParam)
+    protected void ExportToNewFile(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -123,7 +138,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         var items = viewModels.Select(vm => vm.Model);
         Workspace.CreateItemTypes(items);
     }
-    public void ExportToTrader(object cmdParam)
+    protected void ExportToTrader(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -134,7 +149,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         dialog.Store = new ItemTypesToTraderExportStore(items);
         dialog.ShowDialog();
     }
-    public void SetCategory(VanillaFlag category)
+    protected void SetCategory(VanillaFlag category)
     {
         if (category == null)
         {
@@ -143,7 +158,38 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         viewModels.AsParallel().ForAll(vm => vm.Category = category);
     }
-
+    protected void AddValueFlag(UserDefinableFlag flag)
+    {
+        if (flag == null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
+        viewModels.AsParallel().ForAll(vm => vm.AddValueFlagCommand.Execute(flag));
+    }
+    protected void AddUsageFlag(UserDefinableFlag flag)
+    {
+        if (flag == null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
+        viewModels.AsParallel().ForAll(vm => vm.AddUsageFlagCommand.Execute(flag));
+    }
+    protected void AddTag(VanillaFlag flag)
+    {
+        if (flag == null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
+        viewModels.AsParallel().ForAll(vm => vm.AddTagCommand.Execute(flag));
+    }
+    protected void ClearFlags(ClearTarget target)
+    {
+        var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
+        viewModels.AsParallel().ForAll(vm => vm.ClearFlagsCommand.Execute(target));
+    }
 
     protected override void OnLoad(Stream input, string filename)
     {

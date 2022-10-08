@@ -3,7 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+
+using DayzServerTools.Application.Services;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
@@ -11,6 +14,7 @@ namespace DayzServerTools.Application.ViewModels;
 
 public class ItemTypeViewModel : ObservableValidator
 {
+    private readonly IDispatcherService _dispatcher;
     private ItemType _model;
 
     public ItemType Model { get => _model; }
@@ -124,10 +128,12 @@ public class ItemTypeViewModel : ObservableValidator
     public IRelayCommand RemoveValueFlagCommand { get; }
     public IRelayCommand AddTagCommand { get; }
     public IRelayCommand RemoveTagCommand { get; }
+    public IRelayCommand ClearFlagsCommand { get; }
 
     public ItemTypeViewModel(ItemType model, WorkspaceViewModel workspace)
         : base(new Dictionary<object, object>() { { "workspace", workspace } })
     {
+        _dispatcher = Ioc.Default.GetRequiredService<IDispatcherService>();
         _model = model;
 
         AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag);
@@ -136,6 +142,7 @@ public class ItemTypeViewModel : ObservableValidator
         RemoveValueFlagCommand = new RelayCommand<UserDefinableFlag>(RemoveValueFlag);
         AddTagCommand = new RelayCommand<VanillaFlag>(AddTag);
         RemoveTagCommand = new RelayCommand<VanillaFlag>(RemoveTag);
+        ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags);
     }
 
     public void ValidateSelf() => ValidateAllProperties();
@@ -152,29 +159,45 @@ public class ItemTypeViewModel : ObservableValidator
     {
         Restock = (int)Math.Round(Restock * factor);
     }
-    public void AddUsageFlag(UserDefinableFlag flag)
+    protected void AddUsageFlag(UserDefinableFlag flag)
     {
-        Usages.Add(flag);
+        _dispatcher.BeginInvoke(() => Usages.Add(flag));
     }
-    public void RemoveUsageFlag(UserDefinableFlag flag)
+    protected void RemoveUsageFlag(UserDefinableFlag flag)
     {
         Usages.Remove(flag);
     }
-    public void AddValueFlag(UserDefinableFlag flag)
+    protected void AddValueFlag(UserDefinableFlag flag)
     {
-        Value.Add(flag);
+        _dispatcher.BeginInvoke(() => Value.Add(flag));
     }
-    public void RemoveValueFlag(UserDefinableFlag flag)
+    protected void RemoveValueFlag(UserDefinableFlag flag)
     {
         Value.Remove(flag);
     }
-    public void AddTag(VanillaFlag tag)
+    protected void AddTag(VanillaFlag tag)
     {
-        Tags.Add(tag);
+        _dispatcher.BeginInvoke(() => Tags.Add(tag));
     }
-    public void RemoveTag(VanillaFlag tag)
+    protected void RemoveTag(VanillaFlag tag)
     {
         Tags.Remove(tag);
+    }
+    protected void ClearFlags(ClearTarget target)
+    {
+        switch (target)
+        {
+            case ClearTarget.ValueFlags:
+                _dispatcher.BeginInvoke(() => Value.Clear());
+                break;
+            case ClearTarget.UsageFlags:
+                _dispatcher.BeginInvoke(() => Usages.Clear());
+                break;
+            case ClearTarget.Tags:
+                _dispatcher.BeginInvoke(() => Tags.Clear());
+                break;
+            default: break;
+        }
     }
 
     public static ValidationResult ValidateCategory(VanillaFlag category, ValidationContext context)
@@ -190,12 +213,12 @@ public class ItemTypeViewModel : ObservableValidator
         var workspace = (WorkspaceViewModel)context.Items["workspace"];
         var validator = new UserFlagValidator(workspace.Usages);
 
-        if(usages.Where(usage => usage.DefinitionType == FlagDefinition.User).Count() > 1)
+        if (usages.Where(usage => usage.DefinitionType == FlagDefinition.User).Count() > 1)
         {
             return new ValidationResult($"Usage Flags:\n\tOnly multiple user flags not allowed");
         }
 
-        if(usages.Any(usage => usage.DefinitionType == FlagDefinition.User) &&
+        if (usages.Any(usage => usage.DefinitionType == FlagDefinition.User) &&
             usages.Any(usage => usage.DefinitionType == FlagDefinition.Vanilla))
         {
             return new ValidationResult($"Usage Flags:\n\tMixed flag definitions not allowed");
@@ -286,4 +309,3 @@ public class ItemTypeViewModel : ObservableValidator
         }
     }
 }
- 
