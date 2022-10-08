@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Services;
+using DayzServerTools.Application.Extensions;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
@@ -135,6 +136,9 @@ public class ItemTypeViewModel : ObservableValidator
     {
         _dispatcher = Ioc.Default.GetRequiredService<IDispatcherService>();
         _model = model;
+        _model.Value.RemoveAllEmpty();
+        _model.Usages.RemoveAllEmpty();
+        _model.Tags.RemoveAllEmpty();
 
         AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag);
         RemoveUsageFlagCommand = new RelayCommand<UserDefinableFlag>(RemoveUsageFlag);
