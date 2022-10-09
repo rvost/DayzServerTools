@@ -13,7 +13,7 @@
                       CommandParameter="{Binding}"/>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Expander>
+    <Expander  IsExpanded="{Binding Mode=OneWayToSource, Path=IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}">
         <Expander.Header>
             <TextBox Text="{Binding Name}" d:Text="Category Name"
                      FontSize="18" FontWeight="SemiBold"
@@ -22,21 +22,16 @@
                      BorderThickness="0 0 0 2"
                      Background="Transparent"/>
         </Expander.Header>
-        <DataGrid ItemsSource="{Binding Path=Items}" AutoGenerateColumns="False">
+        <local:BindableMultiSelectDataGrid ItemsSource="{Binding Path=Items}" AutoGenerateColumns="False"
+                                           SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy items to..."
                               Icon="{StaticResource CopyIcon}"
-                              Command="{Binding CopyItemsCommand}"
-                              CommandParameter="{Binding PlacementTarget.SelectedItems,
-                                                         RelativeSource={RelativeSource FindAncestor,
-                                                         AncestorType={x:Type ContextMenu}}}"/>
+                              Command="{Binding CopyItemsCommand}"/>
                     <MenuItem Header="Move items..."
                               Icon="{StaticResource ExportIcon}"
-                              Command="{Binding MoveItemsCommand}"
-                              CommandParameter="{Binding PlacementTarget.SelectedItems,
-                                                         RelativeSource={RelativeSource FindAncestor,
-                                                         AncestorType={x:Type ContextMenu}}}"/>
+                              Command="{Binding MoveItemsCommand}"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
@@ -69,6 +64,6 @@
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </local:BindableMultiSelectDataGrid>
     </Expander>
 </UserControl>

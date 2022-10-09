@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.Models;
@@ -13,6 +13,9 @@ namespace DayzServerTools.Application.ViewModels
 {
     public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>, IDisposable
     {
+        [ObservableProperty]
+        private TraderViewModel selectedTrader;
+
         public ObservableCollection<TraderViewModel> Traders { get; } = new();
         public CurrencyCategory CurrencyCategory
         {

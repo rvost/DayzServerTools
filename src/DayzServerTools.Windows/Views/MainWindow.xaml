@@ -14,6 +14,15 @@
                      WindowState="Maximized"
                      d:Height="800" d:Width="1200">
     <Window.Resources>
+        <Style TargetType="fluent:Button">
+            <Setter Property="IsEnabled" Value="True"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Command}"
+                             Value="{x:Null}">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="ScaleButton" TargetType="Button">
             <Setter Property="Height" Value="32"/>
             <Setter Property="Width" Value="32"/>
@@ -119,6 +128,11 @@
                                                  BorderBrush="Orange"
                                                  x:Name="ItemTypesToolsGroup"
                                                  Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
+                <fluent:RibbonContextualTabGroup Header="Trader"
+                                                 Background="Gold"
+                                                 BorderBrush="Gold"
+                                                 x:Name="TraderConfigToolsGroup"
+                                                 Visibility="{Binding ActiveFileIsTraderConfig, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
             </fluent:Ribbon.ContextualGroups>
             <fluent:RibbonTabItem Header="Workspace">
                 <fluent:RibbonGroupBox Header="Limits Definitions" MinWidth="100"
@@ -204,6 +218,7 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Item Types Tools Group -->
+            <!-- Item Types General -->
             <fluent:RibbonTabItem Header="General" Group="{Binding ElementName=ItemTypesToolsGroup}"
                                   Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
                 <fluent:RibbonGroupBox Header="Edit">
@@ -224,8 +239,8 @@
                                    Command="{Binding ActiveFile.ValidateCommand}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            
-<fluent:RibbonTabItem Header="Batch Edit" Group="{Binding ElementName=ItemTypesToolsGroup}"
+            <!-- Item Types Batch Edit -->
+            <fluent:RibbonTabItem Header="Batch Edit" Group="{Binding ElementName=ItemTypesToolsGroup}"
                                   Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
                 <fluent:RibbonGroupBox Header="Quantity">
                     <Button Content="×½" Style="{StaticResource ScaleButton}"
@@ -322,6 +337,31 @@
                     <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
                                    Command="{Binding ActiveFile.AddTagCommand}" 
                                    CommandParameter="{Binding ElementName=newTagComboBox, Path=SelectedItem}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <!-- Trader Tools Tools Group -->
+            <fluent:RibbonTabItem Header="Trader Tools" Group="{Binding ElementName=TraderConfigToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsTraderConfig, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
+                <fluent:RibbonGroupBox Header="Category">
+                    <RibbonTextBox x:Name="newTraderCategoryTextBox" Label="New:"
+                                   Background="LightGray"
+                                   Padding="2" Margin="4"
+                                   Command="{Binding ActiveFile.SelectedTrader.AddCategoryCommand}"
+                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+                    <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.AddCategoryCommand}"
+                                   CommandParameter="{Binding ElementName=newTraderCategoryTextBox, Path=Text}"/>
+                    <fluent:Button Header="Remove" Icon="{StaticResource RemoveVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.RemoveCategoryCommand}"
+                                   CommandParameter="{x:Null}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Items">
+                    <fluent:Button Header="Copy to..."
+                                   Icon="{StaticResource CopyVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.CopyItemsCommand}"/>
+                    <fluent:Button Header="Move..."
+                                   Icon="{StaticResource ExportVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.MoveItemsCommand}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>

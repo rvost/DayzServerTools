@@ -13,6 +13,9 @@ public partial class TraderViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Name), nameof(Categories))]
     private Trader model = new();
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveCategoryCommand))]
+    private TraderCategoryViewModel selectedCategory;
 
     public string Name
     {
@@ -32,9 +35,25 @@ public partial class TraderViewModel : ObservableObject, IDisposable
             );
 
         AddCategoryCommand = new RelayCommand<string>(AddCategory);
-        RemoveCategoryCommand = new RelayCommand<TraderCategoryViewModel>(RemoveCategory);
+        RemoveCategoryCommand = new RelayCommand<TraderCategoryViewModel>(RemoveCategory, CanRemoveCategory);
 
         Categories.CollectionChanged += CategoriesCollectionChanged;
+    }
+    protected void AddCategory(string categoryName)
+           => Categories.Add(new(new TraderCategory() { CategoryName = categoryName }));
+    protected bool CanRemoveCategory(TraderCategoryViewModel category)
+        => category is not null || SelectedCategory is not null;
+    protected void RemoveCategory(TraderCategoryViewModel category)
+    {
+        if (category is not null)
+        {
+            Categories.Remove(category);
+        }
+        else if (SelectedCategory is not null)
+        {
+            Categories.Remove(SelectedCategory);
+            SelectedCategory = null;
+        }
     }
 
     private void CategoriesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -57,12 +76,6 @@ public partial class TraderViewModel : ObservableObject, IDisposable
                 break;
         }
     }
-
-    public void AddCategory(string categoryName)
-        => Categories.Add(new(new TraderCategory() { CategoryName = categoryName }));
-
-    public void RemoveCategory(TraderCategoryViewModel category)
-        => Categories.Remove(category);
 
     public void Dispose()
     {

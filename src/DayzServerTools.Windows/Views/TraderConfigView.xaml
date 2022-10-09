@@ -19,7 +19,8 @@
         </Grid.RowDefinitions>
         <TextBlock FontSize="20" FontWeight="SemiBold" Margin="0 5">Trader Config</TextBlock>
         <TabControl Grid.Row="1" ItemsSource="{Binding Traders}" TabStripPlacement="Left"
-                    SelectedIndex="0" IsSynchronizedWithCurrentItem="True">
+                    SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
+                    SelectedItem="{Binding SelectedTrader}">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem">
                     <Setter Property="FontSize" Value="16"/>
@@ -45,7 +46,9 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <ListView Grid.Row="0" ItemsSource="{Binding Categories}" 
+                        <ListView Grid.Row="0" ItemsSource="{Binding Categories}"
+                                  SelectedItem="{Binding SelectedCategory}"
+                                  SelectionMode="Single"
                                   ScrollViewer.CanContentScroll="True" 
                                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                                   VirtualizingPanel.ScrollUnit="Pixel">
