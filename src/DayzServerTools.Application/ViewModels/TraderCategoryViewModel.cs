@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
-
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -26,7 +26,7 @@ public partial class TraderCategoryViewModel : ObservableObject
         get => model.CategoryName;
         set => SetProperty(model.CategoryName, value, model, (m, v) => m.CategoryName = v);
     }
-    public ObservableCollection<TraderItem> Items => model.TraderItems;
+    public ObservableCollection<TraderItemViewModel> Items { get; }
 
     public IRelayCommand CopyItemsCommand { get; }
     public IRelayCommand MoveItemsCommand { get; }
@@ -35,9 +35,33 @@ public partial class TraderCategoryViewModel : ObservableObject
     {
         _dialogFactory = Ioc.Default.GetService<IDialogFactory>();
         this.model = model;
+        Items = new(model.TraderItems.Select(m => new TraderItemViewModel(m)));
 
         CopyItemsCommand = new RelayCommand(CopyItems, () => CanExecuteBatchCommand());
         MoveItemsCommand = new RelayCommand(MoveItems, () => CanExecuteBatchCommand());
+
+        Items.CollectionChanged += OnItemsCollectionChanged;
+    }
+
+    private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Add:
+                foreach (var item in e.NewItems)
+                {
+                    Model.TraderItems.Add(((TraderItemViewModel)item).Model);
+                }
+                break;
+            case NotifyCollectionChangedAction.Remove:
+                foreach (var item in e.OldItems)
+                {
+                    Model.TraderItems.Remove(((TraderItemViewModel)item).Model);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     public TraderCategoryViewModel() : this(new TraderCategory()) { }
@@ -49,7 +73,7 @@ public partial class TraderCategoryViewModel : ObservableObject
         {
             return;
         }
-        var items = SelectedItems.Cast<TraderItem>();
+        var items = SelectedItems.Cast<TraderItemViewModel>();
 
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.Store = new TraderItemsExportStore(items, true);
@@ -61,16 +85,16 @@ public partial class TraderCategoryViewModel : ObservableObject
         {
             return;
         }
-        var items = SelectedItems.Cast<TraderItem>();
+        var items = SelectedItems.Cast<TraderItemViewModel>().ToList();
 
         var dialog = _dialogFactory.CreateExportDialog();
-        dialog.Store = new TraderItemsExportStore(items, true);
+        dialog.Store = new TraderItemsExportStore(items, false);
 
         if (dialog.ShowDialog() ?? false)
         {
             foreach (var item in items)
             {
-                model.TraderItems.Remove(item);
+                Items.Remove(item);
             }
         }
     }

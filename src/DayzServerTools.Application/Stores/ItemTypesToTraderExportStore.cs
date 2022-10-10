@@ -1,4 +1,5 @@
 ﻿using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.ViewModels;
 using DayzServerTools.Library.Trader;
 using DayzServerTools.Library.Xml;
 
@@ -6,7 +7,7 @@ namespace DayzServerTools.Application.Stores
 {
     public interface ITraderCategoryExport
     {
-        void ExportTo(TraderCategory target);
+        void ExportTo(TraderCategoryViewModel target);
     }
 
     public class ItemTypesToTraderExportStore : ITraderCategoryExport
@@ -18,10 +19,10 @@ namespace DayzServerTools.Application.Stores
             _items = items;
         }
 
-        public void ExportTo(TraderCategory target)
+        public void ExportTo(TraderCategoryViewModel target)
         {
-            target.TraderItems.AddRange(
-                _items.Select(i => new TraderItem { Name = i.Name })
+            target.Items.AddRange(
+                _items.Select(i => new TraderItemViewModel(new TraderItem { Name = i.Name }))
                 );
         }
     }

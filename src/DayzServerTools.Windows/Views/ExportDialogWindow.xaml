@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DayzServerTools.Windows.Views"
         xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
-        xmlns:trader="clr-namespace:DayzServerTools.Library.Trader;assembly=DayzServerTools.Library"
         mc:Ignorable="d"
         Title="Select destination category"
         WindowStartupLocation="CenterScreen"
@@ -46,7 +45,7 @@
         </TreeView>
         <Button Grid.Row="1" Margin="10"
                 Command="{Binding ExportCommand}"
-                CommandParameter="{Binding ElementName=PathTree, Path=SelectedItem.Model}">
+                CommandParameter="{Binding ElementName=PathTree, Path=SelectedItem}">
             Export
         </Button>
     </Grid>
