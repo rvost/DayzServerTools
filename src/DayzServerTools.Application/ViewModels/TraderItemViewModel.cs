@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
 using DayzServerTools.Library.Trader;
 
 namespace DayzServerTools.Application.ViewModels;
@@ -30,8 +32,23 @@ public class TraderItemViewModel : ObservableObject
         set => SetProperty(_model.SellPrice, value, _model, (m, v) => m.SellPrice = v);
     }
 
+    public IRelayCommand ProhibitBuyingCommand { get; }
+    public IRelayCommand ProhibitSellingCommand { get; }
+    
     public TraderItemViewModel(TraderItem model)
     {
         _model = model;
+
+        ProhibitBuyingCommand = new RelayCommand(ProhibitBuying);
+        ProhibitSellingCommand = new RelayCommand(ProhibitSelling);
+    }
+
+    protected void ProhibitBuying()
+    {
+        BuyPrice = -1;
+    }
+    protected void ProhibitSelling()
+    {
+        SellPrice = -1;
     }
 }

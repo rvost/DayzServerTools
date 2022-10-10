@@ -16,6 +16,8 @@ namespace DayzServerTools.Application.ViewModels
         [ObservableProperty]
         private TraderViewModel selectedTrader;
 
+        public ObservableCollection<string> AvailableModifiers { get; }
+        = new(new[] { "*", "W", "M", "V", "VNK", "K", "S" });
         public ObservableCollection<TraderViewModel> Traders { get; } = new();
         public CurrencyCategory CurrencyCategory
         {

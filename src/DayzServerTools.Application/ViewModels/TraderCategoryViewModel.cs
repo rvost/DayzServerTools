@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -18,7 +19,10 @@ public partial class TraderCategoryViewModel : ObservableObject
     [ObservableProperty]
     private TraderCategory model;
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(CopyItemsCommand), nameof(MoveItemsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CopyItemsCommand), nameof(MoveItemsCommand),
+        nameof(ProhibitBuyingCommand), nameof(ProhibitSellingCommand),
+        nameof(SetBuyPriceCommand), nameof(SetSellPriceCommand),
+        nameof(SetQuantityModifierCommand))]
     private IList selectedItems;
 
     public string Name
@@ -30,6 +34,11 @@ public partial class TraderCategoryViewModel : ObservableObject
 
     public IRelayCommand CopyItemsCommand { get; }
     public IRelayCommand MoveItemsCommand { get; }
+    public IRelayCommand ProhibitSellingCommand { get; }
+    public IRelayCommand ProhibitBuyingCommand { get; }
+    public IRelayCommand<double> SetBuyPriceCommand { get; }
+    public IRelayCommand<double> SetSellPriceCommand { get; }
+    public IRelayCommand<string> SetQuantityModifierCommand { get; }
 
     public TraderCategoryViewModel(TraderCategory model)
     {
@@ -39,6 +48,11 @@ public partial class TraderCategoryViewModel : ObservableObject
 
         CopyItemsCommand = new RelayCommand(CopyItems, () => CanExecuteBatchCommand());
         MoveItemsCommand = new RelayCommand(MoveItems, () => CanExecuteBatchCommand());
+        ProhibitBuyingCommand = new RelayCommand(ProhibitBuying, () => CanExecuteBatchCommand());
+        ProhibitSellingCommand = new RelayCommand(ProhibitSelling, () => CanExecuteBatchCommand());
+        SetBuyPriceCommand = new RelayCommand<double>(SetBuyPrice, (param) => CanExecuteBatchCommand());
+        SetSellPriceCommand = new RelayCommand<double>(SetSellPrice, (param) => CanExecuteBatchCommand());
+        SetQuantityModifierCommand = new RelayCommand<string>(SetQuantityModifier, (param) => CanExecuteBatchCommand());
 
         Items.CollectionChanged += OnItemsCollectionChanged;
     }
@@ -97,5 +111,55 @@ public partial class TraderCategoryViewModel : ObservableObject
                 Items.Remove(item);
             }
         }
+    }
+    protected void ProhibitBuying()
+    {
+        if (SelectedItems is null)
+        {
+            return;
+        }
+        var items = SelectedItems.Cast<TraderItemViewModel>();
+
+        items.AsParallel().ForAll(item => item.ProhibitBuyingCommand.Execute(null));
+    }
+    protected void ProhibitSelling()
+    {
+        if (SelectedItems is null)
+        {
+            return;
+        }
+        var items = SelectedItems.Cast<TraderItemViewModel>();
+
+        items.AsParallel().ForAll(item => item.ProhibitSellingCommand.Execute(null));
+    }
+    protected void SetBuyPrice(double price)
+    {
+        if (SelectedItems is null)
+        {
+            return;
+        }
+        var items = SelectedItems.Cast<TraderItemViewModel>();
+
+        items.AsParallel().ForAll(item => item.BuyPrice = price);
+    }
+    protected void SetSellPrice(double price)
+    {
+        if (SelectedItems is null)
+        {
+            return;
+        }
+        var items = SelectedItems.Cast<TraderItemViewModel>();
+
+        items.AsParallel().ForAll(item => item.SellPrice = price);
+    }
+    protected void SetQuantityModifier(string modifier)
+    {
+        if (SelectedItems is null || string.IsNullOrWhiteSpace(modifier))
+        {
+            return;
+        }
+        var items = SelectedItems.Cast<TraderItemViewModel>();
+
+        items.AsParallel().ForAll(item => item.Modifier = modifier);
     }
 }

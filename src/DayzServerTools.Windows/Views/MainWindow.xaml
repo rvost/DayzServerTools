@@ -355,7 +355,36 @@
                                    Command="{Binding ActiveFile.SelectedTrader.RemoveCategoryCommand}"
                                    CommandParameter="{x:Null}"/>
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Items">
+                <fluent:RibbonGroupBox Header="Items Quantity">
+                    <fluent:ComboBox x:Name="quantityModifierComboBox" Header="Quantity" 
+                                     ItemsSource="{Binding ActiveFile.AvailableModifiers}"
+                                     IsEditable="False" InputWidth="48"/>
+                    <fluent:Button Header="Set Quantity" Icon="{StaticResource EditVecIcon}" Size="Middle"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.SetQuantityModifierCommand}"
+                                   CommandParameter="{Binding ElementName=quantityModifierComboBox, Path=SelectedItem}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Items Price">
+
+                    <fluent:Button Header="Prohibit Buying" Icon="{StaticResource StatusNoVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.ProhibitBuyingCommand}"/>
+                    <fluent:Button Header="Set Buy Price" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.SetBuyPriceCommand}"
+                                   CommandParameter="{Binding ElementName=buyPriceCategoryTextBox, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <RibbonTextBox x:Name="buyPriceCategoryTextBox" Label="Buy Price:"
+                                   Padding="2" Margin="4" Text="100"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.SetBuyPriceCommand}"
+                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <RibbonTextBox x:Name="sellPriceCategoryTextBox" Label="Sell Price:"
+                                   Padding="2" Margin="4" Text="100"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.SetSellPriceCommand}"
+                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <fluent:Button Header="Set Sell Price" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.SetSellPriceCommand}"
+                                   CommandParameter="{Binding ElementName=sellPriceCategoryTextBox, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <fluent:Button Header="Prohibit Selling" Icon="{StaticResource StatusNoVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.ProhibitSellingCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Items Export">
                     <fluent:Button Header="Copy to..."
                                    Icon="{StaticResource CopyVecIcon}"
                                    Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.CopyItemsCommand}"/>
