@@ -4,7 +4,7 @@ DayzServerTools are designed to simplify and speed up the setup of your custom D
 
 ![DayzServerTools Screen](./screenshot.png)
 
-**[DOWNLOAD](https://github.com/rvost/DayzServerTools/releases/latest)**
+**[Download](https://github.com/rvost/DayzServerTools/releases/latest)**
 ---
 
 ## Features
@@ -15,11 +15,13 @@ DayzServerTools are designed to simplify and speed up the setup of your custom D
 	* Add/Remove items;
 	* Edit multiple items at once;
 	* Change quantity/restock/lifetime of items in percentage;
-	* Move items to new file (better way to override vanilla `types.xml`)
+	* Move items to new file (better way to override vanilla `types.xml`);
+	* Batch editing.
 * User definitions (`cfglimitsdefinitionuser.xml`) and different styles of writing `types.xml` are supported.
 * Load `cfglimitsdefinition.xml` (and `cfglimitsdefinitionuser.xml`) to select from avilable flag values.
 * Validate `types.xml` according to `cfglimitsdefinition.xml` and `cfglimitsdefinitionuser.xml`.
 * Export items to trader config.
+* Import items from list of classnames in free form.
 
 ### Dayz Trader config editor
 
@@ -28,8 +30,10 @@ DayzServerTools supports [Dr_J0nes Trader Mod](https://steamcommunity.com/shared
 * Rename Traders
 * Add(remove) new categories to traders.
 * Add(remove) items.
-* Edit items prices. 
+* Batch edit items. 
 * Export items from `types.xml` to `TraderConfig.txt`.
+* Import items from list of classnames in free form.
+* Validate config.
 
 ### User flags editor
 
