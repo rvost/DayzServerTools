@@ -24,6 +24,25 @@
         </Expander.Header>
         <local:BindableMultiSelectDataGrid ItemsSource="{Binding Path=Items}" AutoGenerateColumns="False"
                                            SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2"  DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}, Path=(Validation.Errors)}">
+                        <Grid.ToolTip>
+                            <ToolTip>
+                                <ListView ItemsSource="{Binding}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=ErrorContent}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ToolTip>
+                        </Grid.ToolTip>
+                        <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy items to..."
@@ -35,28 +54,32 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Item Class Name" Binding="{Binding Name}">
+                <DataGridTextColumn Header="Item Class Name" Binding="{Binding Name}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource TraderItemNameTooltip}" />
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Modifier}">
+                <DataGridTextColumn Header="Quantity" Binding="{Binding Modifier}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource TraderQuantityModifierTooltip}" />
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Buy Price" Binding="{Binding BuyPrice}">
+                <DataGridTextColumn Header="Buy Price" Binding="{Binding BuyPrice}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource TraderBuyPriceTooltip}" />
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice}">
+                <DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource TraderSellPriceTooltip}" />
