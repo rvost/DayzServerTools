@@ -8,6 +8,9 @@ internal class WindowsDialogFactory : IDialogFactory
 {
     private string defaultFilter = "XML Files (*.xml)|*.xml";
 
+    public IClassnameImportDialog CreateClassnameImportDialog()
+        => new WindowsClassnameImportDialog();
+
     public IExportDialog CreateExportDialog() 
         => new WindowsExportDialog();
 

@@ -224,6 +224,8 @@
                 <fluent:RibbonGroupBox Header="Edit">
                     <fluent:Button Header="Add New Item" Icon="{StaticResource AddVecIcon}"
                                    Command="{Binding ActiveFile.AddEmptyItemCommand}"/>
+                    <fluent:Button Header="Import Classnames" Icon="{StaticResource ImportVecIcon}"
+                                   Command="{Binding ActiveFile.ClassnamesImportCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Export">
                     <fluent:Button Header="To New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
@@ -354,6 +356,10 @@
                     <fluent:Button Header="Remove" Icon="{StaticResource RemoveVecIcon}"
                                    Command="{Binding ActiveFile.SelectedTrader.RemoveCategoryCommand}"
                                    CommandParameter="{x:Null}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Items">
+                    <fluent:Button Header="Import Classnames" Icon="{StaticResource ImportVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedTrader.SelectedCategory.ClassnamesImportCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Items Quantity">
                     <fluent:ComboBox x:Name="quantityModifierComboBox" Header="Quantity" 

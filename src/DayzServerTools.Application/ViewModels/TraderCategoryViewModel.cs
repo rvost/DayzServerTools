@@ -32,6 +32,7 @@ public partial class TraderCategoryViewModel : ObservableObject
     }
     public ObservableCollection<TraderItemViewModel> Items { get; }
 
+    public IRelayCommand ClassnamesImportCommand { get; }
     public IRelayCommand CopyItemsCommand { get; }
     public IRelayCommand MoveItemsCommand { get; }
     public IRelayCommand ProhibitSellingCommand { get; }
@@ -46,6 +47,7 @@ public partial class TraderCategoryViewModel : ObservableObject
         this.model = model;
         Items = new(model.TraderItems.Select(m => new TraderItemViewModel(m)));
 
+        ClassnamesImportCommand = new RelayCommand(ClassnamesImport);
         CopyItemsCommand = new RelayCommand(CopyItems, () => CanExecuteBatchCommand());
         MoveItemsCommand = new RelayCommand(MoveItems, () => CanExecuteBatchCommand());
         ProhibitBuyingCommand = new RelayCommand(ProhibitBuying, () => CanExecuteBatchCommand());
@@ -81,6 +83,12 @@ public partial class TraderCategoryViewModel : ObservableObject
     public TraderCategoryViewModel() : this(new TraderCategory()) { }
 
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
+    protected void ClassnamesImport()
+    {
+        var dialog = _dialogFactory.CreateClassnameImportDialog();
+        dialog.Store = new TraderCategoryClassnameImportStore(this);
+        dialog.ShowDialog();
+    }
     protected void CopyItems()
     {
         if (SelectedItems is null)

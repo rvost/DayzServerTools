@@ -48,6 +48,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public IRelayCommand<float?> AdjustRestockCommand { get; }
     public IRelayCommand ExportToNewFileCommand { get; }
     public IRelayCommand ExportToTraderCommand { get; }
+    public IRelayCommand ClassnamesImportCommand { get; }
     public IRelayCommand<VanillaFlag> SetCategoryCommand { get; }
     public IRelayCommand<UserDefinableFlag> AddValueFlagCommand { get; }
     public IRelayCommand<UserDefinableFlag> AddUsageFlagCommand { get; }
@@ -66,6 +67,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, (param) => CanExecuteBatchCommand());
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteExportCommand);
+        ClassnamesImportCommand = new RelayCommand(ClassnamesImport);
         SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, (param) => CanExecuteBatchCommand());
         AddValueFlagCommand = new RelayCommand<UserDefinableFlag>(AddValueFlag, (param) => CanExecuteBatchCommand());
         AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag, (param) => CanExecuteBatchCommand());
@@ -147,6 +149,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
 
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.Store = new ItemTypesToTraderExportStore(items);
+        dialog.ShowDialog();
+    }
+    protected void ClassnamesImport()
+    {
+        var dialog = _dialogFactory.CreateClassnameImportDialog();
+        dialog.Store = new ItemTypesClassnameImportStore(this);
         dialog.ShowDialog();
     }
     protected void SetCategory(VanillaFlag category)

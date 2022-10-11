@@ -1,0 +1,31 @@
+﻿<Window x:Class="DayzServerTools.Windows.Views.ClassnamesImportView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DayzServerTools.Windows.Views"
+        mc:Ignorable="d"
+        Title="Import items from class names"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        Height="450" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Paste class names:">
+            <TextBox Text="{Binding RawInput}" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     AcceptsReturn="True"/>
+        </GroupBox>
+        <Button Grid.Row="1" Content="Parse" Command="{Binding ParseCommand}"/>
+        <GroupBox Grid.Row="2" Header="Items to be imported:">
+            <ListView  ItemsSource="{Binding Classnames}"/>
+        </GroupBox>
+        <Button Grid.Row="3" Content="Import" Command="{Binding ImportCommand}"
+                CommandParameter="{Binding Classnames}"/>
+    </Grid>
+</Window>
