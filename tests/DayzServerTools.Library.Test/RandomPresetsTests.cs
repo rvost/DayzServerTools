@@ -18,7 +18,7 @@ public class RandomPresetsTests
     }
 
     [Fact]
-    public void CanSerialize()
+    public void TrySerialize()
     {
         var cargo = new RandomPreset() { Name = "foodHermit", Chance = 0.15 };
         cargo.Items.Add(new ("TunaCan", 0.11));

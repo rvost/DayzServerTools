@@ -31,6 +31,9 @@
 	  <None Update="Resources\cfgrandompresets.xml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Resources\cfgspawnabletypes.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Resources\Schemas\cfglimitsdefinitionuser.xsd">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	    <SubType>Designer</SubType>
