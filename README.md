@@ -59,3 +59,10 @@ Some tips on how to use DayzServerTools:
 * To move items from one trader to another: use  right click on selected items and choose option in context menu.
 * To delete value or usage flag or tag: right click on it and choose 'Remove' in context menu.
 * Delete rows in tables with `Del` key. 
+
+## Known issues
+
+**Caution:** DayzServerTools uses generic format for xml files the order of tags and attributes matches the one in vanilla files, comments and your custom formatting will be stripped on editing.
+
+This may cause merge conflicts with future versions of the files (if you edited `db\types.xml` for example).
+Workaround: when update comes out, you can open&save new file with the tool and then merge your current version with it.

@@ -34,23 +34,16 @@ public class ItemType
 
     [XmlElement("flags", typeof(ItemFlags))]
     public ItemFlags Flags { get; set; } = new ItemFlags();
+    [XmlElement("category", typeof(VanillaFlag))]
+    public VanillaFlag Category { get; set; } = new VanillaFlag();
+    [XmlIgnore]
+    public bool CategorySpecified => !string.IsNullOrWhiteSpace(Category?.Value);
+    [XmlElement("tag", typeof(VanillaFlag))]
+    public ObservableCollection<VanillaFlag> Tags { get; set; } = new ObservableCollection<VanillaFlag>();
 
     [XmlElement("usage", typeof(UserDefinableFlag))]
     public ObservableCollection<UserDefinableFlag> Usages { get; set; } = new ObservableCollection<UserDefinableFlag>();
 
     [XmlElement("value", typeof(UserDefinableFlag))]
     public ObservableCollection<UserDefinableFlag> Value { get; set; } = new ObservableCollection<UserDefinableFlag>();
-
-    [XmlElement("category", typeof(VanillaFlag))]
-    public VanillaFlag Category { get; set; } = new VanillaFlag();
-
-    [XmlIgnore]
-    public bool CategorySpecified
-    {
-        get => !string.IsNullOrEmpty(Category?.Value);
-        set { return; }
-    }
-
-    [XmlElement("tag", typeof(VanillaFlag))]
-    public ObservableCollection<VanillaFlag> Tags { get; set; } = new ObservableCollection<VanillaFlag>();
 }

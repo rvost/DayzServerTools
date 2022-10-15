@@ -208,7 +208,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "types*";
         return dialog;
     }
     protected override bool CanSave()

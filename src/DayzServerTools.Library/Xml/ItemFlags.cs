@@ -35,9 +35,9 @@ public class ItemFlags : IXmlSerializable
 
     public void WriteXml(XmlWriter writer)
     {
-        writer.WriteAttributeString("count_in_map", CountInMap ? "1" : "0");
-        writer.WriteAttributeString("count_in_hoarder", CountInHoarder ? "1" : "0");
         writer.WriteAttributeString("count_in_cargo", CountInCargo ? "1" : "0");
+        writer.WriteAttributeString("count_in_hoarder", CountInHoarder ? "1" : "0");
+        writer.WriteAttributeString("count_in_map", CountInMap ? "1" : "0");
         writer.WriteAttributeString("count_in_player", CountInPlayer ? "1" : "0");
         writer.WriteAttributeString("crafted", Crafted ? "1" : "0");
         writer.WriteAttributeString("deloot", Deloot ? "1" : "0");
