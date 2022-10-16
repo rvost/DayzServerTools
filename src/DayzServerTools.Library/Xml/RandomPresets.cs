@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace DayzServerTools.Library.Xml;
@@ -16,9 +17,15 @@ public class RandomPresets : DayzXmlFile<RandomPresets>
 
 public class RandomPreset
 {
+    [XmlAttribute("chance")]
+    public string ChanceFormat
+    {
+        get => Chance.ToString(Chance < 1 ? "0.00" : "0.0", CultureInfo.InvariantCulture);
+        set => Chance = double.Parse(value, CultureInfo.InvariantCulture);
+    }
     [XmlAttribute("name")]
     public string Name { get; set; }
-    [XmlAttribute("chance")]
+    [XmlIgnore]
     public double Chance { get; set; }
 
     [XmlElement("item")]
