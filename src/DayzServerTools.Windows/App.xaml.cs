@@ -35,6 +35,7 @@ namespace DayzServerTools.Windows
                     .AddSingleton<ErrorsPaneViewModel>()
                     .AddTransient<ItemTypesViewModel>()
                     .AddTransient<UserDefinitionsViewModel>()
+                    .AddTransient<RandomPresetsViewModel>()
                     .AddTransient<TraderConfigViewModel>()
                     .AddTransient<ExportViewModel>()
                     .BuildServiceProvider()

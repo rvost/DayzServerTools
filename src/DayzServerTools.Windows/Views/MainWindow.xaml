@@ -52,6 +52,9 @@
         <DataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}">
             <views:TraderConfigView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:RandomPresetsViewModel}">
+            <views:RandomPresetsView/>
+        </DataTemplate>
         <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
         <s:Single x:Key="x025">0.25</s:Single>
         <s:Single x:Key="x05">0.5</s:Single>
@@ -89,6 +92,9 @@
                                 <fluent:Button Header="New User Flags" Icon="{StaticResource NewFlagsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
+                                <fluent:Button Header="New Random Presets" Icon="{StaticResource NewRandomPresetsVecIcon}"
+                                               Command="{Binding NewTabCommand}" 
+                                               CommandParameter="{x:Static viewmodels:NewTabOptions.NewRandomPresets}"/>
                             </WrapPanel>
                         </fluent:BackstageTabItem>
                         <fluent:BackstageTabItem Header="Open" Icon="{StaticResource OpenIcon}">
@@ -99,6 +105,9 @@
                                 <fluent:Button Header="Open User Flags" Icon="{StaticResource OpenFlagsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
+                                <fluent:Button Header="Open Random Presets" Icon="{StaticResource OpenRandomPresetsVecIcon}"
+                                               Command="{Binding NewTabCommand}" 
+                                               CommandParameter="{x:Static viewmodels:NewTabOptions.OpenRandomPresets}"/>
                                 <fluent:Button Header="Open Trader Config" Icon="{StaticResource OpenTraderConfigVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTraderConfig}"/>
@@ -123,6 +132,11 @@
                                                  BorderBrush="OrangeRed"
                                                  x:Name="UserDefinitionsToolsGroup"
                                                  Visibility="{Binding ActiveFileIsUserDefinitions, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
+                <fluent:RibbonContextualTabGroup Header="Random Presets"
+                                                 Background="Magenta"
+                                                 BorderBrush="Magenta"
+                                                 x:Name="RandomPresetsToolsGroup"
+                                                 Visibility="{Binding ActiveFileIsRandomPresets, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
                 <fluent:RibbonContextualTabGroup Header="Types"
                                                  Background="Orange"
                                                  BorderBrush="Orange"
@@ -176,6 +190,29 @@
                                    Command="{Binding NewTabCommand}" 
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Random Presets">
+                    <Ellipse StrokeThickness="0" Width="16" Height="16" Margin="0 16 16 0" 
+                             VerticalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="Red"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RandomPresetsLoaded, Mode=OneWay}" Value="true">
+                                        <Setter Property="Fill" Value="DarkGreen"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <fluent:Button Header="Load" Command="{Binding LoadRandomPresetsCommand}" Size="Large"
+                                   Icon="{StaticResource OpenVecIcon}"/>
+                    <fluent:Button Header="Create New" Icon="{StaticResource NewRandomPresetsVecIcon}"
+                                   Command="{Binding NewTabCommand}"
+                                   CommandParameter="{x:Static viewmodels:NewTabOptions.NewRandomPresets}" />
+                    <fluent:Button Header="Open Edit" Icon="{StaticResource OpenRandomPresetsVecIcon}"
+                                   Command="{Binding NewTabCommand}"
+                                   CommandParameter="{x:Static viewmodels:NewTabOptions.OpenRandomPresets}"/>
+                </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Types">
                     <fluent:Button Header="New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
                                    Command="{Binding NewTabCommand}" 
@@ -215,6 +252,18 @@
                                        HorizontalContentAlignment="Center">
                     <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
                                    Command="{Binding ActiveFile.ValidateCommand}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <!-- Random Presets Tools Group-->
+            <fluent:RibbonTabItem Header="Random Presets Tools" Group="{Binding ElementName=RandomPresetsToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsRandomPresets, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
+                <fluent:RibbonGroupBox Header="Cargo" MinWidth="100">
+                    <fluent:Button Header="Add" Icon="{StaticResource AddCargoRandomPresetVecIcon}"
+                                   Command="{Binding ActiveFile.NewCargoPresetCommand}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Attachments" MinWidth="100">
+                    <fluent:Button Header="Add" Icon="{StaticResource AddAttachmentsRandomPresetVecIcon}"
+                                   Command="{Binding ActiveFile.NewAttachmentsPresetCommand}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Item Types Tools Group -->

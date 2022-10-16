@@ -21,6 +21,8 @@ public enum NewTabOptions
     OpenTypes,
     NewUserDefinitions,
     OpenUserDefinitions,
+    NewRandomPresets,
+    OpenRandomPresets,
     OpenTraderConfig
 }
 
@@ -35,8 +37,12 @@ public partial class WorkspaceViewModel : TabbedViewModel
     [NotifyCanExecuteChangedFor(nameof(LoadUserDefinitionsCommand))]
     private UserDefinitions userDefinitions = null;
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RandomPresetsLoaded))]
+    [NotifyCanExecuteChangedFor(nameof(LoadRandomPresetsCommand))]
+    private RandomPresets randomPresets = null;
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes), 
-        nameof(ActiveFileIsTraderConfig))]
+        nameof(ActiveFileIsRandomPresets), nameof(ActiveFileIsTraderConfig))]
     private IProjectFileTab activeFile;
     private object activePane;
 
@@ -54,6 +60,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
     }
     public bool ActiveFileIsUserDefinitions => ActiveFile is UserDefinitionsViewModel;
     public bool ActiveFileIsItemTypes => ActiveFile is ItemTypesViewModel;
+    public bool ActiveFileIsRandomPresets => ActiveFile is RandomPresetsViewModel;
     public bool ActiveFileIsTraderConfig => ActiveFile is TraderConfigViewModel;
     public ErrorsPaneViewModel ErrorsPaneViewModel => _errorsPaneViewModel;
     [ObservableProperty]
@@ -83,10 +90,12 @@ public partial class WorkspaceViewModel : TabbedViewModel
     }
     public bool LimitsDefinitionsLoaded { get => LimitsDefinitions is not null; }
     public bool UserDefinitionsLoaded { get => UserDefinitions is not null; }
+    public bool RandomPresetsLoaded { get => RandomPresets is not null; }
     public IEnumerable<IPane> Panes { get; }
 
     public IRelayCommand LoadLimitsDefinitionsCommand { get; }
     public IRelayCommand LoadUserDefinitionsCommand { get; }
+    public IRelayCommand LoadRandomPresetsCommand { get; }
     public IRelayCommand<NewTabOptions> NewTabCommand { get; }
     public IRelayCommand SaveAllCommand { get; }
 
@@ -99,6 +108,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
 
         LoadLimitsDefinitionsCommand = new RelayCommand(LoadLimitsDefinitions, () => LimitsDefinitions is null);
         LoadUserDefinitionsCommand = new RelayCommand(LoadUserDefinitions, () => UserDefinitions is null);
+        LoadRandomPresetsCommand = new RelayCommand(LoadRandomPresets, () => RandomPresets is null);
         NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
         SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
     }
@@ -157,6 +167,30 @@ public partial class WorkspaceViewModel : TabbedViewModel
             }
         }
     }
+    public void LoadRandomPresets()
+    {
+        var dialog = _dialogFactory.CreateOpenFileDialog();
+        dialog.FileName = "cfgrandompresets*";
+        dialog.ShowDialog();
+        var filename = dialog.FileName;
+
+        if (File.Exists(filename))
+        {
+            using var input = File.OpenRead(filename);
+            try
+            {
+                RandomPresets = RandomPresets.ReadFromStream(input);
+            }
+            catch (InvalidOperationException e)
+            {
+                var errorDialog = _dialogFactory.CreateMessageDialog();
+                errorDialog.Title = "File format error";
+                errorDialog.Message = e.InnerException.Message;
+                errorDialog.Image = MessageDialogImage.Error;
+                errorDialog.Show();
+            }
+        }
+    }
     public void NewTab(NewTabOptions options)
     {
         switch (options)
@@ -176,11 +210,16 @@ public partial class WorkspaceViewModel : TabbedViewModel
             case NewTabOptions.OpenTraderConfig:
                 OpenTraderConfig();
                 break;
+            case NewTabOptions.NewRandomPresets:
+                CreateRandomPresets();
+                break;
+            case NewTabOptions.OpenRandomPresets:
+                OpenRandomPresets();
+                break;
             default:
                 OpenItemTypes();
                 break;
         }
-
     }
     public void SaveAll()
         => Tabs.AsParallel().ForAll(tab => tab.SaveCommand.Execute(null));
@@ -216,6 +255,17 @@ public partial class WorkspaceViewModel : TabbedViewModel
         newUserDefinitionVM.LimitsDefinitions = LimitsDefinitions;
         Tabs.Add(newUserDefinitionVM);
         newUserDefinitionVM.Load();
+    }
+    public void CreateRandomPresets()
+    {
+        var newVM= Ioc.Default.GetService<RandomPresetsViewModel>();
+        Tabs.Add(newVM);
+    }
+    public void OpenRandomPresets()
+    {
+        var newVM = Ioc.Default.GetService<RandomPresetsViewModel>();
+        Tabs.Add(newVM);
+        newVM.Load();
     }
     public void OpenTraderConfig()
     {
