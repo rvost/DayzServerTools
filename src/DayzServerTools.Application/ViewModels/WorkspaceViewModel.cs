@@ -12,6 +12,7 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
+using System.Globalization;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -23,6 +24,8 @@ public enum NewTabOptions
     OpenUserDefinitions,
     NewRandomPresets,
     OpenRandomPresets,
+    NewSpawnableTypes,
+    OpenSpawnableTypes,
     OpenTraderConfig
 }
 
@@ -42,7 +45,8 @@ public partial class WorkspaceViewModel : TabbedViewModel
     private RandomPresets randomPresets = null;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes), 
-        nameof(ActiveFileIsRandomPresets), nameof(ActiveFileIsTraderConfig))]
+        nameof(ActiveFileIsRandomPresets), nameof(ActiveFileIsSpawnableTypes), 
+        nameof(ActiveFileIsTraderConfig))]
     private IProjectFileTab activeFile;
     private object activePane;
 
@@ -61,6 +65,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public bool ActiveFileIsUserDefinitions => ActiveFile is UserDefinitionsViewModel;
     public bool ActiveFileIsItemTypes => ActiveFile is ItemTypesViewModel;
     public bool ActiveFileIsRandomPresets => ActiveFile is RandomPresetsViewModel;
+    public bool ActiveFileIsSpawnableTypes => ActiveFile is SpawnableTypesViewModel;
     public bool ActiveFileIsTraderConfig => ActiveFile is TraderConfigViewModel;
     public ErrorsPaneViewModel ErrorsPaneViewModel => _errorsPaneViewModel;
     [ObservableProperty]
@@ -71,6 +76,10 @@ public partial class WorkspaceViewModel : TabbedViewModel
     private ObservableCollection<VanillaFlag> categories = new() { new VanillaFlag("") };
     [ObservableProperty]
     private ObservableCollection<VanillaFlag> tags = new();
+    [ObservableProperty]
+    private IEnumerable<string> availableCargoPresets = new List<string>();
+    [ObservableProperty]
+    private IEnumerable<string> availableAttachmentsPresets = new List<string>();
 
     public LimitsDefinitions LimitsDefinitions
     {
@@ -180,6 +189,8 @@ public partial class WorkspaceViewModel : TabbedViewModel
             try
             {
                 RandomPresets = RandomPresets.ReadFromStream(input);
+                AvailableCargoPresets = RandomPresets.CargoPresets.Select(p => p.Name).ToList();
+                AvailableAttachmentsPresets = RandomPresets.AttachmentsPresets.Select(p => p.Name).ToList();
             }
             catch (InvalidOperationException e)
             {
@@ -215,6 +226,12 @@ public partial class WorkspaceViewModel : TabbedViewModel
                 break;
             case NewTabOptions.OpenRandomPresets:
                 OpenRandomPresets();
+                break;
+            case NewTabOptions.NewSpawnableTypes:
+                CreateSpawnableTypes();
+                break;
+            case NewTabOptions.OpenSpawnableTypes:
+                OpenSpawnableTypes();
                 break;
             default:
                 OpenItemTypes();
@@ -264,6 +281,17 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public void OpenRandomPresets()
     {
         var newVM = Ioc.Default.GetService<RandomPresetsViewModel>();
+        Tabs.Add(newVM);
+        newVM.Load();
+    }
+    public void CreateSpawnableTypes()
+    {
+        var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
+        Tabs.Add(newVM);
+    }
+    public void OpenSpawnableTypes()
+    {
+        var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
         Tabs.Add(newVM);
         newVM.Load();
     }

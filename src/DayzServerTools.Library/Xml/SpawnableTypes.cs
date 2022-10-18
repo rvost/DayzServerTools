@@ -20,7 +20,7 @@ public class SpawnableType
     [XmlElement("damage")]
     public SpawnDamage Damage { get; set; } = new();
     public bool DamageSpecified 
-        => Damage.Min > 0 || Damage.Max > 0;
+        => !double.IsNaN(Damage.Min) && !double.IsNaN(Damage.Max);
 
     [XmlElement("hoarder")]
     public object Hoarder { get; set; }
@@ -46,7 +46,7 @@ public class SpawnDamage
         Min = min;
         Max = max;
     }
-    public SpawnDamage() : this(0, 0) { }
+    public SpawnDamage() : this(double.NaN, double.NaN) { }
 }
 
 public class SpawnablePreset
