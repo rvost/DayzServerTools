@@ -287,11 +287,20 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public void CreateSpawnableTypes()
     {
         var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
+        newVM.Workspace = this;
+        Tabs.Add(newVM);
+    }
+    public void CreateSpawnableTypes(IEnumerable<SpawnableType> items)
+    {
+        var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
+        newVM.Workspace = this;
+        newVM.CopySpawnableTypes(items);
         Tabs.Add(newVM);
     }
     public void OpenSpawnableTypes()
     {
         var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
+        newVM.Workspace = this;
         Tabs.Add(newVM);
         newVM.Load();
     }

@@ -12,7 +12,19 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Grid.Column="0" ItemsSource="{Binding Spawnables}" AutoGenerateColumns="False" x:Name="datagrid">
+        <controls:BindableMultiSelectDataGrid Grid.Column="0" AutoGenerateColumns="False"
+                                              x:Name="datagrid" ItemsSource="{Binding Spawnables}" 
+                                              SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Export selected to new file"
+                              Icon="{StaticResource NewSpawnableTypesVecIcon}"
+                              Command="{Binding ExportToNewFileCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                 <DataGridCheckBoxColumn Header="Hoarder" Binding="{Binding Hoarder, Converter={StaticResource ObjectToBooleanConverter}}"/>
@@ -43,7 +55,7 @@
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </controls:BindableMultiSelectDataGrid>
         <ContentControl Grid.Column="1" Content="{Binding ElementName=datagrid, Path=SelectedItem}">
             <ContentControl.ContentTemplate>
                 <DataTemplate>

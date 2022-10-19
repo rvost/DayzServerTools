@@ -421,6 +421,11 @@
                     <fluent:Button Header="Add Type" Icon="{StaticResource AddSpawnabeTypeVecIcon}"
                                    Command="{Binding ActiveFile.AddSpawnableTypeCommand}"/>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Export">
+                    <fluent:Button Header="To New File" Icon="{StaticResource NewSpawnableTypesVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToNewFileCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Trader Tools Tools Group -->
             <fluent:RibbonTabItem Header="Trader Tools" Group="{Binding ElementName=TraderConfigToolsGroup}"

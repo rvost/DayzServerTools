@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -11,11 +13,18 @@ using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
-public class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, IDisposable
+public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, IDisposable
 {
+    [ObservableProperty]
+    private WorkspaceViewModel workspace;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand))]
+    private IList selectedItems;
+
     public ObservableCollection<SpawnableTypeViewModel> Spawnables { get; set; } = new();
 
     public IRelayCommand AddSpawnableTypeCommand { get; }
+    public IRelayCommand<object> ExportToNewFileCommand { get; }
 
     public SpawnableTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
@@ -23,8 +32,27 @@ public class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, IDi
         FileName = "cfgspawnabletypes.xml";
 
         AddSpawnableTypeCommand = new RelayCommand(() => Spawnables.Add(new(new())));
+        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
 
         Spawnables.CollectionChanged += OnSpawnablesCollectionChanged;
+    }
+
+    public void CopySpawnableTypes(IEnumerable<SpawnableType> source)
+    {
+        Spawnables.AddRange(
+            source.Select(obj => new SpawnableTypeViewModel(obj.Copy()))
+        );
+    }
+
+    protected bool CanExecuteExportCommand(object cmdParam)
+        => cmdParam is not null || SelectedItems is not null;
+    protected void ExportToNewFile(object cmdParam)
+    {
+        var list = (IList)cmdParam ?? SelectedItems;
+        var viewModels = list.Cast<SpawnableTypeViewModel>();
+
+        var items = viewModels.Select(vm => vm.Model);
+        Workspace.CreateSpawnableTypes(items);
     }
 
     protected override bool CanSave() => true;
