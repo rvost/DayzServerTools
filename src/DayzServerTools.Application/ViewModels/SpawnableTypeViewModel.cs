@@ -34,6 +34,11 @@ public partial class SpawnableTypeViewModel : ObservableObject
         get => _model.Damage.Max;
         set => SetProperty(_model.Damage.Max, value, _model, (m, v) => m.Damage.Max = v);
     }
+    public string Tag
+    {
+        get => _model.Tag.Value;
+        set => SetProperty(_model.Tag.Value, value, _model, (m, v) => m.Tag.Value = v);
+    }
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
     public IEnumerable<string> AvailableCargoPresets => _workspace.AvailableCargoPresets;

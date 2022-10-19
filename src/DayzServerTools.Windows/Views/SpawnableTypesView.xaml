@@ -22,6 +22,26 @@
                                     Binding="{Binding Cargo.Count, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Attachments Presets" IsReadOnly="True"
                                     Binding="{Binding Attachments.Count, Mode=OneWay}"/>
+                <DataGridTemplateColumn Header="Tag" SortMemberPath="Tag">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border Padding="2">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding Path=Tag, Converter={StaticResource FlagColorConverter}, Mode=OneWay}"/>
+                                </Border.Background>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                           Text="{Binding Tag}" />
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox SelectedValue="{Binding Tag}" SelectedValuePath="Value" DisplayMemberPath="Value"
+                                      ItemTemplate="{StaticResource VanillaFlagTemplate}"
+                                      ItemsSource="{Binding DataContext.Tags, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <ContentControl Grid.Column="1" Content="{Binding ElementName=datagrid, Path=SelectedItem}">
