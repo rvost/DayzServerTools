@@ -8,6 +8,7 @@ public class SpawnableItem
     public string Name { get; set; }
     [XmlAttribute("chance")]
     public double Chance { get; set; }
+    public bool ChanceSpecified => !double.IsNaN(Chance);
 
     public SpawnableItem(string name, double chance)
     {
@@ -15,5 +16,5 @@ public class SpawnableItem
         Chance = chance;
     }
 
-    public SpawnableItem() : this("", 0) { }
+    public SpawnableItem() : this("", double.NaN) { }
 }

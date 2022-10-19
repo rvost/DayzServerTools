@@ -26,12 +26,16 @@ public class SpawnableType
     public object Hoarder { get; set; }
     public bool HoarderSpecified
        => Hoarder is not null;
+    
+    [XmlElement("tag")]
+    public VanillaFlag Tag { get; set; } = new();
+    public bool TagSpecified
+        => !string.IsNullOrWhiteSpace(Tag.Value);
 
     [XmlElement("cargo")]
     public ObservableCollection<SpawnablePreset> Cargo { get; set; } = new();
     [XmlElement("attachments")]
     public ObservableCollection<SpawnablePreset> Attachments { get; set; } = new();
-
 }
 
 public class SpawnDamage
