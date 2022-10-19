@@ -28,6 +28,7 @@ public class SpawnablePresetViewModel:ObservableObject
         get=> _model.Chance;
         set => SetProperty(_model.Chance, value, _model, (m, v) => _model.Chance = value);
     }
+    public SpawnableItem DefaultItem => _model.Items.FirstOrDefault();
     public ObservableCollection<SpawnableItem> Items => _model.Items;
     
     public SpawnablePresetViewModel(SpawnablePreset model)

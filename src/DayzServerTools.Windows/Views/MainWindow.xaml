@@ -55,6 +55,9 @@
         <DataTemplate DataType="{x:Type viewmodels:RandomPresetsViewModel}">
             <views:RandomPresetsView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:SpawnableTypesViewModel}">
+            <views:SpawnableTypesView/>
+        </DataTemplate>
         <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
         <s:Single x:Key="x025">0.25</s:Single>
         <s:Single x:Key="x05">0.5</s:Single>
@@ -89,6 +92,10 @@
                                                Icon="{StaticResource NewItemTypesVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}" />
+                                <fluent:Button Header="New Spawnable Types"
+                                               Icon="{StaticResource NewSpawnableTypesVecIcon}"
+                                               Command="{Binding NewTabCommand}"
+                                               CommandParameter="{x:Static viewmodels:NewTabOptions.NewSpawnableTypes}" />
                                 <fluent:Button Header="New User Flags" Icon="{StaticResource NewFlagsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
@@ -102,6 +109,10 @@
                                 <fluent:Button Header="Open types.xml" Icon="{StaticResource OpenItemTypesVecIcon}"
                                                Command="{Binding NewTabCommand}"
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
+                                <fluent:Button Header="Open Spawnable Types"
+                                               Icon="{StaticResource OpenSpawnableTypesVecIcon}"
+                                               Command="{Binding NewTabCommand}"
+                                               CommandParameter="{x:Static viewmodels:NewTabOptions.OpenSpawnableTypes}" />
                                 <fluent:Button Header="Open User Flags" Icon="{StaticResource OpenFlagsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
@@ -142,6 +153,11 @@
                                                  BorderBrush="Orange"
                                                  x:Name="ItemTypesToolsGroup"
                                                  Visibility="{Binding ActiveFileIsItemTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
+                <fluent:RibbonContextualTabGroup Header="Spawnable Types"
+                                                 Background="MediumVioletRed"
+                                                 BorderBrush="MediumVioletRed"
+                                                 x:Name="SpawnableTypesToolsGroup"
+                                                 Visibility="{Binding ActiveFileIsSpawnableTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
                 <fluent:RibbonContextualTabGroup Header="Trader"
                                                  Background="Gold"
                                                  BorderBrush="Gold"
@@ -214,12 +230,20 @@
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenRandomPresets}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Types">
-                    <fluent:Button Header="New types.xml" Icon="{StaticResource NewItemTypesVecIcon}"
+                    <fluent:Button Header="New" Icon="{StaticResource NewItemTypesVecIcon}"
                                    Command="{Binding NewTabCommand}" 
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}" />
-                    <fluent:Button Header="Open types.xml" Icon="{StaticResource OpenItemTypesVecIcon}"
+                    <fluent:Button Header="Open" Icon="{StaticResource OpenItemTypesVecIcon}"
                                    Command="{Binding NewTabCommand}"
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Spawnable Types" HorizontalContentAlignment="Center">
+                    <fluent:Button Header="New" Icon="{StaticResource NewSpawnableTypesVecIcon}"
+                                   Command="{Binding NewTabCommand}" 
+                                   CommandParameter="{x:Static viewmodels:NewTabOptions.NewSpawnableTypes}" />
+                    <fluent:Button Header="Open" Icon="{StaticResource OpenSpawnableTypesVecIcon}"
+                                   Command="{Binding NewTabCommand}"
+                                   CommandParameter="{x:Static viewmodels:NewTabOptions.OpenSpawnableTypes}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Trader Config">
                     <fluent:Button Header="Open Trader Config" Icon="{StaticResource OpenTraderConfigVecIcon}"
@@ -388,6 +412,14 @@
                     <fluent:Button Header="Add" Icon="{StaticResource AddVecIcon}"
                                    Command="{Binding ActiveFile.AddTagCommand}" 
                                    CommandParameter="{Binding ElementName=newTagComboBox, Path=SelectedItem}"/>
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            <!-- Spawnable Types Tools Group -->
+            <fluent:RibbonTabItem Header="Spawnable Types Tools" Group="{Binding ElementName=SpawnableTypesToolsGroup}"
+                                  Visibility="{Binding ActiveFileIsSpawnableTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
+                <fluent:RibbonGroupBox Header="Edit">
+                    <fluent:Button Header="Add Type" Icon="{StaticResource AddSpawnabeTypeVecIcon}"
+                                   Command="{Binding ActiveFile.AddSpawnableTypeCommand}"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Trader Tools Tools Group -->

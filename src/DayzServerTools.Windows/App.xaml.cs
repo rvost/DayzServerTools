@@ -37,6 +37,7 @@ namespace DayzServerTools.Windows
                     .AddTransient<UserDefinitionsViewModel>()
                     .AddTransient<RandomPresetsViewModel>()
                     .AddTransient<TraderConfigViewModel>()
+                    .AddTransient<SpawnableTypesViewModel>()
                     .AddTransient<ExportViewModel>()
                     .BuildServiceProvider()
                 );

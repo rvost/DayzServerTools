@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="DayzServerTools.Windows.Views.SpawnableTypesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DayzServerTools.Windows.Views"
+             xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="1080" d:DesignWidth="1920">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Grid.Column="0" ItemsSource="{Binding Spawnables}" AutoGenerateColumns="False" x:Name="datagrid">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                <DataGridCheckBoxColumn Header="Hoarder" Binding="{Binding Hoarder, Converter={StaticResource ObjectToBooleanConverter}}"/>
+                <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}"/>
+                <DataGridTextColumn Header="Max Damage" Binding="{Binding MinDamage}"/>
+                <DataGridTextColumn Header="Cargo Presets" IsReadOnly="True"
+                                    Binding="{Binding Cargo.Count, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Attachments Presets" IsReadOnly="True"
+                                    Binding="{Binding Attachments.Count, Mode=OneWay}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ContentControl Grid.Column="1" Content="{Binding ElementName=datagrid, Path=SelectedItem}">
+            <ContentControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding Name}"
+                                   HorizontalAlignment="Center"
+                                   FontSize="16"/>
+                        <GroupBox Grid.Row="1" Header="Cargo">
+                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Cargo}"
+                                                           AvailablePresets="{Binding DataContext.AvailableCargoPresets, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+                        </GroupBox>
+                        <GroupBox Grid.Row="2" Header="Attachments">
+                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Attachments}"
+                                                           AvailablePresets="{Binding DataContext.AvailableAttachmentsPresets, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
+                        </GroupBox>
+                    </Grid>
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
+    </Grid>
+</UserControl>
