@@ -34,11 +34,20 @@ namespace DayzServerTools.Windows.Controls
             set { SetValue(AvailablePresetsProperty, value); }
         }
 
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
+
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<SpawnablePresetViewModel>), typeof(SpawnablePresetsGrid), new PropertyMetadata(default));
         
         public static readonly DependencyProperty AvailablePresetsProperty =
            DependencyProperty.Register("AvailablePresets", typeof(IEnumerable<string>), typeof(SpawnablePresetsGrid), new PropertyMetadata(default));
+        
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register("SelectedItem", typeof(object), typeof(SpawnablePresetsGrid), new PropertyMetadata(default));
 
         public SpawnablePresetsGrid()
         {

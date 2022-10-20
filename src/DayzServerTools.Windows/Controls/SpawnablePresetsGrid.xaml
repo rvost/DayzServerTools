@@ -64,7 +64,10 @@
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        <DataGrid ItemsSource="{Binding ElementName=root, Path=ItemsSource}" AutoGenerateColumns="False">
+        <DataGrid ItemsSource="{Binding ElementName=root, Path=ItemsSource}"
+                  SelectedItem="{Binding ElementName=root, Path=SelectedItem}"
+                  VirtualizingPanel.ScrollUnit="Pixel"
+                  AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Chance" Binding="{Binding Chance}"/>
                 <DataGridTemplateColumn Header="Preset">
@@ -103,7 +106,13 @@
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid ItemsSource="{Binding Items}" IsEnabled="{Binding ItemsSpecified}"/>
+                    <DataGrid ItemsSource="{Binding Items}" IsEnabled="{Binding ItemsSpecified}"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Chance" Binding="{Binding Chance}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>

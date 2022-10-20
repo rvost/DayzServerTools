@@ -3,15 +3,28 @@ using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+
 using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Services;
+using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
+public enum PresetType
+{
+    Cargo,
+    Attachments
+}
+
 public partial class SpawnableTypeViewModel : ObservableObject
 {
     private readonly SpawnableType _model;
-    private readonly WorkspaceViewModel _workspace;
+    private readonly IDialogFactory _dialogFactory;
+    
+    [ObservableProperty]
+    private SpawnablePresetViewModel selectedPreset;
 
     public SpawnableType Model => _model;
     public string Name
@@ -41,19 +54,48 @@ public partial class SpawnableTypeViewModel : ObservableObject
     }
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
-    public IEnumerable<string> AvailableCargoPresets => _workspace.AvailableCargoPresets;
-    public IEnumerable<string> AvailableAttachmentsPresets => _workspace.AvailableAttachmentsPresets;
+
+    public IRelayCommand<PresetType> AddNewPresetCommand { get; }
+    public IRelayCommand<PresetType> ImportClassnamesAsPresetsCommand { get; }
 
     public SpawnableTypeViewModel(SpawnableType model)
     {
         _model = model;
-        _workspace = Ioc.Default.GetRequiredService<WorkspaceViewModel>();
+        _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
 
         Cargo.AddRange(_model.Cargo.Select(preset => new SpawnablePresetViewModel(preset)));
         Attachments.AddRange(_model.Attachments.Select(preset => new SpawnablePresetViewModel(preset)));
 
+        AddNewPresetCommand = new RelayCommand<PresetType>(AddNewPreset);
+        ImportClassnamesAsPresetsCommand = new RelayCommand<PresetType>(ImportClassnamesAsPresets);
+
         Cargo.CollectionChanged += OnPresetsCollectionChanged;
         Attachments.CollectionChanged += OnPresetsCollectionChanged;
+    }
+
+    protected void AddNewPreset(PresetType type)
+    {
+        var newPreset = new SpawnablePresetViewModel(new SpawnablePreset());
+
+        switch (type)
+        {
+            case PresetType.Cargo:
+                Cargo.Add(newPreset);
+                break;
+            case PresetType.Attachments:
+                Attachments.Add(newPreset);
+                break;
+            default:
+                break;
+        }
+    }
+    protected void ImportClassnamesAsPresets(PresetType type)
+    {
+        var target = type == PresetType.Cargo ? Cargo : Attachments;
+
+        var dialog = _dialogFactory.CreateClassnameImportDialog();
+        dialog.Store = new SpawnableTypePresetsImportStore(target);
+        dialog.ShowDialog();
     }
 
     private void OnPresetsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

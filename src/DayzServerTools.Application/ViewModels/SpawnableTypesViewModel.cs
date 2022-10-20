@@ -18,6 +18,8 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     [ObservableProperty]
     private WorkspaceViewModel workspace;
     [ObservableProperty]
+    private SpawnableTypeViewModel selectedItem;
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand))]
     private IList selectedItems;
 

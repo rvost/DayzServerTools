@@ -420,6 +420,26 @@
                 <fluent:RibbonGroupBox Header="Edit">
                     <fluent:Button Header="Add Type" Icon="{StaticResource AddSpawnabeTypeVecIcon}"
                                    Command="{Binding ActiveFile.AddSpawnableTypeCommand}"/>
+                    <fluent:Button Header="Add Cargo Preset" Icon="{StaticResource AddVecIcon}"
+                                   Size="Middle"
+                                   Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
+                                   CommandParameter="{x:Static viewmodels:PresetType.Cargo}"/>
+                    <fluent:Button Header="Add Attachments Preset" Icon="{StaticResource AddVecIcon}"
+                                   Size="Middle"
+                                   Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
+                                   CommandParameter="{x:Static viewmodels:PresetType.Attachments}"/>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Import">
+                    <fluent:Button Header="Classnames as Cargo Presets" Icon="{StaticResource ImportVecIcon}"
+                                   Size="Middle"
+                                   Command="{Binding ActiveFile.SelectedItem.ImportClassnamesAsPresetsCommand}"
+                                   CommandParameter="{x:Static viewmodels:PresetType.Cargo}"/>
+                    <fluent:Button Header="Classnames as Attachments Preset" Icon="{StaticResource ImportVecIcon}"
+                                   Size="Middle"
+                                   Command="{Binding ActiveFile.SelectedItem.ImportClassnamesAsPresetsCommand}"
+                                   CommandParameter="{x:Static viewmodels:PresetType.Attachments}"/>
+                    <fluent:Button Header="Classnames to Preset" Icon="{StaticResource ImportVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedItem.SelectedPreset.ImportClassnamesCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Export">
                     <fluent:Button Header="To New File" Icon="{StaticResource NewSpawnableTypesVecIcon}"

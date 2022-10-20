@@ -13,7 +13,8 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <controls:BindableMultiSelectDataGrid Grid.Column="0" AutoGenerateColumns="False"
-                                              x:Name="datagrid" ItemsSource="{Binding Spawnables}" 
+                                              x:Name="datagrid" ItemsSource="{Binding Spawnables}"
+                                              SelectedItem="{Binding SelectedItem}"
                                               SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
             <DataGrid.ContextMenu>
                 <ContextMenu>
@@ -69,11 +70,11 @@
                                    HorizontalAlignment="Center"
                                    FontSize="16"/>
                         <GroupBox Grid.Row="1" Header="Cargo">
-                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Cargo}"
+                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Cargo}" SelectedItem="{Binding SelectedPreset, Mode=OneWayToSource}"
                                                            AvailablePresets="{Binding DataContext.AvailableCargoPresets, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
                         </GroupBox>
                         <GroupBox Grid.Row="2" Header="Attachments">
-                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Attachments}"
+                            <controls:SpawnablePresetsGrid ItemsSource="{Binding Attachments}" SelectedItem="{Binding SelectedPreset, Mode=OneWayToSource}"
                                                            AvailablePresets="{Binding DataContext.AvailableAttachmentsPresets, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"/>
                         </GroupBox>
                     </Grid>
