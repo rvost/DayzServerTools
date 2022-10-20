@@ -8,7 +8,8 @@
              x:Name="root"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <local:BindableMultiSelectDataGrid ItemsSource="{Binding ItemsSource, ElementName=root}"
+        <local:BindableMultiSelectDataGrid ItemsSource="{Binding ElementName=root, Path=ItemsSource}"
+                                           SelectedItem="{Binding ElementName=root, Path=SelectedItem}"
                                            EnableRowVirtualization="False"
                                            EnableColumnVirtualization="False"
                                            VirtualizingPanel.ScrollUnit="Pixel"
@@ -21,7 +22,13 @@
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock HorizontalAlignment="Center" Margin="0 2">Items:</TextBlock>
-                        <DataGrid ItemsSource="{Binding Items}"/>
+                        <DataGrid ItemsSource="{Binding Items}"
+                              AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Chance" Binding="{Binding Chance}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </StackPanel>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>

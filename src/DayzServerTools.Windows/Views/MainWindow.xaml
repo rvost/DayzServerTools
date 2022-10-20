@@ -289,6 +289,10 @@
                     <fluent:Button Header="Add" Icon="{StaticResource AddAttachmentsRandomPresetVecIcon}"
                                    Command="{Binding ActiveFile.NewAttachmentsPresetCommand}"/>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Import">
+                    <fluent:Button Header="Classnames" Icon="{StaticResource ImportVecIcon}"
+                                   Command="{Binding ActiveFile.SelectedPreset.ImportClassnamesCommand}"/>
+                </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
             <!-- Item Types Tools Group -->
             <!-- Item Types General -->

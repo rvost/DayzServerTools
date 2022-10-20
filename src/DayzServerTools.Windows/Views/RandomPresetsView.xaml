@@ -23,7 +23,8 @@
             Cargo
         </TextBlock>
         <controls:RandomPresetsGrid Grid.Row="1" Grid.Column="0" 
-                                    ItemsSource="{Binding CargoPresets}"/>
+                                    ItemsSource="{Binding CargoPresets}"
+                                    SelectedItem="{Binding SelectedPreset, Mode=OneWayToSource}"/>
         <!-- Attachments -->
         <TextBlock Grid.Row="0" Grid.Column="1" 
                    HorizontalAlignment="Center"
@@ -31,7 +32,8 @@
             Attachments
         </TextBlock>
         <controls:RandomPresetsGrid Grid.Row="1" Grid.Column="1" 
-                                    ItemsSource="{Binding AttachmentsPresets}"/>
+                                    ItemsSource="{Binding AttachmentsPresets}"
+                                    SelectedItem="{Binding SelectedPreset, Mode=OneWayToSource}"/>
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Stretch"
                       ShowsPreview="true" ResizeDirection="Columns" BorderThickness="3" BorderBrush="LightGray"/>
     </Grid>

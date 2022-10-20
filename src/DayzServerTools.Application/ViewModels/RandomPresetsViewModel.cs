@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -13,6 +13,9 @@ namespace DayzServerTools.Application.ViewModels;
 
 public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets>, IDisposable
 {
+    [ObservableProperty]
+    private RandomPresetViewModel selectedPreset;
+
     public ObservableCollection<RandomPresetViewModel> CargoPresets { get; } = new();
     public ObservableCollection<RandomPresetViewModel> AttachmentsPresets { get; } = new();
 

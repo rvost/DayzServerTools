@@ -27,9 +27,16 @@ namespace DayzServerTools.Windows.Controls
             get { return (ObservableCollection<RandomPresetViewModel>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(ObservableCollection<RandomPresetViewModel>), typeof(RandomPresetsGrid), new PropertyMetadata(default));
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register("SelectedItem", typeof(object), typeof(RandomPresetsGrid), new PropertyMetadata(default));
 
         public RandomPresetsGrid()
         {
