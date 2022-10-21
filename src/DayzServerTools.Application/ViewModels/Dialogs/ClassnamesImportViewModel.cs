@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -10,14 +9,23 @@ namespace DayzServerTools.Application.ViewModels;
 public partial class ClassnamesImportViewModel : ObservableObject
 {
     private readonly IClassnameImportStore _importStore;
-    [ObservableProperty]
+   
     private string rawInput = "";
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ImportCommand))]
     private IEnumerable<string> classnames = new List<string>();
 
+    public string RawInput
+    {
+        get => rawInput;
+        set
+        {
+            SetProperty(ref rawInput, value);
+            Classnames = Parse(value);
+        }
+    }
+
     public IRelayCommand<IEnumerable<string>> ImportCommand { get; }
-    public IRelayCommand ParseCommand { get; }
     public event EventHandler CloseRequested;
 
     public ClassnamesImportViewModel(IClassnameImportStore importStore)
@@ -25,7 +33,6 @@ public partial class ClassnamesImportViewModel : ObservableObject
         _importStore = importStore;
 
         ImportCommand = new RelayCommand<IEnumerable<string>>(Import, CanImport);
-        ParseCommand = new RelayCommand(Parse);
     }
 
     protected bool CanImport(IEnumerable<string> classnames)
@@ -36,13 +43,16 @@ public partial class ClassnamesImportViewModel : ObservableObject
         CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    protected void Parse()
+    protected IEnumerable<string> Parse(string input)
     {
-        if (!string.IsNullOrWhiteSpace(rawInput))
+        if (!string.IsNullOrWhiteSpace(input))
         {
             var regex = new Regex(@"\w+");
-            Classnames = regex.Matches(RawInput).Select(m => m.Value).ToList();
+            return regex.Matches(RawInput).Select(m => m.Value).ToList();
         }
-
+        else
+        {
+            return Enumerable.Empty<string>();
+        }
     }
 }
