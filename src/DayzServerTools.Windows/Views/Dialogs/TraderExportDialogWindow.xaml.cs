@@ -11,19 +11,18 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using DayzServerTools.Application.ViewModels.Dialogs;
 
-using DayzServerTools.Application.ViewModels;
-
-namespace DayzServerTools.Windows.Views
+namespace DayzServerTools.Windows.Views.Dialogs
 {
     /// <summary>
     /// Interaction logic for ExportDialogWindow.xaml
     /// </summary>
-    public partial class ExportDialogWindow : Window
+    public partial class TraderExportDialogWindow : Window
     {
-        private readonly ExportViewModel _model;
+        private readonly TraderExportViewModel _model;
 
-        public ExportDialogWindow(ExportViewModel model)
+        public TraderExportDialogWindow(TraderExportViewModel model)
         {
             InitializeComponent();
             _model = model;

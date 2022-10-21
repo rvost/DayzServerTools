@@ -9,6 +9,7 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels;
 using DayzServerTools.Windows.Services;
 using DayzServerTools.Application.ViewModels.Panes;
+using DayzServerTools.Application.ViewModels.Dialogs;
 
 namespace DayzServerTools.Windows
 {
@@ -38,7 +39,7 @@ namespace DayzServerTools.Windows
                     .AddTransient<RandomPresetsViewModel>()
                     .AddTransient<TraderConfigViewModel>()
                     .AddTransient<SpawnableTypesViewModel>()
-                    .AddTransient<ExportViewModel>()
+                    .AddTransient<TraderExportViewModel>()
                     .BuildServiceProvider()
                 );
 

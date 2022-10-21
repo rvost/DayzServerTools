@@ -2,8 +2,8 @@
 
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Stores;
-using DayzServerTools.Application.ViewModels;
-using DayzServerTools.Windows.Views;
+using DayzServerTools.Application.ViewModels.Dialogs;
+using DayzServerTools.Windows.Views.Dialogs;
 
 
 namespace DayzServerTools.Windows.Models;
@@ -14,10 +14,10 @@ internal class WindowsExportDialog : IExportDialog
 
     public bool? ShowDialog()
     {
-        var vm =Ioc.Default.GetService<ExportViewModel>();
+        var vm =Ioc.Default.GetService<TraderExportViewModel>();
         vm.Store = Store;
 
-        var window = new ExportDialogWindow(vm);
+        var window = new TraderExportDialogWindow(vm);
         
         return window.ShowDialog();
     }

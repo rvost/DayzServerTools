@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace DayzServerTools.Windows.Views
+namespace DayzServerTools.Windows.Views.Dialogs
 {
     /// <summary>
     /// Interaction logic for ClassnamesImportView.xaml

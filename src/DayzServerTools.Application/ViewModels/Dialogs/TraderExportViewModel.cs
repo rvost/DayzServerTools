@@ -3,19 +3,19 @@ using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Stores;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.Dialogs;
 
-public partial class ExportViewModel : ObservableObject
+public partial class TraderExportViewModel : ObservableObject
 {
     private readonly WorkspaceViewModel _workspace;
 
     public IEnumerable<TraderConfigViewModel> Options { get; }
     public ITraderCategoryExport Store { get; set; }
     public IRelayCommand<TraderCategoryViewModel> ExportCommand { get; }
-    
+
     public event EventHandler CloseRequested;
 
-    public ExportViewModel(WorkspaceViewModel workspace)
+    public TraderExportViewModel(WorkspaceViewModel workspace)
     {
         _workspace = workspace;
 

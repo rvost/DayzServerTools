@@ -1,7 +1,7 @@
 ﻿using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.ViewModels;
-using DayzServerTools.Windows.Views;
+using DayzServerTools.Windows.Views.Dialogs;
 
 namespace DayzServerTools.Windows.Models;
 
