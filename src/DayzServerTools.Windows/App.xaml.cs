@@ -63,7 +63,10 @@ namespace DayzServerTools.Windows
         private static async Task UpdateApp()
         {
             using var mgr = new GithubUpdateManager("https://github.com/rvost/DayzServerTools");
-            await mgr.UpdateApp();
+            if (mgr.IsInstalledApp)
+            {
+                 await mgr.UpdateApp();
+            };
         }
     }
 }
