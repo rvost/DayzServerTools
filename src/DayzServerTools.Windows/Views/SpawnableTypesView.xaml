@@ -30,7 +30,7 @@
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
                 <DataGridCheckBoxColumn Header="Hoarder" Binding="{Binding Hoarder, Converter={StaticResource ObjectToBooleanConverter}}"/>
                 <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}"/>
-                <DataGridTextColumn Header="Max Damage" Binding="{Binding MinDamage}"/>
+                <DataGridTextColumn Header="Max Damage" Binding="{Binding MaxDamage}"/>
                 <DataGridTextColumn Header="Cargo Presets" IsReadOnly="True"
                                     Binding="{Binding Cargo.Count, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Attachments Presets" IsReadOnly="True"

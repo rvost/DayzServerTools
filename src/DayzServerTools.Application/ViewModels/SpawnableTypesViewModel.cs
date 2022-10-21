@@ -20,13 +20,16 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     [ObservableProperty]
     private SpawnableTypeViewModel selectedItem;
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand),
+        nameof(SetMinDamageCommand), nameof(SetMaxDamageCommand))]
     private IList selectedItems;
 
     public ObservableCollection<SpawnableTypeViewModel> Spawnables { get; set; } = new();
 
     public IRelayCommand AddSpawnableTypeCommand { get; }
     public IRelayCommand<object> ExportToNewFileCommand { get; }
+    public IRelayCommand<double> SetMinDamageCommand { get; }
+    public IRelayCommand<double> SetMaxDamageCommand { get; }
 
     public SpawnableTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
@@ -35,6 +38,8 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
 
         AddSpawnableTypeCommand = new RelayCommand(() => Spawnables.Add(new(new())));
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
+        SetMinDamageCommand = new RelayCommand<double>(SetMinDamage, (param) => CanExecuteBatchCommand());
+        SetMaxDamageCommand = new RelayCommand<double>(SetMaxDamage, (param) => CanExecuteBatchCommand());
 
         Spawnables.CollectionChanged += OnSpawnablesCollectionChanged;
     }
@@ -46,6 +51,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         );
     }
 
+    protected bool CanExecuteBatchCommand() => SelectedItems is not null;
     protected bool CanExecuteExportCommand(object cmdParam)
         => cmdParam is not null || SelectedItems is not null;
     protected void ExportToNewFile(object cmdParam)
@@ -55,6 +61,24 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
 
         var items = viewModels.Select(vm => vm.Model);
         Workspace.CreateSpawnableTypes(items);
+    }
+    protected void SetMinDamage(double value)
+    {
+        if(SelectedItems is null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<SpawnableTypeViewModel>();
+        viewModels.AsParallel().ForAll(spawnable => spawnable.MinDamage=value);
+    }
+    protected void SetMaxDamage(double value)
+    {
+        if (SelectedItems is null)
+        {
+            return;
+        }
+        var viewModels = SelectedItems.Cast<SpawnableTypeViewModel>();
+        viewModels.AsParallel().ForAll(spawnable => spawnable.MaxDamage = value);
     }
 
     protected override bool CanSave() => true;

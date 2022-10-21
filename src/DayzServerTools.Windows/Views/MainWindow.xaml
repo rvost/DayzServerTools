@@ -421,17 +421,33 @@
             <!-- Spawnable Types Tools Group -->
             <fluent:RibbonTabItem Header="Spawnable Types Tools" Group="{Binding ElementName=SpawnableTypesToolsGroup}"
                                   Visibility="{Binding ActiveFileIsSpawnableTypes, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}">
-                <fluent:RibbonGroupBox Header="Edit">
-                    <fluent:Button Header="Add Type" Icon="{StaticResource AddSpawnabeTypeVecIcon}"
+                <fluent:RibbonGroupBox Header="Add">
+                    <fluent:Button Header="New Type" Icon="{StaticResource AddSpawnabeTypeVecIcon}"
                                    Command="{Binding ActiveFile.AddSpawnableTypeCommand}"/>
-                    <fluent:Button Header="Add Cargo Preset" Icon="{StaticResource AddVecIcon}"
+                    <fluent:Button Header="Cargo Preset" Icon="{StaticResource AddVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
                                    CommandParameter="{x:Static viewmodels:PresetType.Cargo}"/>
-                    <fluent:Button Header="Add Attachments Preset" Icon="{StaticResource AddVecIcon}"
+                    <fluent:Button Header="Attachments Preset" Icon="{StaticResource AddVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
                                    CommandParameter="{x:Static viewmodels:PresetType.Attachments}"/>
+                    </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Edit">
+                    <fluent:Button Header="Set Min Damage" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.SetMinDamageCommand}"
+                                   CommandParameter="{Binding ElementName=minDamageTextBox, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <RibbonTextBox x:Name="minDamageTextBox" Label="Min Damage:"
+                                   Padding="2" Margin="4" Text="0"
+                                   Command="{Binding ActiveFile.SetMinDamageCommand}"
+                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <RibbonTextBox x:Name="maxDamageTextBox" Label="Max Damage:"
+                                   Padding="2" Margin="4" Text="0"
+                                   Command="{Binding ActiveFile.SetMaxDamageCommand}"
+                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
+                    <fluent:Button Header="Set Max Damage" Icon="{StaticResource EditVecIcon}"
+                                   Command="{Binding ActiveFile.SetMaxDamageCommand}"
+                                   CommandParameter="{Binding ElementName=maxDamageTextBox, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Import">
                     <fluent:Button Header="Classnames as Cargo Presets" Icon="{StaticResource ImportVecIcon}"
