@@ -57,6 +57,12 @@
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,
                                                          AncestorType={x:Type ContextMenu}}}"/>
+                    <MenuItem Header="Export to spawnabletypes.xml..."
+                              Icon="{StaticResource ExportSpawnableTypesVecIcon}"
+                              Command="{Binding ExportToSpawnableTypesCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
                     <MenuItem Header="Export to Trader Config..."
                               Icon="{StaticResource ExportTraderIcon}"
                               Command="{Binding ExportToTraderCommand}"

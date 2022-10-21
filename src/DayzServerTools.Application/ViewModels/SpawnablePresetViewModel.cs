@@ -4,13 +4,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
+using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
-public class SpawnablePresetViewModel:ObservableObject
+public class SpawnablePresetViewModel:ObservableObject, IClassnamesImporter
 {
     private readonly SpawnablePreset _model;
     private readonly IDialogFactory _dialogFactory;
@@ -44,6 +45,15 @@ public class SpawnablePresetViewModel:ObservableObject
         _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
 
         ImportClassnamesCommand = new RelayCommand(ImportClassnames);
+    }
+
+    public void AcceptClassnames(IEnumerable<string> classnames)
+    {
+        var total = classnames.Count();
+        var items = classnames.Select(name =>
+            new SpawnableItem(name, Math.Round(1.0 / total, 2))
+        );
+        Items.AddRange(items);
     }
 
     protected void ImportClassnames()

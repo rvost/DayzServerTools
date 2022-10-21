@@ -22,7 +22,7 @@ public partial class SpawnableTypeViewModel : ObservableObject
 {
     private readonly SpawnableType _model;
     private readonly IDialogFactory _dialogFactory;
-    
+
     [ObservableProperty]
     private SpawnablePresetViewModel selectedPreset;
 
@@ -52,6 +52,7 @@ public partial class SpawnableTypeViewModel : ObservableObject
         get => _model.Tag.Value;
         set => SetProperty(_model.Tag.Value, value, _model, (m, v) => m.Tag.Value = v);
     }
+    public IEnumerable<SpawnablePresetsCollectionProxy> Proxies { get; }
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
 
@@ -65,6 +66,11 @@ public partial class SpawnableTypeViewModel : ObservableObject
 
         Cargo.AddRange(_model.Cargo.Select(preset => new SpawnablePresetViewModel(preset)));
         Attachments.AddRange(_model.Attachments.Select(preset => new SpawnablePresetViewModel(preset)));
+        Proxies = new List<SpawnablePresetsCollectionProxy>
+        {
+            new SpawnablePresetsCollectionProxy( "Cargo",Cargo),
+            new SpawnablePresetsCollectionProxy("Attachments", Attachments)
+        };
 
         AddNewPresetCommand = new RelayCommand<PresetType>(AddNewPreset);
         ImportClassnamesAsPresetsCommand = new RelayCommand<PresetType>(ImportClassnamesAsPresets);
@@ -121,5 +127,29 @@ public partial class SpawnableTypeViewModel : ObservableObject
             default:
                 break;
         }
+    }
+}
+
+public class SpawnablePresetsCollectionProxy : IClassnamesImporter
+{
+    public string Name { get; }
+    public ObservableCollection<SpawnablePresetViewModel> Spawnables { get; }
+
+    public SpawnablePresetsCollectionProxy(string name, ObservableCollection<SpawnablePresetViewModel> spawnables)
+    {
+        Name = name;
+        Spawnables = spawnables;
+    }
+
+    public void AcceptClassnames(IEnumerable<string> classnames)
+    {
+        var items = classnames.Select(name => new SpawnableItem(name, 1));
+        var presetVMs = items.Select(item =>
+        {
+            var preset = new SpawnablePreset() { Chance = 1 };
+            preset.Items.Add(item);
+            return new SpawnablePresetViewModel(preset);
+        });
+        Spawnables.AddRange(presetVMs);
     }
 }

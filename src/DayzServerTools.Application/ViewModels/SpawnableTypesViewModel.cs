@@ -13,7 +13,7 @@ using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
-public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, IDisposable
+public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, IClassnamesImporter, IDisposable
 {
     [ObservableProperty]
     private WorkspaceViewModel workspace;
@@ -49,6 +49,12 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         Spawnables.AddRange(
             source.Select(obj => new SpawnableTypeViewModel(obj.Copy()))
         );
+    }
+    public void AcceptClassnames(IEnumerable<string> classnames)
+    {
+        var models =classnames.Select(name => new SpawnableType() { Name = name });
+        var viewModels = models.Select(models => new SpawnableTypeViewModel(models));
+        Spawnables.AddRange(viewModels);
     }
 
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
