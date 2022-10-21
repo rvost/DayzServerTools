@@ -147,7 +147,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
 
         var items = viewModels.Select(vm => vm.Model);
 
-        var dialog = _dialogFactory.CreateExportDialog();
+        var dialog = _dialogFactory.CreateTraderExportDialog();
         dialog.Store = new ItemTypesToTraderExportStore(items);
         dialog.ShowDialog();
     }
@@ -208,6 +208,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
+        dialog.FileName = "types*";
         return dialog;
     }
     protected override bool CanSave()

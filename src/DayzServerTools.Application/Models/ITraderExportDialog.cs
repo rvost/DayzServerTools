@@ -2,7 +2,7 @@
 
 namespace DayzServerTools.Application.Models;
 
-public interface IExportDialog
+public interface ITraderExportDialog
 {
     ITraderCategoryExport Store { get; set; }
     bool? ShowDialog();

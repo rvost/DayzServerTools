@@ -97,7 +97,7 @@ public partial class TraderCategoryViewModel : ObservableObject
         }
         var items = SelectedItems.Cast<TraderItemViewModel>();
 
-        var dialog = _dialogFactory.CreateExportDialog();
+        var dialog = _dialogFactory.CreateTraderExportDialog();
         dialog.Store = new TraderItemsExportStore(items, true);
         dialog.ShowDialog();
     }
@@ -109,7 +109,7 @@ public partial class TraderCategoryViewModel : ObservableObject
         }
         var items = SelectedItems.Cast<TraderItemViewModel>().ToList();
 
-        var dialog = _dialogFactory.CreateExportDialog();
+        var dialog = _dialogFactory.CreateTraderExportDialog();
         dialog.Store = new TraderItemsExportStore(items, false);
 
         if (dialog.ShowDialog() ?? false)

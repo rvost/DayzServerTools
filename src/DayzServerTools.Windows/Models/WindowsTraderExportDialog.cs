@@ -8,7 +8,7 @@ using DayzServerTools.Windows.Views.Dialogs;
 
 namespace DayzServerTools.Windows.Models;
 
-internal class WindowsExportDialog : IExportDialog
+internal class WindowsTraderExportDialog : ITraderExportDialog
 {
     public ITraderCategoryExport Store { get; set; }
 
