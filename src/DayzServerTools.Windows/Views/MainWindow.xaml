@@ -311,6 +311,9 @@
                     <fluent:Button Header="To spawnabletypes.xml" Icon="{StaticResource ExportSpawnableTypesVecIcon}"
                                    Command="{Binding ActiveFile.ExportToSpawnableTypesCommand}"
                                    CommandParameter="{Binding ActiveFile.SelectedItems}"/>
+                    <fluent:Button Header="To cfgrandompresets.xml" Icon="{StaticResource ExportRandomPresetsVecIcon}"
+                                   Command="{Binding ActiveFile.ExportToRandomPresetsCommand}"
+                                   CommandParameter="{Binding ActiveFile.SelectedItems}"/>
                     <fluent:Button Header="To Trader Config" Icon="{StaticResource ExportTraderVecIcon}"
                                    Command="{Binding ActiveFile.ExportToTraderCommand}"
                                    CommandParameter="{Binding ActiveFile.SelectedItems}"/>

@@ -24,7 +24,7 @@
                 <HierarchicalDataTemplate DataType="{x:Type vms:SpawnableTypeViewModel}" ItemsSource="{Binding Proxies}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type vms:SpawnablePresetsCollectionProxy}" ItemsSource="{Binding Spawnables}">
+                <HierarchicalDataTemplate DataType="{x:Type vms:SpawnablePresetsCollectionProxy}" ItemsSource="{Binding Presets}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type vms:SpawnablePresetViewModel}">
@@ -34,10 +34,21 @@
                         <TextBlock Text="{Binding DefaultItem.Name}"/>
                     </StackPanel>
                 </DataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type vms:RandomPresetsViewModel}" ItemsSource="{Binding Proxies}">
+                    <TextBlock Text="{Binding Name}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type vms:RandomPresetsCollectionProxy}" ItemsSource="{Binding Presets}">
+                    <TextBlock Text="{Binding Name}" ToolTip="{Binding FileName}"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type vms:RandomPresetViewModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Chance}" Margin="8 0"/>
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
             </TreeView.Resources>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="Focusable" Value="{Binding ItemsSpecified, FallbackValue=True}" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
                             <Setter Property="IsExpanded" Value="True"/>

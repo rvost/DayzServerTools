@@ -63,6 +63,12 @@
                               CommandParameter="{Binding PlacementTarget.SelectedItems,
                                                          RelativeSource={RelativeSource FindAncestor,
                                                          AncestorType={x:Type ContextMenu}}}"/>
+                    <MenuItem Header="Export to cfgrandompresets.xml..."
+                              Icon="{StaticResource ExportRandomPresetsVecIcon}"
+                              Command="{Binding ExportToRandomPresetsCommand}"
+                              CommandParameter="{Binding PlacementTarget.SelectedItems,
+                                                         RelativeSource={RelativeSource FindAncestor,
+                                                         AncestorType={x:Type ContextMenu}}}"/>
                     <MenuItem Header="Export to Trader Config..."
                               Icon="{StaticResource ExportTraderIcon}"
                               Command="{Binding ExportToTraderCommand}"

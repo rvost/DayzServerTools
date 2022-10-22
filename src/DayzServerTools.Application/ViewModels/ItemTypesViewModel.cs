@@ -40,7 +40,8 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     [NotifyCanExecuteChangedFor(nameof(AdjustLifetimeCommand), nameof(AdjustQuantityCommand),
         nameof(AdjustRestockCommand), nameof(SetCategoryCommand), nameof(ExportToNewFileCommand), 
         nameof(ExportToTraderCommand), nameof(AddValueFlagCommand), nameof(AddUsageFlagCommand), 
-        nameof(AddTagCommand), nameof(ClearFlagsCommand), nameof(ExportToSpawnableTypesCommand))]
+        nameof(AddTagCommand), nameof(ClearFlagsCommand), nameof(ExportToSpawnableTypesCommand),
+        nameof(ExportToRandomPresetsCommand))]
     private IList selectedItems;
     
     public IRelayCommand AddEmptyItemCommand { get; }
@@ -49,6 +50,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public IRelayCommand<float?> AdjustRestockCommand { get; }
     public IRelayCommand ExportToNewFileCommand { get; }
     public IRelayCommand ExportToSpawnableTypesCommand { get; }
+    public IRelayCommand ExportToRandomPresetsCommand { get; }
     public IRelayCommand ExportToTraderCommand { get; }
     public IRelayCommand ClassnamesImportCommand { get; }
     public IRelayCommand<VanillaFlag> SetCategoryCommand { get; }
@@ -70,6 +72,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, (param) => CanExecuteBatchCommand());
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         ExportToSpawnableTypesCommand = new RelayCommand<object>(ExportToSpawnableTypes, CanExecuteExportCommand);
+        ExportToRandomPresetsCommand = new RelayCommand<object>(ExportToRandomPresets, CanExecuteExportCommand);
         ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteExportCommand);
         ClassnamesImportCommand = new RelayCommand(ClassnamesImport);
         SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, (param) => CanExecuteBatchCommand());
@@ -152,6 +155,19 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
 
         var options = _workspace.Tabs
             .Where(t => t is SpawnableTypesViewModel)
+            .ToList();
+        var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
+        var dialog = _dialogFactory.CreateSpawnableTypesExportDialog();
+        dialog.ShowDialog(vm);
+    }
+    protected void ExportToRandomPresets(object cmdParam)
+    {
+        var list = (IList)cmdParam;
+        var viewModels = list.Cast<ItemTypeViewModel>();
+        var classnames = viewModels.Select(vm => vm.Name);
+
+        var options = _workspace.Tabs
+            .Where(t => t is RandomPresetsViewModel)
             .ToList();
         var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
         var dialog = _dialogFactory.CreateSpawnableTypesExportDialog();

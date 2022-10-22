@@ -16,6 +16,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     [ObservableProperty]
     private RandomPresetViewModel selectedPreset;
 
+    public IEnumerable<RandomPresetsCollectionProxy> Proxies { get; }
     public ObservableCollection<RandomPresetViewModel> CargoPresets { get; } = new();
     public ObservableCollection<RandomPresetViewModel> AttachmentsPresets { get; } = new();
 
@@ -26,6 +27,12 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     {
         Model = new();
         FileName = "cfgrandompresets.xml";
+
+        Proxies = new List<RandomPresetsCollectionProxy>
+        {
+            new RandomPresetsCollectionProxy( "Cargo", CargoPresets),
+            new RandomPresetsCollectionProxy("Attachments", AttachmentsPresets)
+        };
 
         NewCargoPresetCommand = new RelayCommand(() => CargoPresets.Add(new(new())));
         NewAttachmentsPresetCommand = new RelayCommand(() => AttachmentsPresets.Add(new(new())));
@@ -81,5 +88,17 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     {
         CargoPresets.CollectionChanged -= OnPresetsCollectionChanged;
         AttachmentsPresets.CollectionChanged -= OnPresetsCollectionChanged;
+    }
+}
+
+public class RandomPresetsCollectionProxy
+{
+    public string Name { get; }
+    public ObservableCollection<RandomPresetViewModel> Presets { get; }
+
+    public RandomPresetsCollectionProxy(string name, ObservableCollection<RandomPresetViewModel> presets)
+    {
+        Name = name;
+        Presets = presets;
     }
 }

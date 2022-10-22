@@ -133,12 +133,12 @@ public partial class SpawnableTypeViewModel : ObservableObject
 public class SpawnablePresetsCollectionProxy : IImporter<IEnumerable<string>>
 {
     public string Name { get; }
-    public ObservableCollection<SpawnablePresetViewModel> Spawnables { get; }
+    public ObservableCollection<SpawnablePresetViewModel> Presets { get; }
 
-    public SpawnablePresetsCollectionProxy(string name, ObservableCollection<SpawnablePresetViewModel> spawnables)
+    public SpawnablePresetsCollectionProxy(string name, ObservableCollection<SpawnablePresetViewModel> presets)
     {
         Name = name;
-        Spawnables = spawnables;
+        Presets = presets;
     }
 
     public void Import(IEnumerable<string> classnames)
@@ -150,6 +150,6 @@ public class SpawnablePresetsCollectionProxy : IImporter<IEnumerable<string>>
             preset.Items.Add(item);
             return new SpawnablePresetViewModel(preset);
         });
-        Spawnables.AddRange(presetVMs);
+        Presets.AddRange(presetVMs);
     }
 }
