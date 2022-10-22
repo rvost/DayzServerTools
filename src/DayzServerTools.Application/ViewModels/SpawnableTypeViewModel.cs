@@ -130,7 +130,7 @@ public partial class SpawnableTypeViewModel : ObservableObject
     }
 }
 
-public class SpawnablePresetsCollectionProxy : IClassnamesImporter
+public class SpawnablePresetsCollectionProxy : IImporter<IEnumerable<string>>
 {
     public string Name { get; }
     public ObservableCollection<SpawnablePresetViewModel> Spawnables { get; }
@@ -141,7 +141,7 @@ public class SpawnablePresetsCollectionProxy : IClassnamesImporter
         Spawnables = spawnables;
     }
 
-    public void AcceptClassnames(IEnumerable<string> classnames)
+    public void Import(IEnumerable<string> classnames)
     {
         var items = classnames.Select(name => new SpawnableItem(name, 1));
         var presetVMs = items.Select(item =>

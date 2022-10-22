@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.ViewModels.Base;
+using DayzServerTools.Application.ViewModels.Dialogs;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
@@ -24,7 +25,7 @@ public enum ClearTarget
 
 public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisposable
 {
-
+    private readonly WorkspaceViewModel _workspace;
     [ObservableProperty]
     private ObservableCollection<ItemTypeViewModel> items = new();
     [ObservableProperty]
@@ -41,7 +42,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         nameof(ExportToTraderCommand), nameof(AddValueFlagCommand), nameof(AddUsageFlagCommand), 
         nameof(AddTagCommand), nameof(ClearFlagsCommand), nameof(ExportToSpawnableTypesCommand))]
     private IList selectedItems;
-
+    
     public IRelayCommand AddEmptyItemCommand { get; }
     public IRelayCommand<float?> AdjustQuantityCommand { get; }
     public IRelayCommand<float?> AdjustLifetimeCommand { get; }
@@ -57,8 +58,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
     public IRelayCommand ValidateCommand { get; }
 
-    public ItemTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
+    public ItemTypesViewModel(IDialogFactory dialogFactory, WorkspaceViewModel workspace) : base(dialogFactory)
     {
+        _workspace = workspace;
         Model = new();
         FileName = "types.xml";
 
@@ -148,9 +150,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
         var viewModels = list.Cast<ItemTypeViewModel>();
         var classnames = viewModels.Select(vm => vm.Name);
 
+        var options = _workspace.Tabs
+            .Where(t => t is SpawnableTypesViewModel)
+            .ToList();
+        var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
         var dialog = _dialogFactory.CreateSpawnableTypesExportDialog();
-        dialog.Classnames = classnames;
-        dialog.ShowDialog();
+        dialog.ShowDialog(vm);
     }
     protected void ExportToTrader(object cmdParam)
     {
@@ -220,7 +225,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "types*";
         return dialog;
     }
     protected override bool CanSave()

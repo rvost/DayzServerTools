@@ -18,11 +18,11 @@ namespace DayzServerTools.Windows.Views.Dialogs
     /// <summary>
     /// Interaction logic for SpawnableTypesExportView.xaml
     /// </summary>
-    public partial class SpawnableTypesExportView : Window
+    public partial class ExportView : Window
     {
-        private SpawnableTypesExportViewModel _model;
+        private IExportViewModel _model;
 
-        public SpawnableTypesExportView(SpawnableTypesExportViewModel model)
+        public ExportView(IExportViewModel model)
         {
             InitializeComponent();
             _model = model;

@@ -11,7 +11,7 @@ using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
-public class SpawnablePresetViewModel:ObservableObject, IClassnamesImporter
+public class SpawnablePresetViewModel:ObservableObject, IImporter<IEnumerable<string>>
 {
     private readonly SpawnablePreset _model;
     private readonly IDialogFactory _dialogFactory;
@@ -47,7 +47,7 @@ public class SpawnablePresetViewModel:ObservableObject, IClassnamesImporter
         ImportClassnamesCommand = new RelayCommand(ImportClassnames);
     }
 
-    public void AcceptClassnames(IEnumerable<string> classnames)
+    public void Import(IEnumerable<string> classnames)
     {
         var total = classnames.Count();
         var items = classnames.Select(name =>
