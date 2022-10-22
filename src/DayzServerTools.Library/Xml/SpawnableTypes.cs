@@ -61,9 +61,9 @@ public class SpawnablePreset
         => !string.IsNullOrWhiteSpace(Preset);
 
     [XmlAttribute("chance")]
-    public double Chance { get; set; } = 0;
+    public double Chance { get; set; } = double.NaN;
     public bool ChanceSpecified
-        => !PresetSpecified;
+        => !PresetSpecified && !double.IsNaN(Chance);
 
     [XmlElement("item")]
     public ObservableCollection<SpawnableItem> Items { get; set; } = new();
