@@ -460,6 +460,11 @@
                                    Command="{Binding ActiveFile.SetMaxDamageCommand}"
                                    CommandParameter="{Binding ElementName=maxDamageTextBox, Path=Text, Converter={StaticResource StringToDoubleConverter}}"/>
                 </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Validation" MinWidth="80"
+                                       HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Validate" Icon="{StaticResource ValidateVecIcon}"
+                                   Command="{Binding ActiveFile.ValidateCommand}"/>
+                </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Import">
                     <fluent:Button Header="Classnames as Cargo Presets" Icon="{StaticResource ImportVecIcon}"
                                    Size="Middle"

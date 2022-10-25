@@ -4,8 +4,10 @@ using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Messages;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
@@ -31,6 +33,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     public IRelayCommand<object> ExportToNewFileCommand { get; }
     public IRelayCommand<double> SetMinDamageCommand { get; }
     public IRelayCommand<double> SetMaxDamageCommand { get; }
+    public IRelayCommand ValidateCommand { get; }
 
     public SpawnableTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
@@ -41,6 +44,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         SetMinDamageCommand = new RelayCommand<double>(SetMinDamage, (param) => CanExecuteBatchCommand());
         SetMaxDamageCommand = new RelayCommand<double>(SetMaxDamage, (param) => CanExecuteBatchCommand());
+        ValidateCommand = new RelayCommand(Validate);
 
         Spawnables.CollectionChanged += OnSpawnablesCollectionChanged;
     }
@@ -56,6 +60,21 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         var models = classnames.Select(name => new SpawnableType() { Name = name });
         var viewModels = models.Select(models => new SpawnableTypeViewModel(models));
         Spawnables.AddRange(viewModels);
+    }
+    public void Validate()
+    {
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
+        Spawnables.AsParallel().ForAll(s => s.ValidateSelf());
+        var allErrors = Spawnables.AsParallel()
+            .Where(s => s.HasErrors)
+            .Select(s =>
+            {
+                var errorMessages = s.GetErrors().Select(r => r.ErrorMessage);
+                return new ValidationErrorInfo(this, s.Name, errorMessages);
+            }
+            ).ToList();
+        allErrors.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
 
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
@@ -88,7 +107,12 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         viewModels.AsParallel().ForAll(spawnable => spawnable.MaxDamage = value);
     }
 
-    protected override bool CanSave() => true;
+    protected override bool CanSave()
+    {
+        var isEmpty = Spawnables.Count == 0;
+        var isValid = !Spawnables.Any(i => i.HasErrors);
+        return !isEmpty && isValid;
+    }
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();

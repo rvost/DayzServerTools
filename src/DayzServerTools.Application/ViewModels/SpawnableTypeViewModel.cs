@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -9,6 +9,7 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validation;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -18,7 +19,7 @@ public enum PresetType
     Attachments
 }
 
-public partial class SpawnableTypeViewModel : ObservableObject
+public partial class SpawnableTypeViewModel : ObservableValidator
 {
     private readonly SpawnableType _model;
     private readonly IDialogFactory _dialogFactory;
@@ -27,6 +28,7 @@ public partial class SpawnableTypeViewModel : ObservableObject
     private SpawnablePresetViewModel selectedPreset;
 
     public SpawnableType Model => _model;
+    [MinLength(1)]
     public string Name
     {
         get => _model.Name;
@@ -37,15 +39,17 @@ public partial class SpawnableTypeViewModel : ObservableObject
         get => _model.Hoarder;
         set => SetProperty(_model.Hoarder, value, _model, (m, v) => m.Hoarder = v);
     }
+    [CustomValidation(typeof(SpawnChanceValidation), nameof(SpawnChanceValidation.ValidateChance))]
     public double MinDamage
     {
         get => _model.Damage.Min;
-        set => SetProperty(_model.Damage.Min, value, _model, (m, v) => m.Damage.Min = v);
+        set => SetProperty(_model.Damage.Min, value, _model, (m, v) => m.Damage.Min = v, true);
     }
+    [CustomValidation(typeof(SpawnChanceValidation), nameof(SpawnChanceValidation.ValidateChance))]
     public double MaxDamage
     {
         get => _model.Damage.Max;
-        set => SetProperty(_model.Damage.Max, value, _model, (m, v) => m.Damage.Max = v);
+        set => SetProperty(_model.Damage.Max, value, _model, (m, v) => m.Damage.Max = v, true);
     }
     public string Tag
     {
@@ -53,7 +57,9 @@ public partial class SpawnableTypeViewModel : ObservableObject
         set => SetProperty(_model.Tag.Value, value, _model, (m, v) => m.Tag.Value = v);
     }
     public IEnumerable<SpawnablePresetsCollectionProxy> Proxies { get; }
+    [CustomValidation(typeof(SpawnableTypeViewModel), nameof(ValidateSpawnablePresets))]
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
+    [CustomValidation(typeof(SpawnableTypeViewModel), nameof(ValidateSpawnablePresets))]
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
 
     public IRelayCommand<PresetType> AddNewPresetCommand { get; }
@@ -79,6 +85,21 @@ public partial class SpawnableTypeViewModel : ObservableObject
         Attachments.CollectionChanged += OnPresetsCollectionChanged;
     }
 
+    public void ValidateSelf() => ValidateAllProperties();
+    public static ValidationResult ValidateSpawnablePresets(ICollection<SpawnablePresetViewModel> presets,
+        ValidationContext context)
+    {
+        presets.AsParallel().ForAll(s => s.ValidateSelf());
+        var presetsWithErrors = presets.Where(s => s.HasErrors);
+        if (presetsWithErrors.Any())
+        {
+            return presetsWithErrors.First().GetErrors().First();
+        }
+        else
+        {
+            return ValidationResult.Success;
+        }
+    }
     protected void AddNewPreset(PresetType type)
     {
         var newPreset = new SpawnablePresetViewModel(new SpawnablePreset());
