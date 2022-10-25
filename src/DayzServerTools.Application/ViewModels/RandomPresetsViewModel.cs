@@ -2,8 +2,9 @@
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using CommunityToolkit.Mvvm.Messaging;
 using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Messages;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
@@ -22,6 +23,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
     public IRelayCommand NewCargoPresetCommand { get; }
     public IRelayCommand NewAttachmentsPresetCommand { get; }
+    public IRelayCommand ValidateCommand { get; }
 
     public RandomPresetsViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
@@ -36,11 +38,18 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
         NewCargoPresetCommand = new RelayCommand(() => CargoPresets.Add(new(new())));
         NewAttachmentsPresetCommand = new RelayCommand(() => AttachmentsPresets.Add(new(new())));
+        ValidateCommand = new RelayCommand(Validate);
 
         CargoPresets.CollectionChanged += OnPresetsCollectionChanged;
         AttachmentsPresets.CollectionChanged += OnPresetsCollectionChanged;
     }
 
+    public void Validate()
+    {
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+        ReportPresetsErrors("Cargo", CargoPresets);
+        ReportPresetsErrors("Attachments", AttachmentsPresets);
+    }
     protected override void OnLoad(Stream input, string filename)
     {
         var randomPresets = RandomPresets.ReadFromStream(input);
@@ -51,7 +60,12 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
             randomPresets.AttachmentsPresets.Select(preset => new RandomPresetViewModel(preset))
             );
     }
-    protected override bool CanSave() => true;
+    protected override bool CanSave()
+    {
+        var isEmpty = CargoPresets.Count == 0 && AttachmentsPresets.Count == 0;
+        var hasErrors = CargoPresets.Any(f => f.HasErrors) || AttachmentsPresets.Any(f => f.HasErrors);
+        return !isEmpty && !hasErrors;
+    }
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
@@ -59,6 +73,21 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
         return dialog;
     }
 
+    private void ReportPresetsErrors(string colName, ICollection<RandomPresetViewModel> presets)
+    {
+        presets.AsParallel().ForAll(preset => preset.ValidateSelf());
+
+        var allErrors = presets.AsParallel()
+            .Where(preset => preset.HasErrors)
+            .Select(preset =>
+            {
+                var errorMessages = preset.GetErrors().Select(r => r.ErrorMessage);
+                return new ValidationErrorInfo(this, $"({colName}):{preset.Name}", errorMessages);
+            }
+            );
+
+        allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
+    }
     private void OnPresetsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         ObservableCollection<RandomPreset> target =
