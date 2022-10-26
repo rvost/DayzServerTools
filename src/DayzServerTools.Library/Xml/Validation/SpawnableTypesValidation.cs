@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DayzServerTools.Library.Xml.Validation;
 
-public static class SpawnChanceValidation
+public static class SpawnableTypesValidation
 {
     public static ValidationResult ValidateChance(double value, ValidationContext context)
     {

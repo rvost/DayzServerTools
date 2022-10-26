@@ -33,7 +33,7 @@ public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerab
     }
     public bool PresetSpecified => _model.PresetSpecified;
     public bool ItemsSpecified => _model.ItemsSpecified;
-    [CustomValidation(typeof(SpawnChanceValidation), nameof(SpawnChanceValidation.ValidateChance))]
+    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double Chance
     {
         get => _model.Chance;

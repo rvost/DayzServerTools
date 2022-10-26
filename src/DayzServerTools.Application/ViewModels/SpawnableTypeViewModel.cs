@@ -39,13 +39,13 @@ public partial class SpawnableTypeViewModel : ObservableValidator
         get => _model.Hoarder;
         set => SetProperty(_model.Hoarder, value, _model, (m, v) => m.Hoarder = v);
     }
-    [CustomValidation(typeof(SpawnChanceValidation), nameof(SpawnChanceValidation.ValidateChance))]
+    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double MinDamage
     {
         get => _model.Damage.Min;
         set => SetProperty(_model.Damage.Min, value, _model, (m, v) => m.Damage.Min = v, true);
     }
-    [CustomValidation(typeof(SpawnChanceValidation), nameof(SpawnChanceValidation.ValidateChance))]
+    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double MaxDamage
     {
         get => _model.Damage.Max;

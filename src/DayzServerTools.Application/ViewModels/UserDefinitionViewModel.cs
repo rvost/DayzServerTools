@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -19,7 +20,7 @@ public class UserDefinitionViewModel : ObservableValidator
         get => _model.Name;
         set => SetProperty(_model.Name, value, _model, (m, v) => m.Name = v, true);
     }
-    [CustomValidation(typeof(UserDefinitionViewModel), nameof(ValidateDefinitions))]
+    [CustomValidation(typeof(UserDefinitionsValidation), nameof(UserDefinitionsValidation.ValidateDefinitions))]
     public ObservableCollection<UserDefinableFlag> Definitions { get => _model.Definitions; }
 
     public IRelayCommand<UserDefinableFlag> AddDefinitionCommand { get; }
@@ -39,11 +40,4 @@ public class UserDefinitionViewModel : ObservableValidator
     }
 
     public void ValidateSelf() => ValidateAllProperties();
-    public static ValidationResult ValidateDefinitions(ObservableCollection<UserDefinableFlag> definitions, ValidationContext context)
-    {
-        var getAvailableDefinitions = (Func<IEnumerable<UserDefinableFlag>>)context.Items["definitions"];
-        var availableDefinitions = getAvailableDefinitions();
-        var validator = new UserFlagDefinitionValidator(availableDefinitions);
-        return validator.Validate(definitions);
-    }
 }
