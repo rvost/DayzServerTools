@@ -15,7 +15,7 @@ using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.ViewModels;
 
-public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>, 
+public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>,
     IImporter<IEnumerable<string>>, IDisposable
 {
     [ObservableProperty]
@@ -26,7 +26,8 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand),
         nameof(SetMinDamageCommand), nameof(SetMaxDamageCommand))]
     private IList selectedItems;
-
+    [ObservableProperty]
+    private bool showTagColumn = false;
     public ObservableCollection<SpawnableTypeViewModel> Spawnables { get; set; } = new();
 
     public IRelayCommand AddSpawnableTypeCommand { get; }
@@ -90,12 +91,12 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     }
     protected void SetMinDamage(double value)
     {
-        if(SelectedItems is null)
+        if (SelectedItems is null)
         {
             return;
         }
         var viewModels = SelectedItems.Cast<SpawnableTypeViewModel>();
-        viewModels.AsParallel().ForAll(spawnable => spawnable.MinDamage=value);
+        viewModels.AsParallel().ForAll(spawnable => spawnable.MinDamage = value);
     }
     protected void SetMaxDamage(double value)
     {

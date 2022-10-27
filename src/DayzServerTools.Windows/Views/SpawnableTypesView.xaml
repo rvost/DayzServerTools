@@ -8,11 +8,19 @@
              mc:Ignorable="d"
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
-        <controls:BindableMultiSelectDataGrid Grid.Column="0" AutoGenerateColumns="False"
+        <CheckBox Grid.Row="0" IsChecked="{Binding ShowTagColumn}" Content="Show tag"
+                  HorizontalAlignment="Right"/>
+        <!--Capture DataContext for DataGridTemplateColumn-->
+        <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+        <controls:BindableMultiSelectDataGrid Grid.Row="1" Grid.Column="0" AutoGenerateColumns="False"
                                               x:Name="datagrid" ItemsSource="{Binding Spawnables}"
                                               SelectedItem="{Binding SelectedItem}"
                                               SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
@@ -27,15 +35,44 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                <DataGridCheckBoxColumn Header="Hoarder" Binding="{Binding Hoarder, Converter={StaticResource ObjectToBooleanConverter}}"/>
-                <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}"/>
-                <DataGridTextColumn Header="Max Damage" Binding="{Binding MaxDamage}"/>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesNameTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridCheckBoxColumn Header="Hoarder" Binding="{Binding Hoarder, Converter={StaticResource ObjectToBooleanConverter}}">
+                    <DataGridCheckBoxColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesHoarderTooltip}" />
+                        </Style>
+                    </DataGridCheckBoxColumn.HeaderStyle>
+                </DataGridCheckBoxColumn>
+                <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesMinDamageTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Max Damage" Binding="{Binding MaxDamage}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesMaxDamageTooltip}" />
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Cargo Presets" IsReadOnly="True"
                                     Binding="{Binding Cargo.Count, Mode=OneWay}"/>
                 <DataGridTextColumn Header="Attachments Presets" IsReadOnly="True"
                                     Binding="{Binding Attachments.Count, Mode=OneWay}"/>
-                <DataGridTemplateColumn Header="Tag" SortMemberPath="Tag">
+                <DataGridTemplateColumn Header="Tag" SortMemberPath="Tag" Visibility="{Binding Source={x:Reference dummyElement}, Path=DataContext.ShowTagColumn, Converter={StaticResource boolToVisibilityConverter}}">
+                    <DataGridTemplateColumn.HeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesTagTooltip}" />
+                        </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Padding="2">
@@ -57,7 +94,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </controls:BindableMultiSelectDataGrid>
-        <ContentControl Grid.Column="1" Content="{Binding ElementName=datagrid, Path=SelectedItem}">
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding ElementName=datagrid, Path=SelectedItem}">
             <ContentControl.ContentTemplate>
                 <DataTemplate>
                     <Grid>

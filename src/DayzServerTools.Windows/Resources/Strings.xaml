@@ -19,7 +19,13 @@
     <system:String x:Key="ItemTypesCountInPlayerTooltip">Does the spawner count items in players inventory when setting items to nominal and minimum values.</system:String>
     <system:String x:Key="ItemTypesCraftedTooltip">Mark player craftable items.</system:String>
     <system:String x:Key="ItemTypesDelootTooltip">Mark dynamic event loot objects (e.g. in helicrashes).</system:String>
-    
+
+    <system:String x:Key="SpawnableTypesNameTooltip">Item Class Name (as in types.xml)</system:String>
+    <system:String x:Key="SpawnableTypesHoarderTooltip">Whether the element is treated as a persistent container</system:String>
+    <system:String x:Key="SpawnableTypesMinDamageTooltip" xml:space="preserve">Minimum amount of damage dealt to an item upon spawning.&#13;The value NaN means that the default settings from globals.xml will be used.</system:String>
+    <system:String x:Key="SpawnableTypesMaxDamageTooltip" xml:space="preserve">Maximum amount of damage dealt to an item upon spawning.&#13;The value NaN means that the default settings from globals.xml will be used.</system:String>
+    <system:String x:Key="SpawnableTypesTagTooltip">Arcane parameter used only for one item in vanilla cfgspawnabletypes.xml</system:String>
+       
     <system:String x:Key="TraderItemNameTooltip">Item Class Name (as in types.xml)</system:String>
     <system:String x:Key="TraderQuantityModifierTooltip" xml:space="preserve">Quantity Modifier:&#13;0..X - Number items in stack&#13;* - Maximum items in stack&#13;W - Weapon&#13;M - Weapon magazin&#13;S - Stack Meat&#13;V - Vehicle&#13;VNK - Vehicle without Key&#13;K - Key Duplication</system:String>
     <system:String x:Key="TraderBuyPriceTooltip" xml:space="preserve">Buy price in currency units.&#13;-1 means item can not be bought.</system:String>
