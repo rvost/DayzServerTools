@@ -20,7 +20,17 @@ DayzServerTools are designed to simplify and speed up the setup of your custom D
 * User definitions (`cfglimitsdefinitionuser.xml`) and different styles of writing `types.xml` are supported.
 * Load `cfglimitsdefinition.xml` (and `cfglimitsdefinitionuser.xml`) to select from avilable flag values.
 * Validate `types.xml` according to `cfglimitsdefinition.xml` and `cfglimitsdefinitionuser.xml`.
-* Export items to trader config.
+* Export items to `cfgspawnabletypes.xml`, random presets or trader config.
+* Import items from list of classnames in free form.
+
+### DayZ cfgspawnabletypes.xml editor
+
+* Add/Remove items.
+* Add/Remove item cargo or attachments.
+* Edit amount of damage dealt to the item upon spawning.
+* Edit chance of attachments appearing on an item.
+* Load `cfgrandompresets.xml` to select from avilable cargo or attacments presets.
+* Validate `cfgspawnabletypes.xml` according to `cfgrandompresets.xml`.
 * Import items from list of classnames in free form.
 
 ### Dayz Trader config editor
@@ -34,6 +44,12 @@ DayzServerTools supports [Dr_J0nes Trader Mod](https://steamcommunity.com/shared
 * Export items from `types.xml` to `TraderConfig.txt`.
 * Import items from list of classnames in free form.
 * Validate config.
+
+### Random presets editor
+
+* Add/Remove presets
+* Import items from `types.xml`
+* Import items from list of classnames in free form.
 
 ### User flags editor
 
