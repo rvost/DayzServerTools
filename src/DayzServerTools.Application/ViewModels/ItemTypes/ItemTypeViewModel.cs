@@ -10,7 +10,7 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
 public class ItemTypeViewModel : ObservableValidator
 {

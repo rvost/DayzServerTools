@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DayzServerTools.Library.Trader;
 using System.ComponentModel.DataAnnotations;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.Trader;
 
 public class TraderItemViewModel : ObservableValidator
 {

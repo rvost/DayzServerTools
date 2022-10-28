@@ -1,18 +1,21 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
+using RandomPresetsModel = DayzServerTools.Library.Xml.RandomPresets;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.RandomPresets;
 
-public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets>, IDisposable
+public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresetsModel>, IDisposable
 {
     [ObservableProperty]
     private RandomPresetViewModel selectedPreset;
@@ -52,7 +55,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     }
     protected override void OnLoad(Stream input, string filename)
     {
-        var randomPresets = RandomPresets.ReadFromStream(input);
+        var randomPresets = RandomPresetsModel.ReadFromStream(input);
         CargoPresets.AddRange(
             randomPresets.CargoPresets.Select(preset => new RandomPresetViewModel(preset))
             );

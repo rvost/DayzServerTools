@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Stores;
+using DayzServerTools.Application.ViewModels.Trader;
 
 namespace DayzServerTools.Application.ViewModels.Dialogs;
 

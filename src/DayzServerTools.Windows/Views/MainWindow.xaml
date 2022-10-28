@@ -7,6 +7,11 @@
                      xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
+                     xmlns:itemsVMs="clr-namespace:DayzServerTools.Application.ViewModels.ItemTypes;assembly=DayzServerTools.Application"
+                     xmlns:traderVMs="clr-namespace:DayzServerTools.Application.ViewModels.Trader;assembly=DayzServerTools.Application"
+                     xmlns:presetsVMs="clr-namespace:DayzServerTools.Application.ViewModels.RandomPresets;assembly=DayzServerTools.Application"
+                     xmlns:userDefVMs="clr-namespace:DayzServerTools.Application.ViewModels.UserDefinitions;assembly=DayzServerTools.Application"
+                     xmlns:spawnablesVMs="clr-namespace:DayzServerTools.Application.ViewModels.SpawnableTypes;assembly=DayzServerTools.Application"
                      xmlns:dockView="clr-namespace:DayzServerTools.Windows.Views.Dock"
                      xmlns:views="clr-namespace:DayzServerTools.Windows.Views" xmlns:controls="clr-namespace:DayzServerTools.Windows.Controls"
                      mc:Ignorable="d"
@@ -43,19 +48,19 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <DataTemplate DataType="{x:Type viewmodels:ItemTypesViewModel}">
+        <DataTemplate DataType="{x:Type itemsVMs:ItemTypesViewModel}">
             <views:ItemTypesView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:UserDefinitionsViewModel}">
+        <DataTemplate DataType="{x:Type userDefVMs:UserDefinitionsViewModel}">
             <views:UserDefinitionsView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:TraderConfigViewModel}">
+        <DataTemplate DataType="{x:Type traderVMs:TraderConfigViewModel}">
             <views:TraderConfigView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:RandomPresetsViewModel}">
+        <DataTemplate DataType="{x:Type presetsVMs:RandomPresetsViewModel}">
             <views:RandomPresetsView/>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewmodels:SpawnableTypesViewModel}">
+        <DataTemplate DataType="{x:Type spawnablesVMs:SpawnableTypesViewModel}">
             <views:SpawnableTypesView/>
         </DataTemplate>
         <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
@@ -395,7 +400,7 @@
                 <fluent:RibbonGroupBox Header="Value Flags">
                     <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
                                    Command="{Binding ActiveFile.ClearFlagsCommand}" 
-                                   CommandParameter="{x:Static viewmodels:ClearTarget.ValueFlags}"/>
+                                   CommandParameter="{x:Static itemsVMs:ClearTarget.ValueFlags}"/>
                     <fluent:ComboBox x:Name="newValueFlagComboBox" ItemsSource="{Binding Values}" 
                                      IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
                                      Style="{StaticResource RibbonComboBox}"
@@ -407,7 +412,7 @@
                 <fluent:RibbonGroupBox Header="Usage Flags">
                     <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
                                    Command="{Binding ActiveFile.ClearFlagsCommand}" 
-                                   CommandParameter="{x:Static viewmodels:ClearTarget.UsageFlags}"/>
+                                   CommandParameter="{x:Static itemsVMs:ClearTarget.UsageFlags}"/>
                     <fluent:ComboBox x:Name="newUsageFlagComboBox" ItemsSource="{Binding Usages}" 
                                      IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
                                      Style="{StaticResource RibbonComboBox}"
@@ -419,7 +424,7 @@
                 <fluent:RibbonGroupBox Header="Tags">
                     <fluent:Button Header="Clear" Icon="{StaticResource ClearVecIcon}"
                                    Command="{Binding ActiveFile.ClearFlagsCommand}" 
-                                   CommandParameter="{x:Static viewmodels:ClearTarget.Tags}"/>
+                                   CommandParameter="{x:Static itemsVMs:ClearTarget.Tags}"/>
                     <fluent:ComboBox x:Name="newTagComboBox" ItemsSource="{Binding Tags}" 
                                      IsEditable="False"  SelectedIndex="0" IsSynchronizedWithCurrentItem="True"
                                      Style="{StaticResource RibbonComboBox}"
@@ -438,11 +443,11 @@
                     <fluent:Button Header="Cargo Preset" Icon="{StaticResource AddVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
-                                   CommandParameter="{x:Static viewmodels:PresetType.Cargo}"/>
+                                   CommandParameter="{x:Static spawnablesVMs:PresetType.Cargo}"/>
                     <fluent:Button Header="Attachments Preset" Icon="{StaticResource AddVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
-                                   CommandParameter="{x:Static viewmodels:PresetType.Attachments}"/>
+                                   CommandParameter="{x:Static spawnablesVMs:PresetType.Attachments}"/>
                     </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Edit">
                     <fluent:Button Header="Set Min Damage" Icon="{StaticResource EditVecIcon}"
@@ -469,11 +474,11 @@
                     <fluent:Button Header="Classnames as Cargo Presets" Icon="{StaticResource ImportVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.ImportClassnamesAsPresetsCommand}"
-                                   CommandParameter="{x:Static viewmodels:PresetType.Cargo}"/>
+                                   CommandParameter="{x:Static spawnablesVMs:PresetType.Cargo}"/>
                     <fluent:Button Header="Classnames as Attachments Preset" Icon="{StaticResource ImportVecIcon}"
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.ImportClassnamesAsPresetsCommand}"
-                                   CommandParameter="{x:Static viewmodels:PresetType.Attachments}"/>
+                                   CommandParameter="{x:Static spawnablesVMs:PresetType.Attachments}"/>
                     <fluent:Button Header="Classnames to Preset" Icon="{StaticResource ImportVecIcon}"
                                    Command="{Binding ActiveFile.SelectedItem.SelectedPreset.ImportClassnamesCommand}"/>
                 </fluent:RibbonGroupBox>

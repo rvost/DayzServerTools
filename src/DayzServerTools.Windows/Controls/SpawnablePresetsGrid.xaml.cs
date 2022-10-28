@@ -1,4 +1,5 @@
 ﻿using DayzServerTools.Application.ViewModels;
+using DayzServerTools.Application.ViewModels.SpawnableTypes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

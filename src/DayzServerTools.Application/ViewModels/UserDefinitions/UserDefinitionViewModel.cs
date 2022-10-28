@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.UserDefinitions;
 
 public class UserDefinitionViewModel : ObservableValidator
 {

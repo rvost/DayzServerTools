@@ -1,5 +1,5 @@
 ﻿using DayzServerTools.Application.Extensions;
-using DayzServerTools.Application.ViewModels;
+using DayzServerTools.Application.ViewModels.Trader;
 
 namespace DayzServerTools.Application.Stores;
 

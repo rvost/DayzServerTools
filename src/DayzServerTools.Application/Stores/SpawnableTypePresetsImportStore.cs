@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 
 using DayzServerTools.Application.Extensions;
-using DayzServerTools.Application.ViewModels;
+using DayzServerTools.Application.ViewModels.SpawnableTypes;
 using DayzServerTools.Library.Xml;
 
 namespace DayzServerTools.Application.Stores;

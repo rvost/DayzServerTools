@@ -11,7 +11,7 @@ using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Trader;
 
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderCategoryViewModel : ObservableObject
 {

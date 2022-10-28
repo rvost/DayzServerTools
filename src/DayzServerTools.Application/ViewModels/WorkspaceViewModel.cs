@@ -1,18 +1,26 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.ViewModels.Base;
+using DayzServerTools.Application.ViewModels.ItemTypes;
 using DayzServerTools.Application.ViewModels.Panes;
+using DayzServerTools.Application.ViewModels.RandomPresets;
+using DayzServerTools.Application.ViewModels.Trader;
+using DayzServerTools.Application.ViewModels.UserDefinitions;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
-using System.Globalization;
+
+using RandomPresetsModel = DayzServerTools.Library.Xml.RandomPresets;
+using UserDefinitionsModel = DayzServerTools.Library.Xml.UserDefinitions;
+using DayzServerTools.Application.ViewModels.SpawnableTypes;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -38,11 +46,11 @@ public partial class WorkspaceViewModel : TabbedViewModel
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(UserDefinitionsLoaded))]
     [NotifyCanExecuteChangedFor(nameof(LoadUserDefinitionsCommand))]
-    private UserDefinitions userDefinitions = null;
+    private UserDefinitionsModel userDefinitions = null;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RandomPresetsLoaded))]
     [NotifyCanExecuteChangedFor(nameof(LoadRandomPresetsCommand))]
-    private RandomPresets randomPresets = null;
+    private RandomPresetsModel randomPresets = null;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes), 
         nameof(ActiveFileIsRandomPresets), nameof(ActiveFileIsSpawnableTypes), 
@@ -162,7 +170,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
             using var input = File.OpenRead(filename);
             try
             {
-                UserDefinitions = UserDefinitions.ReadFromStream(input);
+                UserDefinitions = UserDefinitionsModel.ReadFromStream(input);
                 Usages.AddRange(UserDefinitions.UsageFlags.Select(def => (UserDefinableFlag)def));
                 Values.AddRange(UserDefinitions.ValueFlags.Select(def => (UserDefinableFlag)def));
             }
@@ -188,7 +196,7 @@ public partial class WorkspaceViewModel : TabbedViewModel
             using var input = File.OpenRead(filename);
             try
             {
-                RandomPresets = RandomPresets.ReadFromStream(input);
+                RandomPresets = RandomPresetsModel.ReadFromStream(input);
                 AvailableCargoPresets = RandomPresets.CargoPresets.Select(p => p.Name).ToList();
                 AvailableAttachmentsPresets = RandomPresets.AttachmentsPresets.Select(p => p.Name).ToList();
             }

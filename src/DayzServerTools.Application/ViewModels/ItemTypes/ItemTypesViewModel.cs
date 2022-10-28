@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Messaging;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.ViewModels.Dialogs;
+using DayzServerTools.Application.ViewModels.RandomPresets;
+using DayzServerTools.Application.ViewModels.SpawnableTypes;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
@@ -14,16 +16,9 @@ using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
-public enum ClearTarget
-{
-    ValueFlags,
-    UsageFlags,
-    Tags
-}
-
-public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisposable
+public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemTypes>, IDisposable
 {
     private readonly WorkspaceViewModel _workspace;
     [ObservableProperty]
@@ -234,7 +229,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypes>, IDisp
 
     protected override void OnLoad(Stream input, string filename)
     {
-        var newItems = ItemTypes.ReadFromStream(input);
+        var newItems = Library.Xml.ItemTypes.ReadFromStream(input);
         Items.Clear();
         Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, Workspace)));
     }

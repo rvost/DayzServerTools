@@ -11,13 +11,7 @@ using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
-namespace DayzServerTools.Application.ViewModels;
-
-public enum PresetType
-{
-    Cargo,
-    Attachments
-}
+namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
 public partial class SpawnableTypeViewModel : ObservableValidator
 {
@@ -148,29 +142,5 @@ public partial class SpawnableTypeViewModel : ObservableValidator
             default:
                 break;
         }
-    }
-}
-
-public class SpawnablePresetsCollectionProxy : IImporter<IEnumerable<string>>
-{
-    public string Name { get; }
-    public ObservableCollection<SpawnablePresetViewModel> Presets { get; }
-
-    public SpawnablePresetsCollectionProxy(string name, ObservableCollection<SpawnablePresetViewModel> presets)
-    {
-        Name = name;
-        Presets = presets;
-    }
-
-    public void Import(IEnumerable<string> classnames)
-    {
-        var items = classnames.Select(name => new SpawnableItem(name, 1));
-        var presetVMs = items.Select(item =>
-        {
-            var preset = new SpawnablePreset() { Chance = 1 };
-            preset.Items.Add(item);
-            return new SpawnablePresetViewModel(preset);
-        });
-        Presets.AddRange(presetVMs);
     }
 }

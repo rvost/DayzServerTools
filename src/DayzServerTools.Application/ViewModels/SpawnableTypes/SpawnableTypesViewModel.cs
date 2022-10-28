@@ -12,10 +12,11 @@ using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
+using SpawnableTypesModel = DayzServerTools.Library.Xml.SpawnableTypes;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
-public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypes>,
+public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypesModel>,
     IImporter<IEnumerable<string>>, IDisposable
 {
     [ObservableProperty]
@@ -121,7 +122,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     }
     protected override void OnLoad(Stream input, string filename)
     {
-        var spawnableTypes = SpawnableTypes.ReadFromStream(input);
+        var spawnableTypes = SpawnableTypesModel.ReadFromStream(input);
         Spawnables.AddRange(
             spawnableTypes.Spawnables.Select(type => new SpawnableTypeViewModel(type))
             );

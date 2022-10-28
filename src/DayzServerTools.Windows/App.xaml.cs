@@ -7,9 +7,14 @@ using Squirrel;
 
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels;
-using DayzServerTools.Windows.Services;
 using DayzServerTools.Application.ViewModels.Panes;
 using DayzServerTools.Application.ViewModels.Dialogs;
+using DayzServerTools.Application.ViewModels.ItemTypes;
+using DayzServerTools.Application.ViewModels.RandomPresets;
+using DayzServerTools.Application.ViewModels.SpawnableTypes;
+using DayzServerTools.Application.ViewModels.Trader;
+using DayzServerTools.Application.ViewModels.UserDefinitions;
+using DayzServerTools.Windows.Services;
 
 namespace DayzServerTools.Windows
 {

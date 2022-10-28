@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vms="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
+        xmlns:presetsVMs="clr-namespace:DayzServerTools.Application.ViewModels.RandomPresets;assembly=DayzServerTools.Application"
+        xmlns:spawnablesVMs="clr-namespace:DayzServerTools.Application.ViewModels.SpawnableTypes;assembly=DayzServerTools.Application"
         mc:Ignorable="d"
         Title="Select destination"
         WindowStartupLocation="CenterScreen"
@@ -18,29 +19,29 @@
                   SelectedItemChanged="OnSelectedItemChanged"
                   x:Name="optionsTreeView">
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type vms:SpawnableTypesViewModel}" ItemsSource="{Binding Spawnables}">
+                <HierarchicalDataTemplate DataType="{x:Type spawnablesVMs:SpawnableTypesViewModel}" ItemsSource="{Binding Spawnables}">
                     <TextBlock Text="{Binding Name}" ToolTip="{Binding FileName}"/>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type vms:SpawnableTypeViewModel}" ItemsSource="{Binding Proxies}">
+                <HierarchicalDataTemplate DataType="{x:Type spawnablesVMs:SpawnableTypeViewModel}" ItemsSource="{Binding Proxies}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type vms:SpawnablePresetsCollectionProxy}" ItemsSource="{Binding Presets}">
+                <HierarchicalDataTemplate DataType="{x:Type spawnablesVMs:SpawnablePresetsCollectionProxy}" ItemsSource="{Binding Presets}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type vms:SpawnablePresetViewModel}">
+                <DataTemplate DataType="{x:Type spawnablesVMs:SpawnablePresetViewModel}">
                     <StackPanel Orientation="Horizontal"> 
                         <TextBlock Text="{Binding Chance}" Margin="8 0"/>
                         <TextBlock Text="{Binding Preset}"/>
                         <TextBlock Text="{Binding DefaultItem.Name}"/>
                     </StackPanel>
                 </DataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type vms:RandomPresetsViewModel}" ItemsSource="{Binding Proxies}">
+                <HierarchicalDataTemplate DataType="{x:Type presetsVMs:RandomPresetsViewModel}" ItemsSource="{Binding Proxies}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type vms:RandomPresetsCollectionProxy}" ItemsSource="{Binding Presets}">
+                <HierarchicalDataTemplate DataType="{x:Type presetsVMs:RandomPresetsCollectionProxy}" ItemsSource="{Binding Presets}">
                     <TextBlock Text="{Binding Name}" ToolTip="{Binding FileName}"/>
                 </HierarchicalDataTemplate>
-                <DataTemplate DataType="{x:Type vms:RandomPresetViewModel}">
+                <DataTemplate DataType="{x:Type presetsVMs:RandomPresetViewModel}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Chance}" Margin="8 0"/>
                         <TextBlock Text="{Binding Name}"/>

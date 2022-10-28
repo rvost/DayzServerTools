@@ -11,7 +11,7 @@ using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
 public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerable<string>>
 {

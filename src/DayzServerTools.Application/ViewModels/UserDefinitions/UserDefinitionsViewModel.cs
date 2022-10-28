@@ -11,10 +11,11 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
+using UserDefinitionsModel = DayzServerTools.Library.Xml.UserDefinitions;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.UserDefinitions;
 
-public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinitions>, IDisposable
+public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinitionsModel>, IDisposable
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AvailableValueFlags), nameof(AvailableUsageFlags))]
@@ -64,7 +65,7 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
 
     protected override void OnLoad(Stream input, string filename)
     {
-        var userDefinitions = UserDefinitions.ReadFromStream(input);
+        var userDefinitions = UserDefinitionsModel.ReadFromStream(input);
         ValueFlags.AddRange(
             userDefinitions.ValueFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableValueFlags))
             );

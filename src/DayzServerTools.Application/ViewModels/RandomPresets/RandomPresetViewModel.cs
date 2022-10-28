@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -9,7 +10,7 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Library.Xml;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.RandomPresets;
 
 public class RandomPresetViewModel : ObservableValidator, IImporter<IEnumerable<string>>
 {

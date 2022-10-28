@@ -5,14 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Library.Trader;
+using TraderModel = DayzServerTools.Library.Trader.Trader;
 
-namespace DayzServerTools.Application.ViewModels;
+namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderViewModel : ObservableObject, IDisposable
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Name), nameof(Categories))]
-    private Trader model = new();
+    private TraderModel model = new();
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveCategoryCommand))]
     private TraderCategoryViewModel selectedCategory;
@@ -27,7 +28,7 @@ public partial class TraderViewModel : ObservableObject, IDisposable
     public IRelayCommand<string> AddCategoryCommand { get; }
     public IRelayCommand<TraderCategoryViewModel> RemoveCategoryCommand { get; }
 
-    public TraderViewModel(Trader trader)
+    public TraderViewModel(TraderModel trader)
     {
         Model = trader;
         Categories = new ObservableCollection<TraderCategoryViewModel>(
