@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,9 +27,9 @@ namespace DayzServerTools.Windows
             base.OnStartup(e);
 
             SquirrelAwareApp.HandleEvents(
-                onInitialInstall: OnAppInstall,
-                onAppUninstall: OnAppUninstall,
-                onEveryRun: OnAppRun
+                onInitialInstall: SquirrelConfiguration.OnAppInstall,
+                onAppUninstall: SquirrelConfiguration.OnAppUninstall,
+                onEveryRun: SquirrelConfiguration.OnAppRun
                 );
 
             Ioc.Default.ConfigureServices
@@ -48,30 +47,7 @@ namespace DayzServerTools.Windows
                     .BuildServiceProvider()
                 );
 
-            await UpdateApp();
-        }
-
-        private static void OnAppInstall(SemanticVersion version, IAppTools tools)
-        {
-            tools.CreateShortcutForThisExe(ShortcutLocation.StartMenu);
-        }
-
-        private static void OnAppUninstall(SemanticVersion version, IAppTools tools)
-        {
-            tools.RemoveShortcutForThisExe(ShortcutLocation.StartMenu);
-        }
-
-        private static void OnAppRun(SemanticVersion version, IAppTools tools, bool firstRun)
-        {
-            tools.SetProcessAppUserModelId();
-        }
-        private static async Task UpdateApp()
-        {
-            using var mgr = new GithubUpdateManager("https://github.com/rvost/DayzServerTools");
-            if (mgr.IsInstalledApp)
-            {
-                 await mgr.UpdateApp();
-            };
+            await SquirrelConfiguration.UpdateApp();
         }
     }
 }
