@@ -22,6 +22,15 @@ namespace DayzServerTools.Windows
     /// </summary>
     public partial class App : System.Windows.Application
     {
+        public App()
+        {
+            var serviceces = new ServiceCollection();
+            ConfigureServices(serviceces);
+
+            var serviceProvider = serviceces.BuildServiceProvider();
+            Ioc.Default.ConfigureServices(serviceProvider);
+        }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -31,23 +40,23 @@ namespace DayzServerTools.Windows
                 onAppUninstall: SquirrelConfiguration.OnAppUninstall,
                 onEveryRun: SquirrelConfiguration.OnAppRun
                 );
-
-            Ioc.Default.ConfigureServices
-                (new ServiceCollection()
-                    .AddSingleton<IDialogFactory, WindowsDialogFactory>()
-                    .AddSingleton<IDispatcherService, DispatcherService>()
-                    .AddSingleton<WorkspaceViewModel>()
-                    .AddSingleton<ErrorsPaneViewModel>()
-                    .AddTransient<ItemTypesViewModel>()
-                    .AddTransient<UserDefinitionsViewModel>()
-                    .AddTransient<RandomPresetsViewModel>()
-                    .AddTransient<TraderConfigViewModel>()
-                    .AddTransient<SpawnableTypesViewModel>()
-                    .AddTransient<TraderExportViewModel>()
-                    .BuildServiceProvider()
-                );
-
             await SquirrelConfiguration.UpdateApp();
+        }
+
+        private void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<IDialogFactory, WindowsDialogFactory>();
+            services.AddSingleton<IDispatcherService, DispatcherService>();
+
+            services.AddSingleton<WorkspaceViewModel>();
+            services.AddSingleton<ErrorsPaneViewModel>();
+
+            services.AddTransient<ItemTypesViewModel>();
+            services.AddTransient<UserDefinitionsViewModel>();
+            services.AddTransient<RandomPresetsViewModel>();
+            services.AddTransient<TraderConfigViewModel>();
+            services.AddTransient<SpawnableTypesViewModel>();
+            services.AddTransient<TraderExportViewModel>();
         }
     }
 }
