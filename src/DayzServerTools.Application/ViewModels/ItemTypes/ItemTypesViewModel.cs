@@ -15,12 +15,14 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
 public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemTypes>, IDisposable
 {
     private readonly WorkspaceViewModel _workspace;
+    private readonly ItemTypesValidator _validator;
     [ObservableProperty]
     private ObservableCollection<ItemTypeViewModel> items = new();
     [ObservableProperty]
@@ -30,15 +32,13 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     [ObservableProperty]
     private float restockPercentage = 1;
     [ObservableProperty]
-    private WorkspaceViewModel workspace = null;
-    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AdjustLifetimeCommand), nameof(AdjustQuantityCommand),
-        nameof(AdjustRestockCommand), nameof(SetCategoryCommand), nameof(ExportToNewFileCommand), 
-        nameof(ExportToTraderCommand), nameof(AddValueFlagCommand), nameof(AddUsageFlagCommand), 
+        nameof(AdjustRestockCommand), nameof(SetCategoryCommand), nameof(ExportToNewFileCommand),
+        nameof(ExportToTraderCommand), nameof(AddValueFlagCommand), nameof(AddUsageFlagCommand),
         nameof(AddTagCommand), nameof(ClearFlagsCommand), nameof(ExportToSpawnableTypesCommand),
         nameof(ExportToRandomPresetsCommand))]
     private IList selectedItems;
-    
+
     public IRelayCommand AddEmptyItemCommand { get; }
     public IRelayCommand<float?> AdjustQuantityCommand { get; }
     public IRelayCommand<float?> AdjustLifetimeCommand { get; }
@@ -58,11 +58,13 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     public ItemTypesViewModel(IDialogFactory dialogFactory, WorkspaceViewModel workspace) : base(dialogFactory)
     {
         _workspace = workspace;
+        _validator = new();
+
         Model = new();
         FileName = "types.xml";
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
-        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, (param)=> CanExecuteBatchCommand());
+        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, (param) => CanExecuteBatchCommand());
         AdjustLifetimeCommand = new RelayCommand<float?>(AdjustLifetime, (param) => CanExecuteBatchCommand());
         AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, (param) => CanExecuteBatchCommand());
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
@@ -83,12 +85,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     public void CopyItemTypes(IEnumerable<ItemType> source)
     {
         Items.AddRange(
-            source.Select(obj => new ItemTypeViewModel(obj.Copy(), Workspace))
+            source.Select(obj => new ItemTypeViewModel(obj.Copy()))
         );
     }
 
     protected void AddEmptyItem()
-        => Items.Add(new(new ItemType(), Workspace));
+        => Items.Add(new(new ItemType()));
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
     protected bool CanExecuteExportCommand(object param) => param is not null;
     protected void AdjustQuantity(float? factor)
@@ -122,17 +124,19 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
-        Items.AsParallel().ForAll(item => item.ValidateSelf());
+        Items.AsParallel()
+            .Select(item => new { item.Name, Result = item.ValidateSelf() })
+            .Where(x => !x.Result.IsValid)
+            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
+            .ForAll(error => WeakReferenceMessenger.Default.Send(error));
 
-        var allErrors = Items.AsParallel()
-            .Where(item => item.HasErrors)
-            .Select(item =>
-                {
-                    var errorMessages = item.GetErrors().Select(r => r.ErrorMessage);
-                    return new ValidationErrorInfo(this, item.Name, errorMessages);
-                }
-            );
-        allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
     }
     protected void ExportToNewFile(object cmdParam)
     {
@@ -140,7 +144,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
         var viewModels = list.Cast<ItemTypeViewModel>();
 
         var items = viewModels.Select(vm => vm.Model);
-        Workspace.CreateItemTypes(items);
+        _workspace.CreateItemTypes(items);
     }
     protected void ExportToSpawnableTypes(object cmdParam)
     {
@@ -231,7 +235,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     {
         var newItems = Library.Xml.ItemTypes.ReadFromStream(input);
         Items.Clear();
-        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj, Workspace)));
+        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj)));
     }
     protected override IFileDialog CreateOpenFileDialog()
     {

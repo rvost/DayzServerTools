@@ -251,20 +251,17 @@ public partial class WorkspaceViewModel : TabbedViewModel
     public void CreateItemTypes()
     {
         var newItemTypesVM = Ioc.Default.GetService<ItemTypesViewModel>();
-        newItemTypesVM.Workspace = this;
         Tabs.Add(newItemTypesVM);
     }
     public void CreateItemTypes(IEnumerable<ItemType> items)
     {
         var newItemTypesVM = Ioc.Default.GetService<ItemTypesViewModel>();
-        newItemTypesVM.Workspace = this;
         newItemTypesVM.CopyItemTypes(items);
         Tabs.Add(newItemTypesVM);
     }
     public void OpenItemTypes()
     {
         var newItemTypesVM = Ioc.Default.GetService<ItemTypesViewModel>();
-        newItemTypesVM.Workspace = this;
         Tabs.Add(newItemTypesVM);
         newItemTypesVM.Load();
     }

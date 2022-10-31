@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
@@ -9,66 +8,57 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validation;
+using DayzServerTools.Library.Xml.Validators;
+using DayzServerTools.Application.ViewModels.Base;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
-public class ItemTypeViewModel : ObservableValidator
+public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeValidator>
 {
     private readonly IDispatcherService _dispatcher;
-    private ItemType _model;
 
-    public ItemType Model { get => _model; }
-
-    [Required]
     public string Name
     {
         get => _model.Name;
         set => SetProperty(_model.Name, value, _model, (m, v) => m.Name = v, true);
     }
 
-    [Range(0, int.MaxValue)]
     public int Nominal
     {
         get => _model.Nominal;
         set => SetProperty(_model.Nominal, value, _model, (m, v) => m.Nominal = v, true);
     }
 
-    [Range(0, 3888000)]
     public int Lifetime
     {
         get => _model.Lifetime;
         set => SetProperty(_model.Lifetime, value, _model, (m, v) => m.Lifetime = v, true);
     }
 
-    [Range(0, 3888000)]
     public int Restock
     {
         get => _model.Restock;
         set => SetProperty(_model.Restock, value, _model, (m, v) => m.Restock = v, true);
     }
 
-    [Range(0, int.MaxValue)]
     public int Min
     {
         get => _model.Min;
         set => SetProperty(_model.Min, value, _model, (m, v) => m.Min = v, true);
     }
 
-    [Range(-1, 100)]
     public int Quantmin
     {
         get => _model.Quantmin;
         set => SetProperty(_model.Quantmin, value, _model, (m, v) => m.Quantmin = v, true);
     }
 
-    [Range(-1, 100)]
     public int Quantmax
     {
         get => _model.Quantmax;
         set => SetProperty(_model.Quantmax, value, _model, (m, v) => m.Quantmax = v, true);
     }
 
-    [Range(0, 100)]
     public int Cost
     {
         get => _model.Cost;
@@ -130,16 +120,9 @@ public class ItemTypeViewModel : ObservableValidator
     public IRelayCommand RemoveTagCommand { get; }
     public IRelayCommand ClearFlagsCommand { get; }
 
-    public ItemTypeViewModel(ItemType model, WorkspaceViewModel workspace)
-        : base(new Dictionary<object, object>() {
-            { "categories", () => workspace.Categories },
-            { "usages", () => workspace.Usages },
-            { "values", () => workspace.Values },
-            { "tags", () => workspace.Tags }
-        })
+    public ItemTypeViewModel(ItemType model) : base(model, new ItemTypeValidator())
     {
         _dispatcher = Ioc.Default.GetRequiredService<IDispatcherService>();
-        _model = model;
         _model.Value.RemoveAllEmpty();
         _model.Usages.RemoveAllEmpty();
         _model.Tags.RemoveAllEmpty();
@@ -153,7 +136,6 @@ public class ItemTypeViewModel : ObservableValidator
         ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags);
     }
 
-    public void ValidateSelf() => ValidateAllProperties();
     public void AdjustQuantity(float factor)
     {
         Nominal = (int)Math.Round(Nominal * factor);
