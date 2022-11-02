@@ -1,15 +1,14 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
-using DayzServerTools.Library.Xml;
-using DayzServerTools.Library.Xml.Validation;
-using DayzServerTools.Library.Xml.Validators;
 using DayzServerTools.Application.ViewModels.Base;
+using DayzServerTools.Library.Common;
+using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
@@ -65,7 +64,6 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
         set => SetProperty(_model.Cost, value, _model, (m, v) => m.Cost = v, true);
     }
 
-    [CustomValidation(typeof(ItemTypesValidation), nameof(ItemTypesValidation.ValidateCategory))]
     public VanillaFlag Category
     {
         get => _model.Category;
@@ -103,13 +101,8 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
         set => SetProperty(_model.Flags.Deloot, value, _model.Flags, (m, v) => m.Deloot = v);
     }
 
-    [CustomValidation(typeof(ItemTypesValidation), nameof(ItemTypesValidation.ValidateUsages))]
     public ObservableCollection<UserDefinableFlag> Usages { get => _model.Usages; }
-
-    [CustomValidation(typeof(ItemTypesValidation), nameof(ItemTypesValidation.ValidateValues))]
     public ObservableCollection<UserDefinableFlag> Value { get => _model.Value; }
-
-    [CustomValidation(typeof(ItemTypesValidation), nameof(ItemTypesValidation.ValidateTags))]
     public ObservableCollection<VanillaFlag> Tags { get => _model.Tags; }
 
     public IRelayCommand AddUsageFlagCommand { get; }
@@ -120,7 +113,8 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
     public IRelayCommand RemoveTagCommand { get; }
     public IRelayCommand ClearFlagsCommand { get; }
 
-    public ItemTypeViewModel(ItemType model) : base(model, new ItemTypeValidator())
+    public ItemTypeViewModel(ItemType model) 
+        : base(model, new ItemTypeValidator(Ioc.Default.GetRequiredService<ILimitsDefinitionsProvider>()))
     {
         _dispatcher = Ioc.Default.GetRequiredService<IDispatcherService>();
         _model.Value.RemoveAllEmpty();

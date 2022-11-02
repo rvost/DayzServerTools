@@ -21,6 +21,7 @@ using DayzServerTools.Library.Xml;
 using RandomPresetsModel = DayzServerTools.Library.Xml.RandomPresets;
 using UserDefinitionsModel = DayzServerTools.Library.Xml.UserDefinitions;
 using DayzServerTools.Application.ViewModels.SpawnableTypes;
+using DayzServerTools.Library.Common;
 
 namespace DayzServerTools.Application.ViewModels;
 
@@ -37,7 +38,7 @@ public enum NewTabOptions
     OpenTraderConfig
 }
 
-public partial class WorkspaceViewModel : TabbedViewModel
+public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsProvider
 {
     private readonly IDialogFactory _dialogFactory;
     private readonly ErrorsPaneViewModel _errorsPaneViewModel;

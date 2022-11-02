@@ -14,6 +14,7 @@ using DayzServerTools.Application.ViewModels.SpawnableTypes;
 using DayzServerTools.Application.ViewModels.Trader;
 using DayzServerTools.Application.ViewModels.UserDefinitions;
 using DayzServerTools.Windows.Services;
+using DayzServerTools.Library.Common;
 
 namespace DayzServerTools.Windows
 {
@@ -50,7 +51,9 @@ namespace DayzServerTools.Windows
 
             services.AddSingleton<WorkspaceViewModel>();
             services.AddSingleton<ErrorsPaneViewModel>();
-
+            services.AddSingleton<ILimitsDefinitionsProvider>(x => 
+                x.GetRequiredService<WorkspaceViewModel>());
+           
             services.AddTransient<ItemTypesViewModel>();
             services.AddTransient<UserDefinitionsViewModel>();
             services.AddTransient<RandomPresetsViewModel>();
