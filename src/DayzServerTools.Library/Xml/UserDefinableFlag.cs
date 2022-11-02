@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace DayzServerTools.Library.Xml;
 
-public class UserDefinableFlag : IXmlSerializable
+public class UserDefinableFlag : IXmlSerializable, IEquatable<UserDefinableFlag>
 {
     public FlagDefinition DefinitionType { get; set; } = FlagDefinition.Vanilla;
     public string Value { get; set; } = "";
@@ -66,7 +66,27 @@ public class UserDefinableFlag : IXmlSerializable
     }
 
     public override string ToString()
+        => $"{DefinitionType}: {Value}";
+
+    public bool Equals(UserDefinableFlag other)
+        => DefinitionType == other.DefinitionType && Value == other.Value;
+
+    public override bool Equals(object obj)
     {
-        return $"{DefinitionType}: {Value}";
+        if ((obj == null) || !obj.GetType().Equals(GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            return Equals((UserDefinableFlag)obj);
+        }
     }
+
+    public override int GetHashCode()
+        => HashCode.Combine(Value, DefinitionType);
+    public static bool operator ==(UserDefinableFlag left, UserDefinableFlag rigth)
+        => Equals(left, rigth);
+    public static bool operator !=(UserDefinableFlag left, UserDefinableFlag rigth)
+        => !(left == rigth);
 }

@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace DayzServerTools.Library.Xml;
 
-public class VanillaFlag : IXmlSerializable, IComparable, IComparable<VanillaFlag>
+public class VanillaFlag : IXmlSerializable, IComparable, IComparable<VanillaFlag>, IEquatable<VanillaFlag>
 {
     public string Value { get; set; } = "";
 
@@ -20,9 +20,7 @@ public class VanillaFlag : IXmlSerializable, IComparable, IComparable<VanillaFla
     public override string ToString() => Value;
 
     public int CompareTo(VanillaFlag other)
-    {
-        return Value.CompareTo(other?.Value);
-    }
+        => Value.CompareTo(other?.Value);
 
     public int CompareTo(object obj)
     {
@@ -68,4 +66,29 @@ public class VanillaFlag : IXmlSerializable, IComparable, IComparable<VanillaFla
             writer.WriteAttributeString("name", Value);
         }
     }
+
+    public bool Equals(VanillaFlag other)
+        => Value == other.Value;
+
+    public override bool Equals(object obj)
+    {
+        if ((obj == null) || !obj.GetType().Equals(GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            return Equals((VanillaFlag)obj);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
+    }
+
+    public static bool operator ==(VanillaFlag left, VanillaFlag rigth)
+        => Equals(left, rigth);
+    public static bool operator !=(VanillaFlag left, VanillaFlag rigth)
+        => !(left == rigth);
 }
