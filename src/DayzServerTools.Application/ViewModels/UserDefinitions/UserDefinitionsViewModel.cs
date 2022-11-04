@@ -11,12 +11,15 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
 using UserDefinitionsModel = DayzServerTools.Library.Xml.UserDefinitions;
 
 namespace DayzServerTools.Application.ViewModels.UserDefinitions;
 
 public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinitionsModel>, IDisposable
 {
+    private readonly UserDefinitionsValidator _validator;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AvailableValueFlags), nameof(AvailableUsageFlags))]
     private LimitsDefinitions limitsDefinitions = null;
@@ -37,6 +40,7 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
 
     public UserDefinitionsViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
+        _validator = new();
         Model = new();
         FileName = "cfglimitsdefinitionuser.xml";
 
@@ -59,8 +63,16 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
-        ReportFlagErrors(UsageFlags);
-        ReportFlagErrors(ValueFlags);
+        ReportFlagErrors("Usage", UsageFlags);
+        ReportFlagErrors("Value", ValueFlags);
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
     }
 
     protected override void OnLoad(Stream input, string filename)
@@ -110,20 +122,13 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
                 break;
         }
     }
-    private void ReportFlagErrors(ICollection<UserDefinitionViewModel> flags)
+    private void ReportFlagErrors(string colName, ICollection<UserDefinitionViewModel> flags)
     {
-        flags.AsParallel().ForAll(flag => flag.ValidateSelf());
-
-        var allErrors = flags.AsParallel()
-            .Where(flag => flag.HasErrors)
-            .Select(flag =>
-            {
-                var errorMessages = flag.GetErrors().Select(r => r.ErrorMessage);
-                return new ValidationErrorInfo(this, flag.Name, errorMessages);
-            }
-            );
-
-        allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        flags.AsParallel()
+            .Select(flag => new { flag.Name, Result = flag.ValidateSelf() })
+            .Where(x => !x.Result.IsValid)
+            .Select(x => new ValidationErrorInfo(this, $"({colName}):{x.Name}", x.Result.Errors.Select(x => x.ErrorMessage)))
+            .ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
 
     public void Dispose()
