@@ -11,12 +11,14 @@ using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
 using RandomPresetsModel = DayzServerTools.Library.Xml.RandomPresets;
 
 namespace DayzServerTools.Application.ViewModels.RandomPresets;
 
 public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresetsModel>, IDisposable
 {
+    private readonly RandomPresetsValidator _validator;
     [ObservableProperty]
     private RandomPresetViewModel selectedPreset;
 
@@ -30,6 +32,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
     public RandomPresetsViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
+        _validator = new();
         Model = new();
         FileName = "cfgrandompresets.xml";
 
@@ -50,8 +53,17 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     public void Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
         ReportPresetsErrors("Cargo", CargoPresets);
         ReportPresetsErrors("Attachments", AttachmentsPresets);
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
     }
     protected override void OnLoad(Stream input, string filename)
     {
@@ -78,18 +90,11 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
     private void ReportPresetsErrors(string colName, ICollection<RandomPresetViewModel> presets)
     {
-        presets.AsParallel().ForAll(preset => preset.ValidateSelf());
-
-        var allErrors = presets.AsParallel()
-            .Where(preset => preset.HasErrors)
-            .Select(preset =>
-            {
-                var errorMessages = preset.GetErrors().Select(r => r.ErrorMessage);
-                return new ValidationErrorInfo(this, $"({colName}):{preset.Name}", errorMessages);
-            }
-            );
-
-        allErrors.ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        presets.AsParallel()
+          .Select(preset => new { preset.Name, Result = preset.ValidateSelf() })
+          .Where(x => !x.Result.IsValid)
+          .Select(x => new ValidationErrorInfo(this, $"({colName}):{x.Name}", x.Result.Errors.Select(x => x.ErrorMessage)))
+          .ForAll(error => WeakReferenceMessenger.Default.Send(error));
     }
     private void OnPresetsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
@@ -120,17 +125,5 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     {
         CargoPresets.CollectionChanged -= OnPresetsCollectionChanged;
         AttachmentsPresets.CollectionChanged -= OnPresetsCollectionChanged;
-    }
-}
-
-public class RandomPresetsCollectionProxy
-{
-    public string Name { get; }
-    public ObservableCollection<RandomPresetViewModel> Presets { get; }
-
-    public RandomPresetsCollectionProxy(string name, ObservableCollection<RandomPresetViewModel> presets)
-    {
-        Name = name;
-        Presets = presets;
     }
 }
