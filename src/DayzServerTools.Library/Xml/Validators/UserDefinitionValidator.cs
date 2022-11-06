@@ -23,7 +23,7 @@ public class UserDefinitionValidator : AbstractValidator<UserDefinition>
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .Must(NotContainDuplicates)
-            .WithMessage("{PropertyName} can not be empty");
+            .WithMessage("{PropertyName} contains repeating flags");
     }
 
     private bool BeValidFlag(UserDefinableFlag flag)
@@ -41,16 +41,8 @@ public class UserDefinitionValidator : AbstractValidator<UserDefinition>
 
     private bool NotContainDuplicates(IEnumerable<UserDefinableFlag> flags)
     {
-        var acceptableFlags = _getAcceptableFlags();
-        if (acceptableFlags.Any())
-        {
-            var duplicates = flags.GroupBy(x => x.Value)
-               .Where(g => g.Count() > 1);
-            return !duplicates.Any();
-        }
-        else
-        {
-            return true;
-        }
+        var duplicates = flags.GroupBy(x => x.Value)
+           .Where(g => g.Count() > 1);
+        return !duplicates.Any();
     }
 }
