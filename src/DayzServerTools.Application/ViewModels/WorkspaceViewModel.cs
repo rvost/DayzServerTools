@@ -38,7 +38,7 @@ public enum NewTabOptions
     OpenTraderConfig
 }
 
-public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsProvider
+public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsProvider, IRandomPresetsProvider
 {
     private readonly IDialogFactory _dialogFactory;
     private readonly ErrorsPaneViewModel _errorsPaneViewModel;

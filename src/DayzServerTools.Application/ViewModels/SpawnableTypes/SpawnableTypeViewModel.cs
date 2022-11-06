@@ -8,21 +8,20 @@ using CommunityToolkit.Mvvm.Input;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
+using DayzServerTools.Application.ViewModels.Base;
+using DayzServerTools.Library.Common;
 using DayzServerTools.Library.Xml;
-using DayzServerTools.Library.Xml.Validation;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
-public partial class SpawnableTypeViewModel : ObservableValidator
+public partial class SpawnableTypeViewModel : ObservableFluentValidator<SpawnableType, SpawnableTypeValidator>
 {
-    private readonly SpawnableType _model;
     private readonly IDialogFactory _dialogFactory;
-
+    private readonly IRandomPresetsProvider _randomPresets;
     [ObservableProperty]
     private SpawnablePresetViewModel selectedPreset;
 
-    public SpawnableType Model => _model;
-    [MinLength(1)]
     public string Name
     {
         get => _model.Name;
@@ -33,13 +32,11 @@ public partial class SpawnableTypeViewModel : ObservableValidator
         get => _model.Hoarder;
         set => SetProperty(_model.Hoarder, value, _model, (m, v) => m.Hoarder = v);
     }
-    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double MinDamage
     {
         get => _model.Damage.Min;
         set => SetProperty(_model.Damage.Min, value, _model, (m, v) => m.Damage.Min = v, true);
     }
-    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double MaxDamage
     {
         get => _model.Damage.Max;
@@ -51,25 +48,27 @@ public partial class SpawnableTypeViewModel : ObservableValidator
         set => SetProperty(_model.Tag.Value, value, _model, (m, v) => m.Tag.Value = v);
     }
     public IEnumerable<SpawnablePresetsCollectionProxy> Proxies { get; }
-    [CustomValidation(typeof(SpawnableTypeViewModel), nameof(ValidateSpawnablePresets))]
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
-    [CustomValidation(typeof(SpawnableTypeViewModel), nameof(ValidateSpawnablePresets))]
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
 
     public IRelayCommand<PresetType> AddNewPresetCommand { get; }
     public IRelayCommand<PresetType> ImportClassnamesAsPresetsCommand { get; }
 
     public SpawnableTypeViewModel(SpawnableType model)
+        : base(model, new(Ioc.Default.GetRequiredService<IRandomPresetsProvider>()))
     {
-        _model = model;
         _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
+        _randomPresets = Ioc.Default.GetRequiredService<IRandomPresetsProvider>();
 
-        Cargo.AddRange(_model.Cargo.Select(preset => new SpawnablePresetViewModel(preset)));
-        Attachments.AddRange(_model.Attachments.Select(preset => new SpawnablePresetViewModel(preset)));
+        Cargo.AddRange(_model.Cargo.Select(preset =>
+            new SpawnablePresetViewModel(preset, new(() => _randomPresets.AvailableCargoPresets))));
+        Attachments.AddRange(_model.Attachments.Select(preset =>
+            new SpawnablePresetViewModel(preset, new(() => _randomPresets.AvailableAttachmentsPresets))));
+
         Proxies = new List<SpawnablePresetsCollectionProxy>
         {
-            new SpawnablePresetsCollectionProxy( "Cargo",Cargo),
-            new SpawnablePresetsCollectionProxy("Attachments", Attachments)
+            new SpawnablePresetsCollectionProxy(PresetType.Cargo, "Cargo", Cargo),
+            new SpawnablePresetsCollectionProxy(PresetType.Attachments, "Attachments", Attachments)
         };
 
         AddNewPresetCommand = new RelayCommand<PresetType>(AddNewPreset);
@@ -79,32 +78,19 @@ public partial class SpawnableTypeViewModel : ObservableValidator
         Attachments.CollectionChanged += OnPresetsCollectionChanged;
     }
 
-    public void ValidateSelf() => ValidateAllProperties();
-    public static ValidationResult ValidateSpawnablePresets(ICollection<SpawnablePresetViewModel> presets,
-        ValidationContext context)
-    {
-        presets.AsParallel().ForAll(s => s.ValidateSelf());
-        var presetsWithErrors = presets.Where(s => s.HasErrors);
-        if (presetsWithErrors.Any())
-        {
-            return presetsWithErrors.First().GetErrors().First();
-        }
-        else
-        {
-            return ValidationResult.Success;
-        }
-    }
     protected void AddNewPreset(PresetType type)
     {
-        var newPreset = new SpawnablePresetViewModel(new SpawnablePreset());
-
         switch (type)
         {
             case PresetType.Cargo:
-                Cargo.Add(newPreset);
+                Cargo.Add(
+                    new SpawnablePresetViewModel(new SpawnablePreset(), new(() => _randomPresets.AvailableCargoPresets))
+                );
                 break;
             case PresetType.Attachments:
-                Attachments.Add(newPreset);
+                Attachments.Add(
+                    new SpawnablePresetViewModel(new SpawnablePreset(), new(() => _randomPresets.AvailableAttachmentsPresets))
+                );
                 break;
             default:
                 break;
@@ -115,7 +101,7 @@ public partial class SpawnableTypeViewModel : ObservableValidator
         var target = type == PresetType.Cargo ? Cargo : Attachments;
 
         var dialog = _dialogFactory.CreateClassnameImportDialog();
-        dialog.Store = new SpawnableTypePresetsImportStore(target);
+        dialog.Store = new SpawnableTypePresetsImportStore(type, target);
         dialog.ShowDialog();
     }
 

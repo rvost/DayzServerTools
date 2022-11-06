@@ -12,6 +12,8 @@ using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
+using FluentValidation;
 using SpawnableTypesModel = DayzServerTools.Library.Xml.SpawnableTypes;
 
 namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
@@ -19,6 +21,7 @@ namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypesModel>,
     IImporter<IEnumerable<string>>, IDisposable
 {
+    private readonly SpawnableTypesValidator _validator;
     [ObservableProperty]
     private WorkspaceViewModel workspace;
     [ObservableProperty]
@@ -39,6 +42,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
 
     public SpawnableTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
+        _validator = new();
         Model = new();
         FileName = "cfgspawnabletypes.xml";
 
@@ -67,16 +71,19 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
-        Spawnables.AsParallel().ForAll(s => s.ValidateSelf());
-        var allErrors = Spawnables.AsParallel()
-            .Where(s => s.HasErrors)
-            .Select(s =>
-            {
-                var errorMessages = s.GetErrors().Select(r => r.ErrorMessage);
-                return new ValidationErrorInfo(this, s.Name, errorMessages);
-            }
-            ).ToList();
-        allErrors.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        Spawnables.AsParallel()
+            .Select(item => new { item.Name, Result = item.ValidateSelf() })
+            .Where(x => !x.Result.IsValid)
+            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
+            .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
     }
 
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;

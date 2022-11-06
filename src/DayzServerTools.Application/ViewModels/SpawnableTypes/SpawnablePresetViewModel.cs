@@ -1,26 +1,22 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
+using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
-using DayzServerTools.Library.Xml.Validation;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
-public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerable<string>>
+public class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePreset, SpawnablePresetValidator>,
+    IImporter<IEnumerable<string>>
 {
-    private readonly SpawnablePreset _model;
     private readonly IDialogFactory _dialogFactory;
 
-    public SpawnablePreset Model => _model;
-
-    [CustomValidation(typeof(SpawnablePresetViewModel), nameof(ValidatePresetName))]
     public string Preset
     {
         get => _model.Preset ?? "";
@@ -33,7 +29,6 @@ public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerab
     }
     public bool PresetSpecified => _model.PresetSpecified;
     public bool ItemsSpecified => _model.ItemsSpecified;
-    [CustomValidation(typeof(SpawnableTypesValidation), nameof(SpawnableTypesValidation.ValidateChance))]
     public double Chance
     {
         get => _model.Chance;
@@ -44,10 +39,9 @@ public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerab
 
     public RelayCommand ImportClassnamesCommand { get; }
 
-    public SpawnablePresetViewModel(SpawnablePreset model)
-        : base(new Dictionary<object, object>() { { "workspace", Ioc.Default.GetRequiredService<WorkspaceViewModel>() } })
+    public SpawnablePresetViewModel(SpawnablePreset model, SpawnablePresetValidator validator)
+        : base(model, validator)
     {
-        _model = model;
         _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
 
         ImportClassnamesCommand = new RelayCommand(ImportClassnames);
@@ -60,24 +54,6 @@ public class SpawnablePresetViewModel : ObservableValidator, IImporter<IEnumerab
             new SpawnableItem(name, Math.Round(1.0 / total, 2))
         );
         Items.AddRange(items);
-    }
-    public void ValidateSelf() => ValidateAllProperties();
-    public static ValidationResult ValidatePresetName(string name, ValidationContext context)
-    {
-        var workspace = (WorkspaceViewModel)context.Items["workspace"];
-        if (!string.IsNullOrEmpty(name) && workspace.RandomPresetsLoaded)
-        {
-            if(workspace.AvailableCargoPresets.Contains(name) || 
-                workspace.AvailableAttachmentsPresets.Contains(name))
-            {
-                return ValidationResult.Success;
-            }
-            else
-            {
-                return new ValidationResult($"Preset name '{name}' does not exist in context");
-            }
-        }
-        return ValidationResult.Success;
     }
     protected void ImportClassnames()
     {

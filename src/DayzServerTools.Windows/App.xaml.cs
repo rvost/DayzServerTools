@@ -53,7 +53,9 @@ namespace DayzServerTools.Windows
             services.AddSingleton<ErrorsPaneViewModel>();
             services.AddSingleton<ILimitsDefinitionsProvider>(x => 
                 x.GetRequiredService<WorkspaceViewModel>());
-           
+            services.AddSingleton<IRandomPresetsProvider>(x =>
+                x.GetRequiredService<WorkspaceViewModel>());
+
             services.AddTransient<ItemTypesViewModel>();
             services.AddTransient<UserDefinitionsViewModel>();
             services.AddTransient<RandomPresetsViewModel>();
