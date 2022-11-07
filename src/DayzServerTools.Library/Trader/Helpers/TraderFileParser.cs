@@ -75,7 +75,7 @@ internal class TraderFileParser
         {
             var splitLine = line.Split(',');
 
-            if(splitLine.Length < 4)
+            if(splitLine.Length < 4 || splitLine.Any(s => string.IsNullOrWhiteSpace(s)))
             {
                 throw new InvalidOperationException($"Trader config format error on line {lineNumber}");
             }
