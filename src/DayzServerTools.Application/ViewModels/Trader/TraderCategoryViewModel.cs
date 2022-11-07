@@ -8,16 +8,16 @@ using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
+using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Trader;
-
+using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
-public partial class TraderCategoryViewModel : ObservableObject
+public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderCategory, TraderCategoryValidator>
 {
     private readonly IDialogFactory _dialogFactory;
-    [ObservableProperty]
-    private TraderCategory model;
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CopyItemsCommand), nameof(MoveItemsCommand),
         nameof(ProhibitBuyingCommand), nameof(ProhibitSellingCommand),
@@ -27,8 +27,8 @@ public partial class TraderCategoryViewModel : ObservableObject
 
     public string Name
     {
-        get => model.CategoryName;
-        set => SetProperty(model.CategoryName, value, model, (m, v) => m.CategoryName = v);
+        get => _model.CategoryName;
+        set => SetProperty(_model.CategoryName, value, _model, (m, v) => m.CategoryName = v);
     }
     public ObservableCollection<TraderItemViewModel> Items { get; }
 
@@ -41,10 +41,10 @@ public partial class TraderCategoryViewModel : ObservableObject
     public IRelayCommand<double> SetSellPriceCommand { get; }
     public IRelayCommand<string> SetQuantityModifierCommand { get; }
 
-    public TraderCategoryViewModel(TraderCategory model)
+    public TraderCategoryViewModel(TraderCategory model): base(model, new())
     {
         _dialogFactory = Ioc.Default.GetService<IDialogFactory>();
-        this.model = model;
+
         Items = new(model.TraderItems.Select(m => new TraderItemViewModel(m)));
 
         ClassnamesImportCommand = new RelayCommand(ClassnamesImport);

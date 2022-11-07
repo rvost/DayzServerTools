@@ -3,34 +3,31 @@ using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Trader;
+using DayzServerTools.Library.Trader.Validators;
 using TraderModel = DayzServerTools.Library.Trader.Trader;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
-public partial class TraderViewModel : ObservableObject, IDisposable
+public partial class TraderViewModel : ObservableFluentValidator<TraderModel, TraderValidator>, IDisposable
 {
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Name), nameof(Categories))]
-    private TraderModel model = new();
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveCategoryCommand))]
     private TraderCategoryViewModel selectedCategory;
 
     public string Name
     {
-        get => model.TraderName;
-        set => SetProperty(model.TraderName, value, model, (m, n) => m.TraderName = n);
+        get => _model.TraderName;
+        set => SetProperty(_model.TraderName, value, _model, (m, n) => m.TraderName = n);
     }
     public ObservableCollection<TraderCategoryViewModel> Categories { get; }
 
     public IRelayCommand<string> AddCategoryCommand { get; }
     public IRelayCommand<TraderCategoryViewModel> RemoveCategoryCommand { get; }
 
-    public TraderViewModel(TraderModel trader)
+    public TraderViewModel(TraderModel trader):base(trader, new())
     {
-        Model = trader;
         Categories = new ObservableCollection<TraderCategoryViewModel>(
             trader.TraderCategories.Select(c => new TraderCategoryViewModel(c))
             );

@@ -2,17 +2,23 @@
 using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using FluentValidation;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
+using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Trader;
+using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>, IDisposable
 {
+    private readonly AbstractValidator<TraderConfig> _validator;
     [ObservableProperty]
     private TraderViewModel selectedTrader;
 
@@ -25,14 +31,18 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
         set => SetProperty(model.CurrencyCategory, value, model, (m, n) => m.CurrencyCategory = n);
     }
 
+    public IRelayCommand ValidateCommand { get; }
+
     public TraderConfigViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
     {
+        _validator = new TraderConfigValidator();
         Model = new();
         FileName = "TraderConfig.txt";
+        ValidateCommand = new RelayCommand(Validate);
 
         Traders.CollectionChanged += TradersCollectionChanged;
     }
-
+    
     protected override void OnLoad(Stream input, string filename)
     {
         var newModel = TraderConfig.ReadFromStream(input);
@@ -48,6 +58,24 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
     }
     protected override bool CanSave() => true;
 
+    private void Validate()
+    {
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
+        Traders.AsParallel()
+          .Select(trader => new { trader.Name, Result = trader.ValidateSelf() })
+          .Where(x => !x.Result.IsValid)
+          .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
+          .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
+    }
     private void TradersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)
