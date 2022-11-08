@@ -62,7 +62,7 @@ public class ObservableFluentValidator<TModel, TValidator> : ObservableObject, I
         // type is marked as a non-nullable reference type, here we're returning an
         // empty array to respect the contract. This also matches the behavior of
         // this method whenever errors for a valid properties are retrieved.
-        return Array.Empty<ValidationResult>();
+        return Array.Empty<ValidationFailure>();
     }
     IEnumerable INotifyDataErrorInfo.GetErrors(string propertyName) => GetErrors(propertyName);
 
