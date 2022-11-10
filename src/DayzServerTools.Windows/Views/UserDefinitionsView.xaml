@@ -28,7 +28,8 @@
         <DataGrid Grid.Row="1" Grid.Column="0" ItemsSource="{Binding ValueFlags}" 
                   AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}"/>
                 <DataGridTemplateColumn Header="Definitions" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -61,7 +62,8 @@
         <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding UsageFlags}" 
                   AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}"/>
                 <DataGridTemplateColumn Header="Definitions" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

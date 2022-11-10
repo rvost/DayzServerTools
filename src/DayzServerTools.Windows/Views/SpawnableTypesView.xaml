@@ -35,7 +35,8 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}">
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesNameTooltip}" />
@@ -49,14 +50,16 @@
                         </Style>
                     </DataGridCheckBoxColumn.HeaderStyle>
                 </DataGridCheckBoxColumn>
-                <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}">
+                <DataGridTextColumn Header="Min Damage" Binding="{Binding MinDamage}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesMinDamageTooltip}" />
                         </Style>
                     </DataGridTextColumn.HeaderStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Max Damage" Binding="{Binding MaxDamage}">
+                <DataGridTextColumn Header="Max Damage" Binding="{Binding MaxDamage}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}">
                     <DataGridTextColumn.HeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="ToolTip" Value="{StaticResource SpawnableTypesMaxDamageTooltip}" />

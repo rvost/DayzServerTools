@@ -69,7 +69,8 @@
                   VirtualizingPanel.ScrollUnit="Pixel"
                   AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Chance" Binding="{Binding Chance}"/>
+                <DataGridTextColumn Header="Chance" Binding="{Binding Chance}"
+                                    EditingElementStyle="{StaticResource TextBoxErrorTooltipStyle}"/>
                 <DataGridTemplateColumn Header="Preset">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

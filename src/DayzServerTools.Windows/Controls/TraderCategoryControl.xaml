@@ -24,25 +24,6 @@
         </Expander.Header>
         <local:BindableMultiSelectDataGrid ItemsSource="{Binding Path=Items}" AutoGenerateColumns="False"
                                            SelectedItems="{Binding SelectedItems, Mode=OneWayToSource}">
-            <DataGrid.RowValidationErrorTemplate>
-                <ControlTemplate>
-                    <Grid Margin="0,-2,0,-2"  DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}, Path=(Validation.Errors)}">
-                        <Grid.ToolTip>
-                            <ToolTip>
-                                <ListView ItemsSource="{Binding}">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Path=ErrorContent}"/>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </ToolTip>
-                        </Grid.ToolTip>
-                        <Ellipse StrokeThickness="0" Fill="Red" Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}" />
-                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </ControlTemplate>
-            </DataGrid.RowValidationErrorTemplate>
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Copy items to..."
