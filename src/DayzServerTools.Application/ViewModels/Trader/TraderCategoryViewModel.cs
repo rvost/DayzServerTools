@@ -10,13 +10,14 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.ViewModels.Base;
+using DayzServerTools.Application.ViewModels.Dialogs;
 using DayzServerTools.Library.Trader;
 using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderCategory, TraderCategoryValidator>,
-    IImporter<IEnumerable<string>>
+    IImporter<IEnumerable<string>>, IImporter<IEnumerable<TraderItemViewModel>>
 {
     private readonly IDialogFactory _dialogFactory;
 
@@ -97,11 +98,20 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         {
             return;
         }
-        var items = SelectedItems.Cast<TraderItemViewModel>();
+        var items = SelectedItems
+            .Cast<TraderItemViewModel>()
+            .Select(item => new TraderItemViewModel(item.Model.Copy()));
 
-        var dialog = _dialogFactory.CreateTraderExportDialog();
-        dialog.Store = new TraderItemsExportStore(items, true);
-        dialog.ShowDialog();
+        //TODO: Remove dependency on WorkspaceViewModel and TraderConfigViewModel
+        var workspace = Ioc.Default.GetRequiredService<WorkspaceViewModel>();
+        var options = workspace.Tabs
+           .Where(t => t is TraderConfigViewModel)
+           .ToList();
+
+        var vm = new ExportViewModel<IEnumerable<TraderItemViewModel>>(items, options);
+
+        var dialog = _dialogFactory.CreateExportDialog();
+        dialog.ShowDialog(vm);
     }
     protected void MoveItems()
     {
@@ -111,10 +121,17 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         }
         var items = SelectedItems.Cast<TraderItemViewModel>().ToList();
 
-        var dialog = _dialogFactory.CreateTraderExportDialog();
-        dialog.Store = new TraderItemsExportStore(items, false);
+        //TODO: Remove dependency on WorkspaceViewModel and TraderConfigViewModel
+        var workspace = Ioc.Default.GetRequiredService<WorkspaceViewModel>();
+        var options = workspace.Tabs
+           .Where(t => t is TraderConfigViewModel)
+           .ToList();
 
-        if (dialog.ShowDialog() ?? false)
+        var vm = new ExportViewModel<IEnumerable<TraderItemViewModel>>(items, options);
+
+        var dialog = _dialogFactory.CreateExportDialog();
+
+        if (dialog.ShowDialog(vm) ?? false)
         {
             foreach (var item in items)
             {
@@ -176,6 +193,11 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
     public void Import(IEnumerable<string> classnames)
     {
         var items = classnames.Select(name => new TraderItemViewModel(new() { Name = name }));
+        Items.AddRange(items);
+    }
+
+    public void Import(IEnumerable<TraderItemViewModel> items)
+    {
         Items.AddRange(items);
     }
 }

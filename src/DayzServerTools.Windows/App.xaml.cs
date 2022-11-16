@@ -61,7 +61,6 @@ namespace DayzServerTools.Windows
             services.AddTransient<RandomPresetsViewModel>();
             services.AddTransient<TraderConfigViewModel>();
             services.AddTransient<SpawnableTypesViewModel>();
-            services.AddTransient<TraderExportViewModel>();
         }
     }
 }

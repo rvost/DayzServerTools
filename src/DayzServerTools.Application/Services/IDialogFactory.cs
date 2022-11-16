@@ -8,6 +8,5 @@ public interface IDialogFactory
     IFileDialog CreateOpenFileDialog();
     IFileDialog CreateSaveFileDialog();
     IExportDialog CreateExportDialog();
-    ITraderExportDialog CreateTraderExportDialog();
     IClassnameImportDialog CreateClassnameImportDialog();
 }
