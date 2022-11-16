@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:presetsVMs="clr-namespace:DayzServerTools.Application.ViewModels.RandomPresets;assembly=DayzServerTools.Application"
         xmlns:spawnablesVMs="clr-namespace:DayzServerTools.Application.ViewModels.SpawnableTypes;assembly=DayzServerTools.Application"
+        xmlns:traderVMs="clr-namespace:DayzServerTools.Application.ViewModels.Trader;assembly=DayzServerTools.Application"
         mc:Ignorable="d"
         Title="Select destination"
         WindowStartupLocation="CenterScreen"
@@ -19,6 +20,7 @@
                   SelectedItemChanged="OnSelectedItemChanged"
                   x:Name="optionsTreeView">
             <TreeView.Resources>
+                <!-- Spawnable Types-->
                 <HierarchicalDataTemplate DataType="{x:Type spawnablesVMs:SpawnableTypesViewModel}" ItemsSource="{Binding Spawnables}">
                     <TextBlock Text="{Binding Name}" ToolTip="{Binding FileName}"/>
                 </HierarchicalDataTemplate>
@@ -35,6 +37,7 @@
                         <TextBlock Text="{Binding DefaultItem.Name}"/>
                     </StackPanel>
                 </DataTemplate>
+                <!-- Random Presets -->
                 <HierarchicalDataTemplate DataType="{x:Type presetsVMs:RandomPresetsViewModel}" ItemsSource="{Binding Proxies}">
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
@@ -46,6 +49,18 @@
                         <TextBlock Text="{Binding Chance}" Margin="8 0"/>
                         <TextBlock Text="{Binding Name}"/>
                     </StackPanel>
+                </DataTemplate>
+                <!-- Trader -->
+                <HierarchicalDataTemplate DataType="{x:Type traderVMs:TraderConfigViewModel}"
+                                          ItemsSource="{Binding Traders}">
+                    <TextBlock Text="{Binding Name}" />
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type traderVMs:TraderViewModel}"
+                                          ItemsSource="{Binding Categories}">
+                    <TextBlock Text="{Binding Name}"/>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type traderVMs:TraderCategoryViewModel}">
+                    <TextBlock Text="{Binding Name}"/>
                 </DataTemplate>
             </TreeView.Resources>
             <TreeView.ItemContainerStyle>

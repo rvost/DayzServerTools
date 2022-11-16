@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
+using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.ViewModels.Base;
@@ -14,7 +15,8 @@ using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
-public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderCategory, TraderCategoryValidator>
+public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderCategory, TraderCategoryValidator>,
+    IImporter<IEnumerable<string>>
 {
     private readonly IDialogFactory _dialogFactory;
 
@@ -41,7 +43,7 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
     public IRelayCommand<double> SetSellPriceCommand { get; }
     public IRelayCommand<string> SetQuantityModifierCommand { get; }
 
-    public TraderCategoryViewModel(TraderCategory model): base(model, new())
+    public TraderCategoryViewModel(TraderCategory model) : base(model, new())
     {
         _dialogFactory = Ioc.Default.GetService<IDialogFactory>();
 
@@ -169,5 +171,11 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         var items = SelectedItems.Cast<TraderItemViewModel>();
 
         items.AsParallel().ForAll(item => item.Modifier = modifier);
+    }
+
+    public void Import(IEnumerable<string> classnames)
+    {
+        var items = classnames.Select(name => new TraderItemViewModel(new() { Name = name }));
+        Items.AddRange(items);
     }
 }

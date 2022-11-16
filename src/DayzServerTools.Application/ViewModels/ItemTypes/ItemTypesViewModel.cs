@@ -9,6 +9,7 @@ using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.ViewModels.Dialogs;
 using DayzServerTools.Application.ViewModels.RandomPresets;
 using DayzServerTools.Application.ViewModels.SpawnableTypes;
+using DayzServerTools.Application.ViewModels.Trader;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
@@ -156,7 +157,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
             .Where(t => t is SpawnableTypesViewModel)
             .ToList();
         var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
-        var dialog = _dialogFactory.CreateSpawnableTypesExportDialog();
+        var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
     protected void ExportToRandomPresets(object cmdParam)
@@ -169,19 +170,24 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
             .Where(t => t is RandomPresetsViewModel)
             .ToList();
         var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
-        var dialog = _dialogFactory.CreateSpawnableTypesExportDialog();
+        var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
     protected void ExportToTrader(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
+        var classnames = viewModels.Select(vm => vm.Name);
 
         var items = viewModels.Select(vm => vm.Model);
-
-        var dialog = _dialogFactory.CreateTraderExportDialog();
-        dialog.Store = new ItemTypesToTraderExportStore(items);
-        dialog.ShowDialog();
+        
+        var options = _workspace.Tabs
+           .Where(t => t is TraderConfigViewModel)
+           .ToList();
+        var vm = new ExportViewModel<IEnumerable<string>>(classnames, options);
+        
+        var dialog = _dialogFactory.CreateExportDialog();
+        dialog.ShowDialog(vm);
     }
     protected void ClassnamesImport()
     {

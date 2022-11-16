@@ -7,7 +7,7 @@ public interface IDialogFactory
     IMessageDialog CreateMessageDialog();
     IFileDialog CreateOpenFileDialog();
     IFileDialog CreateSaveFileDialog();
-    IExportDialog CreateSpawnableTypesExportDialog();
+    IExportDialog CreateExportDialog();
     ITraderExportDialog CreateTraderExportDialog();
     IClassnameImportDialog CreateClassnameImportDialog();
 }

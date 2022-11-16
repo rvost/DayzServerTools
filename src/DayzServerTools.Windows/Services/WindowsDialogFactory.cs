@@ -11,7 +11,7 @@ internal class WindowsDialogFactory : IDialogFactory
     public IClassnameImportDialog CreateClassnameImportDialog()
         => new WindowsClassnameImportDialog();
 
-    public IExportDialog CreateSpawnableTypesExportDialog()
+    public IExportDialog CreateExportDialog()
         => new WindowsExportDialog();
 
     public ITraderExportDialog CreateTraderExportDialog() 
