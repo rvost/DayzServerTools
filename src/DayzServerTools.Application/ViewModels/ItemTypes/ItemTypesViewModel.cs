@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentValidation;
 
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Application.ViewModels.Dialogs;
@@ -16,14 +18,13 @@ using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Stores;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Xml;
-using DayzServerTools.Library.Xml.Validators;
+using ItemTypesModel = DayzServerTools.Library.Xml.ItemTypes;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
-public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemTypes>, IDisposable
+public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, IDisposable
 {
     private readonly WorkspaceViewModel _workspace;
-    private readonly ItemTypesValidator _validator;
     [ObservableProperty]
     private ObservableCollection<ItemTypeViewModel> items = new();
     [ObservableProperty]
@@ -54,12 +55,11 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
     public IRelayCommand<UserDefinableFlag> AddUsageFlagCommand { get; }
     public IRelayCommand<VanillaFlag> AddTagCommand { get; }
     public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
-    public IRelayCommand ValidateCommand { get; }
 
-    public ItemTypesViewModel(IDialogFactory dialogFactory, WorkspaceViewModel workspace) : base(dialogFactory)
+    public ItemTypesViewModel(IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, WorkspaceViewModel workspace) 
+        : base(dialogFactory, validator)
     {
         _workspace = workspace;
-        _validator = new();
 
         Model = new();
         FileName = "types.xml";
@@ -78,7 +78,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
         AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag, (param) => CanExecuteBatchCommand());
         AddTagCommand = new RelayCommand<VanillaFlag>(AddTag, (param) => CanExecuteBatchCommand());
         ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags, (param) => CanExecuteBatchCommand());
-        ValidateCommand = new RelayCommand(Validate);
 
         Items.CollectionChanged += ItemsCollectionChanged;
     }
@@ -121,24 +120,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
         }
         RestockPercentage = 1;
     }
-    protected void Validate()
-    {
-        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
-        Items.AsParallel()
-            .Select(item => new { item.Name, Result = item.ValidateSelf() })
-            .Where(x => !x.Result.IsValid)
-            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
-            .ForAll(error => WeakReferenceMessenger.Default.Send(error));
-
-        var res = _validator.Validate(Model);
-        if (!res.IsValid)
-        {
-            res.Errors.AsParallel()
-                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
-                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
-        }
-    }
     protected void ExportToNewFile(object cmdParam)
     {
         var list = (IList)cmdParam;
@@ -248,11 +230,32 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<Library.Xml.ItemT
         var dialog = _dialogFactory.CreateOpenFileDialog();
         return dialog;
     }
-    protected override bool CanSave()
+    protected override bool Validate()
     {
-        var isEmpty = Model is null || Model.Types.Count == 0;
-        var isValid = !Items.Any(i => i.HasErrors);
-        return !isEmpty && isValid;
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
+        var itemsErrors = Items.AsParallel()
+            .Select(item => new { item.Name, Result = item.ValidateSelf() })
+            .Where(x => !x.Result.IsValid)
+            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
+            .ToList();
+
+        bool itemsHaveErrors = itemsErrors.Any();
+
+        if (itemsHaveErrors)
+        {
+            itemsErrors.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
+
+        return res.IsValid && !itemsHaveErrors;
     }
 
     private void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

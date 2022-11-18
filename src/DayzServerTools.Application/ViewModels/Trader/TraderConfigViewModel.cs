@@ -18,7 +18,6 @@ namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>, IDisposable
 {
-    private readonly AbstractValidator<TraderConfig> _validator;
     [ObservableProperty]
     private TraderViewModel selectedTrader;
 
@@ -31,14 +30,11 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
         set => SetProperty(model.CurrencyCategory, value, model, (m, n) => m.CurrencyCategory = n);
     }
 
-    public IRelayCommand ValidateCommand { get; }
-
-    public TraderConfigViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
+    public TraderConfigViewModel(IDialogFactory dialogFactory, IValidator<TraderConfig> validator) 
+        : base(dialogFactory, validator)
     {
-        _validator = new TraderConfigValidator();
         Model = new();
         FileName = "TraderConfig.txt";
-        ValidateCommand = new RelayCommand(Validate);
 
         Traders.CollectionChanged += TradersCollectionChanged;
     }
@@ -56,17 +52,22 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
         dialog.Filter = "Text|*.txt";
         return dialog;
     }
-    protected override bool CanSave() => true;
-
-    private void Validate()
+    protected override bool Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
 
-        Traders.AsParallel()
+        var itemsErrors = Traders.AsParallel()
           .Select(trader => new { trader.Name, Result = trader.ValidateSelf() })
           .Where(x => !x.Result.IsValid)
           .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
-          .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+          .ToList();
+
+        bool itemsHaveErrors = itemsErrors.Any();
+
+        if (itemsHaveErrors)
+        {
+            itemsErrors.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
 
         var res = _validator.Validate(Model);
         if (!res.IsValid)
@@ -75,7 +76,10 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
                 .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
                 .ForAll(error => WeakReferenceMessenger.Default.Send(error));
         }
+
+        return res.IsValid && !itemsHaveErrors;
     }
+
     private void TradersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         switch (e.Action)

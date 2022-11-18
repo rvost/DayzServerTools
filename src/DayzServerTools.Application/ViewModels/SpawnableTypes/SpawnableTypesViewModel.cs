@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentValidation;
 
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
@@ -12,8 +13,6 @@ using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
-using DayzServerTools.Library.Xml.Validators;
-using FluentValidation;
 using SpawnableTypesModel = DayzServerTools.Library.Xml.SpawnableTypes;
 
 namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
@@ -21,7 +20,6 @@ namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypesModel>,
     IImporter<IEnumerable<string>>, IDisposable
 {
-    private readonly SpawnableTypesValidator _validator;
     [ObservableProperty]
     private WorkspaceViewModel workspace;
     [ObservableProperty]
@@ -38,11 +36,10 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     public IRelayCommand<object> ExportToNewFileCommand { get; }
     public IRelayCommand<double> SetMinDamageCommand { get; }
     public IRelayCommand<double> SetMaxDamageCommand { get; }
-    public IRelayCommand ValidateCommand { get; }
 
-    public SpawnableTypesViewModel(IDialogFactory dialogFactory) : base(dialogFactory)
+    public SpawnableTypesViewModel(IDialogFactory dialogFactory, IValidator<SpawnableTypesModel> validator)
+        : base(dialogFactory, validator)
     {
-        _validator = new();
         Model = new();
         FileName = "cfgspawnabletypes.xml";
 
@@ -50,7 +47,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         SetMinDamageCommand = new RelayCommand<double>(SetMinDamage, (param) => CanExecuteBatchCommand());
         SetMaxDamageCommand = new RelayCommand<double>(SetMaxDamage, (param) => CanExecuteBatchCommand());
-        ValidateCommand = new RelayCommand(Validate);
 
         Spawnables.CollectionChanged += OnSpawnablesCollectionChanged;
     }
@@ -66,24 +62,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         var models = classnames.Select(name => new SpawnableType() { Name = name });
         var viewModels = models.Select(models => new SpawnableTypeViewModel(models));
         Spawnables.AddRange(viewModels);
-    }
-    public void Validate()
-    {
-        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
-
-        Spawnables.AsParallel()
-            .Select(item => new { item.Name, Result = item.ValidateSelf() })
-            .Where(x => !x.Result.IsValid)
-            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
-            .ForAll(error => WeakReferenceMessenger.Default.Send(error));
-
-        var res = _validator.Validate(Model);
-        if (!res.IsValid)
-        {
-            res.Errors.AsParallel()
-                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
-                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
-        }
     }
 
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
@@ -116,12 +94,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         viewModels.AsParallel().ForAll(spawnable => spawnable.MaxDamage = value);
     }
 
-    protected override bool CanSave()
-    {
-        var isEmpty = Spawnables.Count == 0;
-        var isValid = !Spawnables.Any(i => i.HasErrors);
-        return !isEmpty && isValid;
-    }
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
@@ -133,6 +105,33 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         Spawnables.AddRange(
             spawnableTypes.Spawnables.Select(type => new SpawnableTypeViewModel(type))
             );
+    }
+    protected override bool Validate()
+    {
+        WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));
+
+        var itemsErrors = Spawnables.AsParallel()
+            .Select(item => new { item.Name, Result = item.ValidateSelf() })
+            .Where(x => !x.Result.IsValid)
+            .Select(x => new ValidationErrorInfo(this, x.Name, x.Result.Errors.Select(x => x.ErrorMessage)))
+            .ToList();
+
+        bool itemsHaveErrors = itemsErrors.Any();
+
+        if (itemsHaveErrors)
+        {
+            itemsErrors.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
+
+        var res = _validator.Validate(Model);
+        if (!res.IsValid)
+        {
+            res.Errors.AsParallel()
+                .Select(error => new ValidationErrorInfo(this, "", new[] { error.ErrorMessage }))
+                .ForAll(error => WeakReferenceMessenger.Default.Send(error));
+        }
+
+        return res.IsValid && !itemsHaveErrors;
     }
 
     private void OnSpawnablesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

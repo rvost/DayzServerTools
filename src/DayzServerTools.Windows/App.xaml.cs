@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 
 using CommunityToolkit.Mvvm.DependencyInjection;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Squirrel;
 
@@ -15,6 +16,7 @@ using DayzServerTools.Application.ViewModels.Trader;
 using DayzServerTools.Application.ViewModels.UserDefinitions;
 using DayzServerTools.Windows.Services;
 using DayzServerTools.Library.Common;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Windows
 {
@@ -61,6 +63,8 @@ namespace DayzServerTools.Windows
             services.AddTransient<RandomPresetsViewModel>();
             services.AddTransient<TraderConfigViewModel>();
             services.AddTransient<SpawnableTypesViewModel>();
+
+            services.AddValidatorsFromAssemblyContaining<ItemTypesValidator>(ServiceLifetime.Transient);
         }
     }
 }

@@ -9,5 +9,6 @@ public interface IProjectFileTab
     IRelayCommand SaveCommand { get; }
     IRelayCommand SaveAsCommand { get; }
     IRelayCommand CloseCommand { get; }
+    IRelayCommand ValidateCommand { get; }
     event EventHandler CloseRequested;
 }

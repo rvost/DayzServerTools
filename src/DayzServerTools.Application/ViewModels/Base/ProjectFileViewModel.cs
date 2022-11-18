@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Library.Common;
+using FluentValidation;
 
 namespace DayzServerTools.Application.ViewModels.Base
 {
@@ -11,6 +12,7 @@ namespace DayzServerTools.Application.ViewModels.Base
         where T : IProjectFile
     {
         protected readonly IDialogFactory _dialogFactory;
+        protected readonly IValidator<T> _validator;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Name))]
@@ -22,17 +24,19 @@ namespace DayzServerTools.Application.ViewModels.Base
         public IRelayCommand SaveCommand { get; }
         public IRelayCommand SaveAsCommand { get; }
         public IRelayCommand CloseCommand { get; }
+        public IRelayCommand ValidateCommand { get; }
 
         public event EventHandler CloseRequested;
 
-        public ProjectFileViewModel(IDialogFactory dialogService)
+        public ProjectFileViewModel(IDialogFactory dialogService, IValidator<T> validator)
         {
             _dialogFactory = dialogService;
+            _validator = validator;
 
             SaveCommand = new RelayCommand(Save);
             SaveAsCommand = new RelayCommand(SaveAs);
             CloseCommand = new RelayCommand(Close);
-
+            ValidateCommand = new RelayCommand(() => Validate());
         }
 
         public void Load()
@@ -93,8 +97,9 @@ namespace DayzServerTools.Application.ViewModels.Base
 
         protected abstract void OnLoad(Stream input, string filename);
         protected abstract IFileDialog CreateOpenFileDialog();
-        protected abstract bool CanSave();
-
+        protected abstract bool Validate();
+        
+        protected virtual bool CanSave() => Validate();
         protected void SaveTo(string filePath)
         {
             if (!string.IsNullOrEmpty(filePath))
