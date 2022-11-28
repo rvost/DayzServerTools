@@ -25,6 +25,9 @@
 		<ProjectReference Include="..\..\src\DayzServerTools.Library\DayzServerTools.Library.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="Resources\cfgeconomycore.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Resources\cfglimitsdefinitionuser.xml">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
