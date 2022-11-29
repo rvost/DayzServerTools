@@ -1,4 +1,5 @@
 ﻿using DayzServerTools.Library.Xml;
+using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Library.Test;
 
@@ -46,5 +47,23 @@ public class EconomyCoreTests
 
         using var output = File.Create("serialized.xml");
         obj.WriteToStream(output);
+    }
+
+    [Fact]
+    public void CanValidate()
+    {
+        var ceFolder = new CeFolder() { Folder = "db" };
+        ceFolder.Files.Add(new() { Name = "types_dzn.xml", Type = CeFileType.Types });
+        ceFolder.Files.Add(new() { Name = "spawnables_dzn.xml", Type = CeFileType.SpawnableTypes });
+        
+        var obj = new EconomyCore();
+        obj.CeFolders.Add(ceFolder);
+        obj.CeFolders.Add(new() { Folder= "foo" });
+
+        var validator = new EconomyCoreValidator(@"Resources\mission.test");
+        var result = validator.Validate(obj);
+        
+        Assert.False(result.IsValid);
+        Assert.Equal(1, result.Errors.Count);
     }
 }
