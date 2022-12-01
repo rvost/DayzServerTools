@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
+
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -18,7 +17,7 @@ namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 public partial class SpawnableTypeViewModel : ObservableFluentValidator<SpawnableType, SpawnableTypeValidator>
 {
     private readonly IDialogFactory _dialogFactory;
-    private readonly IRandomPresetsProvider _randomPresets;
+    private readonly SpawnableTypesViewModelsFactory _viewModelsFactory;
     [ObservableProperty]
     private SpawnablePresetViewModel selectedPreset;
 
@@ -54,21 +53,21 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
     public IRelayCommand<PresetType> AddNewPresetCommand { get; }
     public IRelayCommand<PresetType> ImportClassnamesAsPresetsCommand { get; }
 
-    public SpawnableTypeViewModel(SpawnableType model)
-        : base(model, new(Ioc.Default.GetRequiredService<IRandomPresetsProvider>()))
+    public SpawnableTypeViewModel(SpawnableType model, IDialogFactory dialogFactory,
+        IRandomPresetsProvider randomPresetsProvider, SpawnableTypesViewModelsFactory viewModelsFactory) : base(model, new(randomPresetsProvider))
     {
-        _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
-        _randomPresets = Ioc.Default.GetRequiredService<IRandomPresetsProvider>();
+        _dialogFactory = dialogFactory;
+        _viewModelsFactory = viewModelsFactory;
 
         Cargo.AddRange(_model.Cargo.Select(preset =>
-            new SpawnablePresetViewModel(preset, new(() => _randomPresets.AvailableCargoPresets))));
+            _viewModelsFactory.CreateSpawnablePresetViewModel(PresetType.Cargo ,preset )));
         Attachments.AddRange(_model.Attachments.Select(preset =>
-            new SpawnablePresetViewModel(preset, new(() => _randomPresets.AvailableAttachmentsPresets))));
+            _viewModelsFactory.CreateSpawnablePresetViewModel(PresetType.Attachments, preset)));
 
         Proxies = new List<SpawnablePresetsCollectionProxy>
         {
-            new SpawnablePresetsCollectionProxy(PresetType.Cargo, "Cargo", Cargo),
-            new SpawnablePresetsCollectionProxy(PresetType.Attachments, "Attachments", Attachments)
+            _viewModelsFactory.CreatePresetsCollectionProxy(PresetType.Cargo, "Cargo", Cargo),
+            _viewModelsFactory.CreatePresetsCollectionProxy(PresetType.Attachments, "Attachments", Attachments)
         };
 
         AddNewPresetCommand = new RelayCommand<PresetType>(AddNewPreset);
@@ -84,12 +83,12 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
         {
             case PresetType.Cargo:
                 Cargo.Add(
-                    new SpawnablePresetViewModel(new SpawnablePreset(), new(() => _randomPresets.AvailableCargoPresets))
+                    _viewModelsFactory.CreateSpawnablePresetViewModel(PresetType.Cargo, new SpawnablePreset())
                 );
                 break;
             case PresetType.Attachments:
                 Attachments.Add(
-                    new SpawnablePresetViewModel(new SpawnablePreset(), new(() => _randomPresets.AvailableAttachmentsPresets))
+                    _viewModelsFactory.CreateSpawnablePresetViewModel(PresetType.Attachments, new SpawnablePreset())
                 );
                 break;
             default:
@@ -101,7 +100,7 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
         var target = type == PresetType.Cargo ? Cargo : Attachments;
 
         var dialog = _dialogFactory.CreateClassnameImportDialog();
-        dialog.Store = new SpawnableTypePresetsImportStore(type, target);
+        dialog.Store = new SpawnableTypePresetsImportStore(type, target, _viewModelsFactory);
         dialog.ShowDialog();
     }
 

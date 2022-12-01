@@ -56,6 +56,8 @@ namespace DayzServerTools.Windows
                 x.GetRequiredService<WorkspaceViewModel>());
             services.AddSingleton<IRandomPresetsProvider>(x =>
                 x.GetRequiredService<WorkspaceViewModel>());
+
+            services.AddSingleton<SpawnableTypesViewModelsFactory>();
             services.AddSingleton<TraderViewModelsFactory>();
 
             services.AddTransient<ItemTypesViewModel>();

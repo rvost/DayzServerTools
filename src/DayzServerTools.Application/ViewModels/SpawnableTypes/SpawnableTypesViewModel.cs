@@ -20,6 +20,8 @@ namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTypesModel>,
     IImporter<IEnumerable<string>>, IDisposable
 {
+    private readonly SpawnableTypesViewModelsFactory _viewModelsFactory;
+
     [ObservableProperty]
     private WorkspaceViewModel workspace;
     [ObservableProperty]
@@ -30,6 +32,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     private IList selectedItems;
     [ObservableProperty]
     private bool showTagColumn = false;
+
     public ObservableCollection<SpawnableTypeViewModel> Spawnables { get; set; } = new();
 
     public IRelayCommand AddSpawnableTypeCommand { get; }
@@ -37,13 +40,16 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     public IRelayCommand<double> SetMinDamageCommand { get; }
     public IRelayCommand<double> SetMaxDamageCommand { get; }
 
-    public SpawnableTypesViewModel(IDialogFactory dialogFactory, IValidator<SpawnableTypesModel> validator)
-        : base(dialogFactory, validator)
+    public SpawnableTypesViewModel(IDialogFactory dialogFactory, IValidator<SpawnableTypesModel> validator,
+        SpawnableTypesViewModelsFactory viewModelsFactory) : base(dialogFactory, validator)
     {
+        _viewModelsFactory = viewModelsFactory;
         Model = new();
         FileName = "cfgspawnabletypes.xml";
 
-        AddSpawnableTypeCommand = new RelayCommand(() => Spawnables.Add(new(new())));
+        AddSpawnableTypeCommand = new RelayCommand(() =>
+            Spawnables.Add(viewModelsFactory.CreateSpawnableTypeViewModel(new()))
+        );
         ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
         SetMinDamageCommand = new RelayCommand<double>(SetMinDamage, (param) => CanExecuteBatchCommand());
         SetMaxDamageCommand = new RelayCommand<double>(SetMaxDamage, (param) => CanExecuteBatchCommand());
@@ -54,13 +60,13 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     public void CopySpawnableTypes(IEnumerable<SpawnableType> source)
     {
         Spawnables.AddRange(
-            source.Select(obj => new SpawnableTypeViewModel(obj.Copy()))
+            source.Select(obj => _viewModelsFactory.CreateSpawnableTypeViewModel(obj.Copy()))
         );
     }
     public void Import(IEnumerable<string> classnames)
     {
         var models = classnames.Select(name => new SpawnableType() { Name = name });
-        var viewModels = models.Select(models => new SpawnableTypeViewModel(models));
+        var viewModels = models.Select(models => _viewModelsFactory.CreateSpawnableTypeViewModel(models));
         Spawnables.AddRange(viewModels);
     }
 
@@ -103,7 +109,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     {
         var spawnableTypes = SpawnableTypesModel.ReadFromStream(input);
         Spawnables.AddRange(
-            spawnableTypes.Spawnables.Select(type => new SpawnableTypeViewModel(type))
+            spawnableTypes.Spawnables.Select(type => _viewModelsFactory.CreateSpawnableTypeViewModel(type))
             );
     }
     protected override bool Validate()

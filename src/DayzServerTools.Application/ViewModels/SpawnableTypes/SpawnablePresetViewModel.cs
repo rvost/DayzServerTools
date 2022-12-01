@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -39,10 +38,10 @@ public class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePrese
 
     public RelayCommand ImportClassnamesCommand { get; }
 
-    public SpawnablePresetViewModel(SpawnablePreset model, SpawnablePresetValidator validator)
+    public SpawnablePresetViewModel(SpawnablePreset model, SpawnablePresetValidator validator, IDialogFactory dialogFactory)
         : base(model, validator)
     {
-        _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
+        _dialogFactory = dialogFactory;
 
         ImportClassnamesCommand = new RelayCommand(ImportClassnames);
     }

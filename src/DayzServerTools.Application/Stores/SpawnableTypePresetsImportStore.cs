@@ -14,10 +14,14 @@ public class SpawnableTypePresetsImportStore : IClassnameImportStore
 {
     private readonly ObservableCollection<SpawnablePresetViewModel> _target;
     private readonly PresetType _type;
-    public SpawnableTypePresetsImportStore(PresetType type, ObservableCollection<SpawnablePresetViewModel> target)
+    private readonly SpawnableTypesViewModelsFactory _viewModelsFactory;
+
+    public SpawnableTypePresetsImportStore(PresetType type, ObservableCollection<SpawnablePresetViewModel> target, 
+        SpawnableTypesViewModelsFactory viewModelsFactory)
     {
         _target = target;
         _type = type;
+        _viewModelsFactory = viewModelsFactory;
     }
 
     public void Accept(IEnumerable<string> classnames)
@@ -34,7 +38,7 @@ public class SpawnableTypePresetsImportStore : IClassnameImportStore
                     PresetType.Cargo => new SpawnablePresetValidator(() => provider.AvailableCargoPresets),
                     _ => null
                 };
-                return new SpawnablePresetViewModel(preset, validator);
+                return _viewModelsFactory.CreateSpawnablePresetViewModel(_type, preset);
             });
         _target.AddRange(presetVMs);
     }
