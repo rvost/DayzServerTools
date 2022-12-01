@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -20,6 +19,7 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
     IImporter<IEnumerable<string>>, IImporter<IEnumerable<TraderItemViewModel>>
 {
     private readonly IDialogFactory _dialogFactory;
+    private readonly WorkspaceViewModel _workspace;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(CopyItemsCommand), nameof(MoveItemsCommand),
@@ -44,9 +44,11 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
     public IRelayCommand<double> SetSellPriceCommand { get; }
     public IRelayCommand<string> SetQuantityModifierCommand { get; }
 
-    public TraderCategoryViewModel(TraderCategory model) : base(model, new())
+    public TraderCategoryViewModel(TraderCategory model, IDialogFactory dialogFactory, WorkspaceViewModel workspace) 
+        : base(model, new())
     {
-        _dialogFactory = Ioc.Default.GetService<IDialogFactory>();
+        _dialogFactory = dialogFactory;
+        _workspace = workspace;
 
         Items = new(model.TraderItems.Select(m => new TraderItemViewModel(m)));
 
@@ -83,8 +85,6 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         }
     }
 
-    public TraderCategoryViewModel() : this(new TraderCategory()) { }
-
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
     protected void ClassnamesImport()
     {
@@ -103,8 +103,7 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
             .Select(item => new TraderItemViewModel(item.Model.Copy()));
 
         //TODO: Remove dependency on WorkspaceViewModel and TraderConfigViewModel
-        var workspace = Ioc.Default.GetRequiredService<WorkspaceViewModel>();
-        var options = workspace.Tabs
+        var options = _workspace.Tabs
            .Where(t => t is TraderConfigViewModel)
            .ToList();
 
@@ -122,8 +121,7 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         var items = SelectedItems.Cast<TraderItemViewModel>().ToList();
 
         //TODO: Remove dependency on WorkspaceViewModel and TraderConfigViewModel
-        var workspace = Ioc.Default.GetRequiredService<WorkspaceViewModel>();
-        var options = workspace.Tabs
+        var options = _workspace.Tabs
            .Where(t => t is TraderConfigViewModel)
            .ToList();
 

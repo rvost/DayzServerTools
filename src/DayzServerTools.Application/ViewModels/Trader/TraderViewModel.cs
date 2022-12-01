@@ -3,8 +3,8 @@ using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+
 using DayzServerTools.Application.ViewModels.Base;
-using DayzServerTools.Library.Trader;
 using DayzServerTools.Library.Trader.Validators;
 using TraderModel = DayzServerTools.Library.Trader.Trader;
 
@@ -12,6 +12,8 @@ namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderViewModel : ObservableFluentValidator<TraderModel, TraderValidator>, IDisposable
 {
+    private readonly TraderViewModelsFactory _viewModelsFactory;
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveCategoryCommand))]
     private TraderCategoryViewModel selectedCategory;
@@ -21,15 +23,18 @@ public partial class TraderViewModel : ObservableFluentValidator<TraderModel, Tr
         get => _model.TraderName;
         set => SetProperty(_model.TraderName, value, _model, (m, n) => m.TraderName = n);
     }
+
     public ObservableCollection<TraderCategoryViewModel> Categories { get; }
 
     public IRelayCommand<string> AddCategoryCommand { get; }
     public IRelayCommand<TraderCategoryViewModel> RemoveCategoryCommand { get; }
 
-    public TraderViewModel(TraderModel trader):base(trader, new())
+    public TraderViewModel(TraderModel trader, TraderViewModelsFactory viewModelsFactory) : base(trader, new())
     {
+        _viewModelsFactory = viewModelsFactory;
+
         Categories = new ObservableCollection<TraderCategoryViewModel>(
-            trader.TraderCategories.Select(c => new TraderCategoryViewModel(c))
+            trader.TraderCategories.Select(c => _viewModelsFactory.CreateTraderCategoryViewModel(c))
             );
 
         AddCategoryCommand = new RelayCommand<string>(AddCategory);
@@ -37,8 +42,9 @@ public partial class TraderViewModel : ObservableFluentValidator<TraderModel, Tr
 
         Categories.CollectionChanged += CategoriesCollectionChanged;
     }
+   
     protected void AddCategory(string categoryName)
-           => Categories.Add(new(new TraderCategory() { CategoryName = categoryName }));
+           => Categories.Add(_viewModelsFactory.CreateTraderCategoryViewModel(new() { CategoryName = categoryName }));
     protected bool CanRemoveCategory(TraderCategoryViewModel category)
         => category is not null || SelectedCategory is not null;
     protected void RemoveCategory(TraderCategoryViewModel category)

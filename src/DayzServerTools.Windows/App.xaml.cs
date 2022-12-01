@@ -8,7 +8,6 @@ using Squirrel;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels;
 using DayzServerTools.Application.ViewModels.Panes;
-using DayzServerTools.Application.ViewModels.Dialogs;
 using DayzServerTools.Application.ViewModels.ItemTypes;
 using DayzServerTools.Application.ViewModels.RandomPresets;
 using DayzServerTools.Application.ViewModels.SpawnableTypes;
@@ -57,6 +56,7 @@ namespace DayzServerTools.Windows
                 x.GetRequiredService<WorkspaceViewModel>());
             services.AddSingleton<IRandomPresetsProvider>(x =>
                 x.GetRequiredService<WorkspaceViewModel>());
+            services.AddSingleton<TraderViewModelsFactory>();
 
             services.AddTransient<ItemTypesViewModel>();
             services.AddTransient<UserDefinitionsViewModel>();

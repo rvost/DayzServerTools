@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentValidation;
 
@@ -12,14 +11,15 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Trader;
-using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
 public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>, IDisposable
 {
+    private readonly TraderViewModelsFactory _viewModelsFactory;
     [ObservableProperty]
     private TraderViewModel selectedTrader;
+
 
     public ObservableCollection<string> AvailableModifiers { get; }
     = new(new[] { "*", "W", "M", "V", "VNK", "K", "S" });
@@ -30,20 +30,21 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
         set => SetProperty(model.CurrencyCategory, value, model, (m, n) => m.CurrencyCategory = n);
     }
 
-    public TraderConfigViewModel(IDialogFactory dialogFactory, IValidator<TraderConfig> validator) 
-        : base(dialogFactory, validator)
+    public TraderConfigViewModel(IDialogFactory dialogFactory, IValidator<TraderConfig> validator,
+        TraderViewModelsFactory viewModelsFactory) : base(dialogFactory, validator)
     {
+        _viewModelsFactory = viewModelsFactory;
         Model = new();
         FileName = "TraderConfig.txt";
 
         Traders.CollectionChanged += TradersCollectionChanged;
     }
-    
+
     protected override void OnLoad(Stream input, string filename)
     {
         var newModel = TraderConfig.ReadFromStream(input);
         CurrencyCategory = newModel.CurrencyCategory;
-        Traders.AddRange(newModel.Traders.Select(t => new TraderViewModel(t)));
+        Traders.AddRange(newModel.Traders.Select(t => _viewModelsFactory.CreateTraderViewModel(t)));
     }
     protected override IFileDialog CreateOpenFileDialog()
     {
