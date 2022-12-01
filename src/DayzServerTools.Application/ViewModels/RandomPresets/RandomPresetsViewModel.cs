@@ -40,8 +40,8 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
             new RandomPresetsCollectionProxy("Attachments", AttachmentsPresets)
         };
 
-        NewCargoPresetCommand = new RelayCommand(() => CargoPresets.Add(new(new())));
-        NewAttachmentsPresetCommand = new RelayCommand(() => AttachmentsPresets.Add(new(new())));
+        NewCargoPresetCommand = new RelayCommand(() => CargoPresets.Add(new(new(), _dialogFactory)));
+        NewAttachmentsPresetCommand = new RelayCommand(() => AttachmentsPresets.Add(new(new(), _dialogFactory)));
 
         CargoPresets.CollectionChanged += OnPresetsCollectionChanged;
         AttachmentsPresets.CollectionChanged += OnPresetsCollectionChanged;
@@ -68,10 +68,10 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     {
         var randomPresets = RandomPresetsModel.ReadFromStream(input);
         CargoPresets.AddRange(
-            randomPresets.CargoPresets.Select(preset => new RandomPresetViewModel(preset))
+            randomPresets.CargoPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
             );
         AttachmentsPresets.AddRange(
-            randomPresets.AttachmentsPresets.Select(preset => new RandomPresetViewModel(preset))
+            randomPresets.AttachmentsPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
             );
     }
     protected override IFileDialog CreateOpenFileDialog()

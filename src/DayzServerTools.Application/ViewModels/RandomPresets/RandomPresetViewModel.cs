@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Extensions;
@@ -31,9 +30,9 @@ public class RandomPresetViewModel : ObservableFluentValidator<RandomPreset, Ran
 
     public RelayCommand ImportClassnamesCommand { get; }
 
-    public RandomPresetViewModel(RandomPreset model) : base(model, new())
+    public RandomPresetViewModel(RandomPreset model, IDialogFactory dialogFactory) : base(model, new())
     {
-        _dialogFactory = Ioc.Default.GetRequiredService<IDialogFactory>();
+        _dialogFactory = dialogFactory;
 
         ImportClassnamesCommand = new RelayCommand(ImportClassnames);
     }
