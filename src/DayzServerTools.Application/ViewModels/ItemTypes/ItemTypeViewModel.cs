@@ -1,12 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.ViewModels.Base;
-using DayzServerTools.Library.Common;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validators;
 
@@ -113,10 +111,10 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
     public IRelayCommand RemoveTagCommand { get; }
     public IRelayCommand ClearFlagsCommand { get; }
 
-    public ItemTypeViewModel(ItemType model) 
-        : base(model, new ItemTypeValidator(Ioc.Default.GetRequiredService<ILimitsDefinitionsProvider>()))
+    public ItemTypeViewModel(ItemType model, ItemTypeValidator validator, IDispatcherService dispatcher) 
+        : base(model, validator)
     {
-        _dispatcher = Ioc.Default.GetRequiredService<IDispatcherService>();
+        _dispatcher = dispatcher;
         _model.Value.RemoveAllEmpty();
         _model.Usages.RemoveAllEmpty();
         _model.Tags.RemoveAllEmpty();

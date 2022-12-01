@@ -24,6 +24,7 @@ namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
 public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, IDisposable
 {
+    private readonly ItemTypeViewModelFactory _viewModelFactory;
     private readonly WorkspaceViewModel _workspace;
     [ObservableProperty]
     private ObservableCollection<ItemTypeViewModel> items = new();
@@ -56,9 +57,10 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
     public IRelayCommand<VanillaFlag> AddTagCommand { get; }
     public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
 
-    public ItemTypesViewModel(IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, WorkspaceViewModel workspace) 
-        : base(dialogFactory, validator)
+    public ItemTypesViewModel(IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, 
+        WorkspaceViewModel workspace, ItemTypeViewModelFactory viewModelFactory): base(dialogFactory, validator)
     {
+        _viewModelFactory = viewModelFactory;
         _workspace = workspace;
 
         Model = new();
@@ -85,12 +87,12 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
     public void CopyItemTypes(IEnumerable<ItemType> source)
     {
         Items.AddRange(
-            source.Select(obj => new ItemTypeViewModel(obj.Copy()))
+            source.Select(obj => _viewModelFactory.Create(obj.Copy()))
         );
     }
 
     protected void AddEmptyItem()
-        => Items.Add(new(new ItemType()));
+        => Items.Add(_viewModelFactory.Create(new ItemType()));
     protected bool CanExecuteBatchCommand() => SelectedItems is not null;
     protected bool CanExecuteExportCommand(object param) => param is not null;
     protected void AdjustQuantity(float? factor)
@@ -223,7 +225,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
     {
         var newItems = Library.Xml.ItemTypes.ReadFromStream(input);
         Items.Clear();
-        Items.AddRange(newItems.Types.Select(obj => new ItemTypeViewModel(obj)));
+        Items.AddRange(newItems.Types.Select(obj => _viewModelFactory.Create(obj)));
     }
     protected override IFileDialog CreateOpenFileDialog()
     {
