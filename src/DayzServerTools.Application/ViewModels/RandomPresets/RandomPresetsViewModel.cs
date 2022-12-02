@@ -28,11 +28,15 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     public IRelayCommand NewCargoPresetCommand { get; }
     public IRelayCommand NewAttachmentsPresetCommand { get; }
 
-    public RandomPresetsViewModel(IDialogFactory dialogFactory, IValidator<RandomPresetsModel> validator) : 
-        base(dialogFactory, validator)
+    public RandomPresetsViewModel(string fileName, RandomPresetsModel model, IValidator<RandomPresetsModel> validator,
+        IDialogFactory dialogFactory) : base(fileName, model, validator, dialogFactory)
     {
-        Model = new();
-        FileName = "cfgrandompresets.xml";
+        CargoPresets.AddRange(
+            model.CargoPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
+            );
+        AttachmentsPresets.AddRange(
+            model.AttachmentsPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
+            );
 
         Proxies = new List<RandomPresetsCollectionProxy>
         {
@@ -64,16 +68,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
         return res.IsValid && !cargoHaveErrors && !attachmentsHaveErrors;
     }
-    protected override void OnLoad(Stream input, string filename)
-    {
-        var randomPresets = RandomPresetsModel.ReadFromStream(input);
-        CargoPresets.AddRange(
-            randomPresets.CargoPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
-            );
-        AttachmentsPresets.AddRange(
-            randomPresets.AttachmentsPresets.Select(preset => new RandomPresetViewModel(preset, _dialogFactory))
-            );
-    }
+
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
@@ -90,7 +85,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
           .ToList();
 
         errorInfos.AsParallel().ForAll(error => WeakReferenceMessenger.Default.Send(error));
-        
+
         return errorInfos.Any();
     }
     private void OnPresetsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

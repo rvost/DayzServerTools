@@ -57,14 +57,13 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
     public IRelayCommand<VanillaFlag> AddTagCommand { get; }
     public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
 
-    public ItemTypesViewModel(IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, 
-        WorkspaceViewModel workspace, ItemTypeViewModelFactory viewModelFactory): base(dialogFactory, validator)
+    public ItemTypesViewModel(string fileName, ItemTypesModel model, IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, 
+        WorkspaceViewModel workspace, ItemTypeViewModelFactory viewModelFactory): base(fileName, model, validator, dialogFactory)
     {
         _viewModelFactory = viewModelFactory;
         _workspace = workspace;
 
-        Model = new();
-        FileName = "types.xml";
+        Items.AddRange(model.Types.Select(obj => _viewModelFactory.Create(obj)));
 
         AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
         AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, (param) => CanExecuteBatchCommand());
@@ -221,12 +220,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         viewModels.AsParallel().ForAll(vm => vm.ClearFlagsCommand.Execute(target));
     }
 
-    protected override void OnLoad(Stream input, string filename)
-    {
-        var newItems = Library.Xml.ItemTypes.ReadFromStream(input);
-        Items.Clear();
-        Items.AddRange(newItems.Types.Select(obj => _viewModelFactory.Create(obj)));
-    }
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();

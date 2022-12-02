@@ -40,12 +40,14 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     public IRelayCommand<double> SetMinDamageCommand { get; }
     public IRelayCommand<double> SetMaxDamageCommand { get; }
 
-    public SpawnableTypesViewModel(IDialogFactory dialogFactory, IValidator<SpawnableTypesModel> validator,
-        SpawnableTypesViewModelsFactory viewModelsFactory) : base(dialogFactory, validator)
+    public SpawnableTypesViewModel(string fileName, SpawnableTypesModel model, IValidator<SpawnableTypesModel> validator,
+        IDialogFactory dialogFactory, SpawnableTypesViewModelsFactory viewModelsFactory) : base(fileName, model, validator, dialogFactory)
     {
         _viewModelsFactory = viewModelsFactory;
-        Model = new();
-        FileName = "cfgspawnabletypes.xml";
+        
+        Spawnables.AddRange(
+            model.Spawnables.Select(type => _viewModelsFactory.CreateSpawnableTypeViewModel(type))
+            );
 
         AddSpawnableTypeCommand = new RelayCommand(() =>
             Spawnables.Add(viewModelsFactory.CreateSpawnableTypeViewModel(new()))
@@ -105,13 +107,7 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         var dialog = _dialogFactory.CreateOpenFileDialog();
         return dialog;
     }
-    protected override void OnLoad(Stream input, string filename)
-    {
-        var spawnableTypes = SpawnableTypesModel.ReadFromStream(input);
-        Spawnables.AddRange(
-            spawnableTypes.Spawnables.Select(type => _viewModelsFactory.CreateSpawnableTypeViewModel(type))
-            );
-    }
+
     protected override bool Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));

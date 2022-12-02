@@ -16,9 +16,9 @@ namespace DayzServerTools.Application.ViewModels.Base
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Name))]
-        protected string fileName = "";
+        protected string _fileName = "";
         [ObservableProperty]
-        protected T model;
+        protected T _model;
 
         public string Name => Path.GetFileName(FileName);
         public IRelayCommand SaveCommand { get; }
@@ -28,8 +28,10 @@ namespace DayzServerTools.Application.ViewModels.Base
 
         public event EventHandler CloseRequested;
 
-        public ProjectFileViewModel(IDialogFactory dialogService, IValidator<T> validator)
+        public ProjectFileViewModel(string fileName, T model, IValidator<T> validator, IDialogFactory dialogService)
         {
+            _model = model;
+            _fileName = fileName;
             _dialogFactory = dialogService;
             _validator = validator;
 
@@ -51,7 +53,7 @@ namespace DayzServerTools.Application.ViewModels.Base
                 using var input = File.OpenRead(filename);
                 try
                 {
-                    OnLoad(input, filename);
+                    //OnLoad(input, filename);
                     FileName = filename;
                 }
                 catch (InvalidOperationException e)
@@ -95,7 +97,6 @@ namespace DayzServerTools.Application.ViewModels.Base
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        protected abstract void OnLoad(Stream input, string filename);
         protected abstract IFileDialog CreateOpenFileDialog();
         protected abstract bool Validate();
         

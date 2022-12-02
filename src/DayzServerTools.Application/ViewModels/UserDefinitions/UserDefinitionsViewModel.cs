@@ -35,11 +35,15 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     public IRelayCommand NewValueFlagCommand { get; }
     public IRelayCommand NewUsageFlagCommand { get; }
 
-    public UserDefinitionsViewModel(IDialogFactory dialogFactory, IValidator<UserDefinitionsModel> validator)
-        : base(dialogFactory, validator)
+    public UserDefinitionsViewModel(string fileName, UserDefinitionsModel model, IValidator<UserDefinitionsModel> validator,
+        IDialogFactory dialogFactory) : base(fileName, model, validator, dialogFactory)
     {
-        Model = new();
-        FileName = "cfglimitsdefinitionuser.xml";
+        ValueFlags.AddRange(
+            model.ValueFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableValueFlags))
+            );
+        UsageFlags.AddRange(
+            model.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableUsageFlags))
+            );
 
         NewValueFlagCommand = new RelayCommand(
             () => ValueFlags.Add(new(new ValueUserDefinition(), () => AvailableValueFlags))
@@ -72,16 +76,7 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
 
         return res.IsValid && !usagesHaveErrors && !valuesHaveErrors;
     }
-    protected override void OnLoad(Stream input, string filename)
-    {
-        var userDefinitions = UserDefinitionsModel.ReadFromStream(input);
-        ValueFlags.AddRange(
-            userDefinitions.ValueFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableValueFlags))
-            );
-        UsageFlags.AddRange(
-            userDefinitions.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableUsageFlags))
-            );
-    }
+
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();

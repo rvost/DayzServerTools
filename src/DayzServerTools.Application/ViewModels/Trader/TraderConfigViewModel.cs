@@ -26,26 +26,21 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
     public ObservableCollection<TraderViewModel> Traders { get; } = new();
     public CurrencyCategory CurrencyCategory
     {
-        get => model.CurrencyCategory;
-        set => SetProperty(model.CurrencyCategory, value, model, (m, n) => m.CurrencyCategory = n);
+        get => _model.CurrencyCategory;
+        set => SetProperty(_model.CurrencyCategory, value, _model, (m, n) => m.CurrencyCategory = n);
     }
 
-    public TraderConfigViewModel(IDialogFactory dialogFactory, IValidator<TraderConfig> validator,
-        TraderViewModelsFactory viewModelsFactory) : base(dialogFactory, validator)
+    public TraderConfigViewModel(string fileName, TraderConfig model, IValidator<TraderConfig> validator, IDialogFactory dialogFactory,
+        TraderViewModelsFactory viewModelsFactory) : base(fileName, model, validator, dialogFactory)
     {
         _viewModelsFactory = viewModelsFactory;
-        Model = new();
-        FileName = "TraderConfig.txt";
+        
+        CurrencyCategory = model.CurrencyCategory;
+        Traders.AddRange(model.Traders.Select(t => _viewModelsFactory.CreateTraderViewModel(t)));
 
         Traders.CollectionChanged += TradersCollectionChanged;
     }
 
-    protected override void OnLoad(Stream input, string filename)
-    {
-        var newModel = TraderConfig.ReadFromStream(input);
-        CurrencyCategory = newModel.CurrencyCategory;
-        Traders.AddRange(newModel.Traders.Select(t => _viewModelsFactory.CreateTraderViewModel(t)));
-    }
     protected override IFileDialog CreateOpenFileDialog()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
