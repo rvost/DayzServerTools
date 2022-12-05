@@ -5,12 +5,12 @@ using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
-public class ItemTypeViewModelFactory
+public class ItemTypeViewModelsFactory
 {
     private readonly IDispatcherService _dispatcherService;
     private readonly ILimitsDefinitionsProvider _limitsDefinitions;
 
-    public ItemTypeViewModelFactory(IDispatcherService dispatcherService, ILimitsDefinitionsProvider limitsDefinitions)
+    public ItemTypeViewModelsFactory(IDispatcherService dispatcherService, ILimitsDefinitionsProvider limitsDefinitions)
 	{
         _dispatcherService = dispatcherService;
         _limitsDefinitions = limitsDefinitions;
