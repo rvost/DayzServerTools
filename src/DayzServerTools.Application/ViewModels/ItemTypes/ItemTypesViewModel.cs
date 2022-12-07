@@ -12,7 +12,6 @@ using DayzServerTools.Application.ViewModels.Dialogs;
 using DayzServerTools.Application.ViewModels.RandomPresets;
 using DayzServerTools.Application.ViewModels.SpawnableTypes;
 using DayzServerTools.Application.ViewModels.Trader;
-using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Stores;
@@ -220,11 +219,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         viewModels.AsParallel().ForAll(vm => vm.ClearFlagsCommand.Execute(target));
     }
 
-    protected override IFileDialog CreateOpenFileDialog()
-    {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        return dialog;
-    }
     protected override bool Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));

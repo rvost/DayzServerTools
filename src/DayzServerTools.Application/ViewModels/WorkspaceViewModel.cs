@@ -264,7 +264,6 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     {
         var newItemTypesVM = Ioc.Default.GetService<ItemTypesViewModel>();
         Tabs.Add(newItemTypesVM);
-        newItemTypesVM.Load();
     }
     public void CreateUserDefinitions()
     {
@@ -277,7 +276,6 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         var newUserDefinitionVM = Ioc.Default.GetService<UserDefinitionsViewModel>();
         newUserDefinitionVM.LimitsDefinitions = LimitsDefinitions;
         Tabs.Add(newUserDefinitionVM);
-        newUserDefinitionVM.Load();
     }
     public void CreateRandomPresets()
     {
@@ -288,7 +286,6 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     {
         var newVM = Ioc.Default.GetService<RandomPresetsViewModel>();
         Tabs.Add(newVM);
-        newVM.Load();
     }
     public void CreateSpawnableTypes()
     {
@@ -308,14 +305,11 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         var newVM = Ioc.Default.GetService<SpawnableTypesViewModel>();
         newVM.Workspace = this;
         Tabs.Add(newVM);
-        newVM.Load();
     }
     public void OpenTraderConfig()
     {
         var newVM = Ioc.Default.GetService<TraderConfigViewModel>();
-        //newVM.Workspace = this;
         Tabs.Add(newVM);
-        newVM.Load();
     }
 
     protected override void TabsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

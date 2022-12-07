@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentValidation;
 
 using DayzServerTools.Application.ViewModels.Base;
-using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
@@ -75,13 +74,6 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
         }
 
         return res.IsValid && !usagesHaveErrors && !valuesHaveErrors;
-    }
-
-    protected override IFileDialog CreateOpenFileDialog()
-    {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "cfglimitsdefinitionuser*";
-        return dialog;
     }
 
     private void FlagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

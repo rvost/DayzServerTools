@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FluentValidation;
 
 using DayzServerTools.Application.ViewModels.Base;
-using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
@@ -41,13 +40,6 @@ public partial class TraderConfigViewModel : ProjectFileViewModel<TraderConfig>,
         Traders.CollectionChanged += TradersCollectionChanged;
     }
 
-    protected override IFileDialog CreateOpenFileDialog()
-    {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "TraderConfig*";
-        dialog.Filter = "Text|*.txt";
-        return dialog;
-    }
     protected override bool Validate()
     {
         WeakReferenceMessenger.Default.Send(new ClearValidationErrorsMessage(this));

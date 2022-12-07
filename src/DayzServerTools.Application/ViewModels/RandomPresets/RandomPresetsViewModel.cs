@@ -8,7 +8,6 @@ using FluentValidation;
 
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
-using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Application.ViewModels.Base;
 using DayzServerTools.Library.Xml;
@@ -67,13 +66,6 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
         }
 
         return res.IsValid && !cargoHaveErrors && !attachmentsHaveErrors;
-    }
-
-    protected override IFileDialog CreateOpenFileDialog()
-    {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "cfgrandompresets*";
-        return dialog;
     }
 
     private bool ReportPresetsErrors(string colName, ICollection<RandomPresetViewModel> presets)

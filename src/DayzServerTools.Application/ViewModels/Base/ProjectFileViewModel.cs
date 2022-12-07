@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Library.Common;
 using FluentValidation;
@@ -41,36 +40,6 @@ namespace DayzServerTools.Application.ViewModels.Base
             ValidateCommand = new RelayCommand(() => Validate());
         }
 
-        public void Load()
-        {
-            var dialog = CreateOpenFileDialog();
-
-            dialog.ShowDialog();
-
-            var filename = dialog.FileName;
-            if (File.Exists(filename))
-            {
-                using var input = File.OpenRead(filename);
-                try
-                {
-                    //OnLoad(input, filename);
-                    FileName = filename;
-                }
-                catch (InvalidOperationException e)
-                {
-                    var errorDialog = _dialogFactory.CreateMessageDialog();
-                    errorDialog.Title = "File format error";
-                    errorDialog.Message = e.InnerException?.Message ?? e.Message;
-                    errorDialog.Image = MessageDialogImage.Error;
-                    errorDialog.Show();
-                    CloseCommand.Execute(null);
-                }
-            }
-            else
-            {
-                CloseCommand.Execute(null);
-            }
-        }
         public void Save()
         {
             if (CanSave())
@@ -97,9 +66,8 @@ namespace DayzServerTools.Application.ViewModels.Base
             CloseRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        protected abstract IFileDialog CreateOpenFileDialog();
         protected abstract bool Validate();
-        
+
         protected virtual bool CanSave() => Validate();
         protected void SaveTo(string filePath)
         {
