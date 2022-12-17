@@ -50,22 +50,7 @@ namespace DayzServerTools.Windows
             services.AddSingleton<IDialogFactory, WindowsDialogFactory>();
             services.AddSingleton<IDispatcherService, DispatcherService>();
 
-            services.AddSingleton<WorkspaceViewModel>();
-            services.AddSingleton<ErrorsPaneViewModel>();
-            services.AddSingleton<ILimitsDefinitionsProvider>(x => 
-                x.GetRequiredService<WorkspaceViewModel>());
-            services.AddSingleton<IRandomPresetsProvider>(x =>
-                x.GetRequiredService<WorkspaceViewModel>());
-
-            services.AddSingleton<ItemTypeViewModelsFactory>();
-            services.AddSingleton<SpawnableTypesViewModelsFactory>();
-            services.AddSingleton<TraderViewModelsFactory>();
-
-            services.AddTransient<ItemTypesViewModel>();
-            services.AddTransient<UserDefinitionsViewModel>();
-            services.AddTransient<RandomPresetsViewModel>();
-            services.AddTransient<TraderConfigViewModel>();
-            services.AddTransient<SpawnableTypesViewModel>();
+            services.AddViewModels();
 
             services.AddValidatorsFromAssemblyContaining<ItemTypesValidator>(ServiceLifetime.Transient);
         }

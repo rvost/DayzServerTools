@@ -23,7 +23,7 @@ namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
 public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, IDisposable
 {
-    private readonly ItemTypeViewModelsFactory _viewModelFactory;
+    private readonly ItemTypesViewModelsFactory _viewModelFactory;
     private readonly WorkspaceViewModel _workspace;
     [ObservableProperty]
     private ObservableCollection<ItemTypeViewModel> items = new();
@@ -57,7 +57,7 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
     public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
 
     public ItemTypesViewModel(string fileName, ItemTypesModel model, IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, 
-        WorkspaceViewModel workspace, ItemTypeViewModelsFactory viewModelFactory): base(fileName, model, validator, dialogFactory)
+        WorkspaceViewModel workspace, ItemTypesViewModelsFactory viewModelFactory): base(fileName, model, validator, dialogFactory)
     {
         _viewModelFactory = viewModelFactory;
         _workspace = workspace;
