@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-using Xceed.Wpf.AvalonDock.Layout;
+using AvalonDock.Layout;
 
 using DayzServerTools.Application.ViewModels.Panes;
 

@@ -4,7 +4,7 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+                     xmlns:dock="https://github.com/Dirkster99/AvalonDock"
                      xmlns:fluent="urn:fluent-ribbon"
                      xmlns:viewmodels="clr-namespace:DayzServerTools.Application.ViewModels;assembly=DayzServerTools.Application"
                      xmlns:itemsVMs="clr-namespace:DayzServerTools.Application.ViewModels.ItemTypes;assembly=DayzServerTools.Application"
@@ -63,7 +63,7 @@
         <DataTemplate DataType="{x:Type spawnablesVMs:SpawnableTypesViewModel}">
             <views:SpawnableTypesView/>
         </DataTemplate>
-        <xcad:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
+        <dock:BoolToVisibilityConverter x:Key="AvalonBoolToVisibilityConverter" />
         <s:Single x:Key="x025">0.25</s:Single>
         <s:Single x:Key="x05">0.5</s:Single>
         <s:Single x:Key="x2">2.0</s:Single>
@@ -552,46 +552,46 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <xcad:DockingManager AllowMixedOrientation="True"
+        <dock:DockingManager AllowMixedOrientation="True"
                              DocumentsSource="{Binding Tabs}"
                              AnchorablesSource="{Binding Panes}"
                              ActiveContent="{Binding ActivePane, Mode=TwoWay}">
-            <xcad:DockingManager.Theme>
-                <xcad:GenericTheme/>
-            </xcad:DockingManager.Theme>
+            <dock:DockingManager.Theme>
+                <dock:Vs2013LightTheme/>
+            </dock:DockingManager.Theme>
 
-            <xcad:DockingManager.LayoutItemContainerStyleSelector>
+            <dock:DockingManager.LayoutItemContainerStyleSelector>
                 <dockView:PanesStyleSelector>
                     <dockView:PanesStyleSelector.PaneStyle>
-                        <Style TargetType="{x:Type xcad:LayoutAnchorableItem}">
+                        <Style TargetType="{x:Type dock:LayoutAnchorableItem}">
                             <Setter Property="Title" Value="{Binding Model.Title}"/>
                             <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource AvalonBoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"/>
                             <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}"/>
                         </Style>
                     </dockView:PanesStyleSelector.PaneStyle>
                     <dockView:PanesStyleSelector.DocumentStyle>
-                        <Style TargetType="{x:Type xcad:LayoutItem}">
+                        <Style TargetType="{x:Type dock:LayoutItem}">
                             <Setter Property="Title" Value="{Binding Model.Name}"/>
                             <Setter Property="ToolTip" Value="{Binding Model.FileName}"/>
                             <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
                         </Style>
                     </dockView:PanesStyleSelector.DocumentStyle>
                 </dockView:PanesStyleSelector>
-            </xcad:DockingManager.LayoutItemContainerStyleSelector>
+            </dock:DockingManager.LayoutItemContainerStyleSelector>
 
-            <xcad:DockingManager.LayoutUpdateStrategy>
+            <dock:DockingManager.LayoutUpdateStrategy>
                 <dockView:LayoutInitializer />
-            </xcad:DockingManager.LayoutUpdateStrategy>
+            </dock:DockingManager.LayoutUpdateStrategy>
 
-            <xcad:LayoutRoot>
-                <xcad:LayoutPanel Orientation="Horizontal">
-                    <xcad:LayoutPanel Orientation="Vertical">
-                        <xcad:LayoutDocumentPane/>
-                        <xcad:LayoutAnchorablePane Name="ErrorsPane" DockHeight="200" />
-                    </xcad:LayoutPanel>
-                </xcad:LayoutPanel>
-            </xcad:LayoutRoot>
+            <dock:LayoutRoot>
+                <dock:LayoutPanel Orientation="Horizontal">
+                    <dock:LayoutPanel Orientation="Vertical">
+                        <dock:LayoutDocumentPane/>
+                        <dock:LayoutAnchorablePane Name="ErrorsPane" DockHeight="200" />
+                    </dock:LayoutPanel>
+                </dock:LayoutPanel>
+            </dock:LayoutRoot>
 
-        </xcad:DockingManager>
+        </dock:DockingManager>
     </DockPanel>
 </fluent:RibbonWindow>
