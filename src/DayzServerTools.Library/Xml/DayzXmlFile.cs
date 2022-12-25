@@ -5,7 +5,7 @@ using DayzServerTools.Library.Common;
 
 namespace DayzServerTools.Library.Xml;
 
-public abstract class DayzXmlFile<T>: IProjectFile
+public abstract class DayzXmlFile<T> : IProjectFile
 {
     public void WriteToStream(Stream output)
     {
@@ -34,5 +34,19 @@ public abstract class DayzXmlFile<T>: IProjectFile
     {
         var serializer = new XmlSerializer(typeof(T));
         return (T)serializer.Deserialize(input);
+    }
+
+    public static T ReadFromFile(string filename)
+    {
+        try
+        {
+            using var input = File.OpenRead(filename);
+            return ReadFromStream(input);
+        }
+        catch (InvalidOperationException e)
+        {
+            var originalMessage = e.InnerException?.Message ?? e.Message;
+            throw new InvalidOperationException($"{filename}: {originalMessage}", e);
+        }
     }
 }
