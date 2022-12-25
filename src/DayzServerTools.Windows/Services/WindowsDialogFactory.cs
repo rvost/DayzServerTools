@@ -20,6 +20,9 @@ internal class WindowsDialogFactory : IDialogFactory
     public IFileDialog CreateOpenFileDialog() 
         => new WindowsOpenFileDialog() { Filter = defaultFilter };
 
+    public IFolderDialog CreateOpenFolderDialog()
+        => new WindowsOpenFolderDialog();
+
     public IFileDialog CreateSaveFileDialog() 
         => new WindowsSaveFileDialog() { Filter = defaultFilter };
 }
