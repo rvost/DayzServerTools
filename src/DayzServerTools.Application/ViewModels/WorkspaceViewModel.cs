@@ -17,6 +17,7 @@ using DayzServerTools.Application.Services;
 using DayzServerTools.Application.Extensions;
 using DayzServerTools.Application.Messages;
 using DayzServerTools.Library.Common;
+using DayzServerTools.Library.Missions;
 using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Trader;
 
@@ -31,9 +32,7 @@ public enum NewTabOptions
 {
     NewTypes,
     OpenTypes,
-    NewUserDefinitions,
     OpenUserDefinitions,
-    NewRandomPresets,
     OpenRandomPresets,
     NewSpawnableTypes,
     OpenSpawnableTypes,
@@ -46,14 +45,16 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     private readonly IDialogFactory _dialogFactory;
     private readonly ErrorsPaneViewModel _errorsPaneViewModel;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(MissionLoaded))]
+    [NotifyCanExecuteChangedFor(nameof(LoadMissionCommand), nameof(EditUserDefinitionsCommand),
+        nameof(EditRandomPresetsCommand))]
+    private MpMission _mission;
+
     private LimitsDefinitions limitsDefinitions = null;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(UserDefinitionsLoaded))]
-    [NotifyCanExecuteChangedFor(nameof(LoadUserDefinitionsCommand))]
     private UserDefinitionsModel userDefinitions = null;
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(RandomPresetsLoaded))]
-    [NotifyCanExecuteChangedFor(nameof(LoadRandomPresetsCommand))]
     private RandomPresetsModel randomPresets = null;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveFileIsUserDefinitions), nameof(ActiveFileIsItemTypes),
@@ -79,6 +80,7 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     public bool ActiveFileIsRandomPresets => ActiveFile is RandomPresetsViewModel;
     public bool ActiveFileIsSpawnableTypes => ActiveFile is SpawnableTypesViewModel;
     public bool ActiveFileIsTraderConfig => ActiveFile is TraderConfigViewModel;
+
     public ErrorsPaneViewModel ErrorsPaneViewModel => _errorsPaneViewModel;
     [ObservableProperty]
     private ObservableCollection<UserDefinableFlag> usages = new();
@@ -101,22 +103,20 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             var oldValue = limitsDefinitions;
             if (SetProperty(ref limitsDefinitions, value))
             {
-                OnPropertyChanged(nameof(LimitsDefinitionsLoaded));
-                LoadLimitsDefinitionsCommand.NotifyCanExecuteChanged();
                 WeakReferenceMessenger.Default.Send(
                     new LimitsDefinitionsChengedMaessage(this, nameof(LimitsDefinitions), oldValue, value)
                     );
             }
         }
     }
-    public bool LimitsDefinitionsLoaded { get => LimitsDefinitions is not null; }
-    public bool UserDefinitionsLoaded { get => UserDefinitions is not null; }
-    public bool RandomPresetsLoaded { get => RandomPresets is not null; }
+
+    public bool MissionLoaded { get => Mission is not null; }
+
     public IEnumerable<IPane> Panes { get; }
 
-    public IRelayCommand LoadLimitsDefinitionsCommand { get; }
-    public IRelayCommand LoadUserDefinitionsCommand { get; }
-    public IRelayCommand LoadRandomPresetsCommand { get; }
+    public IAsyncRelayCommand LoadMissionCommand { get; }
+    public IRelayCommand EditUserDefinitionsCommand { get; }
+    public IRelayCommand EditRandomPresetsCommand { get; }
     public IRelayCommand<NewTabOptions> NewTabCommand { get; }
     public IRelayCommand SaveAllCommand { get; }
 
@@ -129,105 +129,68 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         _errorsPaneViewModel = errorsPaneViewModel;
         Panes = new List<IPane>() { _errorsPaneViewModel };
 
-        LoadLimitsDefinitionsCommand = new RelayCommand(LoadLimitsDefinitions, () => LimitsDefinitions is null);
-        LoadUserDefinitionsCommand = new RelayCommand(LoadUserDefinitions, () => UserDefinitions is null);
-        LoadRandomPresetsCommand = new RelayCommand(LoadRandomPresets, () => RandomPresets is null);
+        LoadMissionCommand = new AsyncRelayCommand(LoadMission, () => Mission is null);
+        EditUserDefinitionsCommand = new RelayCommand(EditUserDefinitions, () => Mission is not null);
+        EditRandomPresetsCommand = new RelayCommand(EditRandomPresets, () => Mission is not null);
+
         NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
         SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
     }
 
-    public void LoadLimitsDefinitions()
+    public async Task LoadMission()
     {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "cfglimitsdefinition.*";
+        var dialog = _dialogFactory.CreateOpenFolderDialog();
+        dialog.Title = "Select Mission Folder";
         dialog.ShowDialog();
-        var filename = dialog.FileName;
-
-        if (File.Exists(filename))
+        var folder = dialog.FileName;
+        try
         {
-            using var input = File.OpenRead(filename);
-            try
-            {
-                LimitsDefinitions = LimitsDefinitions.ReadFromStream(input);
-                Categories.AddRange(LimitsDefinitions.Categories);
-                Usages.AddRange(LimitsDefinitions.UsageFlags);
-                Values.AddRange(LimitsDefinitions.ValueFlags);
-                Tags.AddRange(LimitsDefinitions.Tags);
-            }
-            catch (InvalidOperationException e)
-            {
-                var errorDialog = _dialogFactory.CreateMessageDialog();
-                errorDialog.Title = "File format error";
-                errorDialog.Message = e.InnerException.Message;
-                errorDialog.Image = MessageDialogImage.Error;
-                errorDialog.Show();
-            }
+            Mission = await MpMission.Open(folder);
+            // TODO: Refactor
+            LimitsDefinitions = Mission.LimitsDefinitions;
+            Categories.AddRange(LimitsDefinitions.Categories);
+            Usages.AddRange(LimitsDefinitions.UsageFlags);
+            Values.AddRange(LimitsDefinitions.ValueFlags);
+            Tags.AddRange(LimitsDefinitions.Tags);
+
+            UserDefinitions = Mission.UserDefinitions;
+            Usages.AddRange(UserDefinitions.UsageFlags.Select(def => (UserDefinableFlag)def));
+            Values.AddRange(UserDefinitions.ValueFlags.Select(def => (UserDefinableFlag)def));
+
+            RandomPresets = Mission.RandomPresets;
+            AvailableCargoPresets = RandomPresets.CargoPresets.Select(p => p.Name).ToList();
+            AvailableAttachmentsPresets = RandomPresets.AttachmentsPresets.Select(p => p.Name).ToList();
+        }
+        catch (Exception ex)
+        {
+            var errorDialog = _dialogFactory.CreateMessageDialog();
+            errorDialog.Title = "Mission file error";
+            errorDialog.Message = ex.Message;
+            errorDialog.Image = MessageDialogImage.Error;
+            errorDialog.Show();
         }
     }
-    public void LoadUserDefinitions()
+    public void EditUserDefinitions()
     {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "cfglimitsdefinitionuser*";
-        dialog.ShowDialog();
-        var filename = dialog.FileName;
-
-        if (File.Exists(filename))
-        {
-            using var input = File.OpenRead(filename);
-            try
-            {
-                UserDefinitions = UserDefinitionsModel.ReadFromStream(input);
-                Usages.AddRange(UserDefinitions.UsageFlags.Select(def => (UserDefinableFlag)def));
-                Values.AddRange(UserDefinitions.ValueFlags.Select(def => (UserDefinableFlag)def));
-            }
-            catch (InvalidOperationException e)
-            {
-                var errorDialog = _dialogFactory.CreateMessageDialog();
-                errorDialog.Title = "File format error";
-                errorDialog.Message = e.InnerException.Message;
-                errorDialog.Image = MessageDialogImage.Error;
-                errorDialog.Show();
-            }
-        }
+        var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.UserDefinitions);
+        var tab = _fileViewModelFactory.Create(fullPath, Mission.UserDefinitions);
+        Tabs.Add(tab);
     }
-    public void LoadRandomPresets()
+    public void EditRandomPresets()
     {
-        var dialog = _dialogFactory.CreateOpenFileDialog();
-        dialog.FileName = "cfgrandompresets*";
-        dialog.ShowDialog();
-        var filename = dialog.FileName;
-
-        if (File.Exists(filename))
-        {
-            using var input = File.OpenRead(filename);
-            try
-            {
-                RandomPresets = RandomPresetsModel.ReadFromStream(input);
-                AvailableCargoPresets = RandomPresets.CargoPresets.Select(p => p.Name).ToList();
-                AvailableAttachmentsPresets = RandomPresets.AttachmentsPresets.Select(p => p.Name).ToList();
-            }
-            catch (InvalidOperationException e)
-            {
-                var errorDialog = _dialogFactory.CreateMessageDialog();
-                errorDialog.Title = "File format error";
-                errorDialog.Message = e.InnerException.Message;
-                errorDialog.Image = MessageDialogImage.Error;
-                errorDialog.Show();
-            }
-        }
+        var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.RandomPresets);
+        var tab = _fileViewModelFactory.Create(fullPath, Mission.RandomPresets);
+        Tabs.Add(tab);
     }
-    
+
     public void NewTab(NewTabOptions options)
     {
-          IProjectFileTab tab = options switch
+        IProjectFileTab tab = options switch
         {
             NewTabOptions.NewTypes => _fileViewModelFactory.Create<ItemTypesModel>("types.xml", null),
             NewTabOptions.OpenTypes => OpenTabWithDialog<ItemTypesModel>(OpenFileDialogOptions.TypesOptions),
 
-            NewTabOptions.NewUserDefinitions => _fileViewModelFactory.Create<UserDefinitionsModel>("cfglimitsdefinitionsuser.xml", null),
             NewTabOptions.OpenUserDefinitions => OpenTabWithDialog<UserDefinitionsModel>(OpenFileDialogOptions.UserDefinitionsOptions),
-
-            NewTabOptions.NewRandomPresets => _fileViewModelFactory.Create<RandomPresetsModel>("cfgrandompresets.xml", null),
             NewTabOptions.OpenRandomPresets => OpenTabWithDialog<RandomPresetsModel>(OpenFileDialogOptions.RandomPresetsOptions),
 
             NewTabOptions.NewSpawnableTypes => _fileViewModelFactory.Create<SpawnableTypesModel>("cfgspawnabletypes.xml", null),
@@ -250,15 +213,15 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         newItemTypesVM.CopyItemTypes(items);
         Tabs.Add(newItemTypesVM);
     }
-   
+
     public void CreateSpawnableTypes(IEnumerable<SpawnableType> items)
     {
         var newVM = (SpawnableTypesViewModel)_fileViewModelFactory.Create<SpawnableTypesModel>("cfgspawnabletypes.xml", null);
         newVM.CopySpawnableTypes(items);
         Tabs.Add(newVM);
     }
-   
-    public IProjectFileTab OpenTraderConfig()
+
+    private IProjectFileTab OpenTraderConfig()
     {
         var dialog = _dialogFactory.CreateOpenFileDialog();
 

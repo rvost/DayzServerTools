@@ -101,33 +101,30 @@
                                                Icon="{StaticResource NewSpawnableTypesVecIcon}"
                                                Command="{Binding NewTabCommand}"
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.NewSpawnableTypes}" />
-                                <fluent:Button Header="New User Flags" Icon="{StaticResource NewFlagsVecIcon}"
-                                               Command="{Binding NewTabCommand}" 
-                                               CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
-                                <fluent:Button Header="New Random Presets" Icon="{StaticResource NewRandomPresetsVecIcon}"
-                                               Command="{Binding NewTabCommand}" 
-                                               CommandParameter="{x:Static viewmodels:NewTabOptions.NewRandomPresets}"/>
                             </WrapPanel>
                         </fluent:BackstageTabItem>
                         <fluent:BackstageTabItem Header="Open" Icon="{StaticResource OpenIcon}">
-                            <WrapPanel Margin="16">
-                                <fluent:Button Header="Open types.xml" Icon="{StaticResource OpenItemTypesVecIcon}"
+                            <StackPanel Margin="16" Orientation="Vertical">
+                                <fluent:Button Header="Open Mission" Command="{Binding LoadMissionCommand}" HorizontalAlignment="Left"/>
+                                <WrapPanel Margin="0 16">
+                                    <fluent:Button Header="Open types.xml" Icon="{StaticResource OpenItemTypesVecIcon}"
                                                Command="{Binding NewTabCommand}"
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
-                                <fluent:Button Header="Open Spawnable Types"
+                                    <fluent:Button Header="Open Spawnable Types"
                                                Icon="{StaticResource OpenSpawnableTypesVecIcon}"
                                                Command="{Binding NewTabCommand}"
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenSpawnableTypes}" />
-                                <fluent:Button Header="Open User Flags" Icon="{StaticResource OpenFlagsVecIcon}"
+                                    <fluent:Button Header="Open User Flags" Icon="{StaticResource OpenFlagsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
-                                <fluent:Button Header="Open Random Presets" Icon="{StaticResource OpenRandomPresetsVecIcon}"
+                                    <fluent:Button Header="Open Random Presets" Icon="{StaticResource OpenRandomPresetsVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenRandomPresets}"/>
-                                <fluent:Button Header="Open Trader Config" Icon="{StaticResource OpenTraderConfigVecIcon}"
+                                    <fluent:Button Header="Open Trader Config" Icon="{StaticResource OpenTraderConfigVecIcon}"
                                                Command="{Binding NewTabCommand}" 
                                                CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTraderConfig}"/>
-                            </WrapPanel>
+                                </WrapPanel>
+                            </StackPanel>
                         </fluent:BackstageTabItem>
                         <fluent:SeparatorTabItem/>
                         <fluent:Button Header="Save" x:Name="saveButton"
@@ -170,69 +167,38 @@
                                                  Visibility="{Binding ActiveFileIsTraderConfig, Converter={StaticResource AvalonBoolToVisibilityConverter}, Mode=OneWay}" />
             </fluent:Ribbon.ContextualGroups>
             <fluent:RibbonTabItem Header="Workspace">
-                <fluent:RibbonGroupBox Header="Limits Definitions" MinWidth="100"
+                <fluent:RibbonGroupBox Header="Mission" MinWidth="100"
                                        HorizontalContentAlignment="Center">
                     <Ellipse StrokeThickness="0" Width="16" Height="16" Margin="0 16 16 0">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="Red"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding LimitsDefinitionsLoaded, Mode=OneWay}" Value="true">
+                                    <DataTrigger Binding="{Binding MissionLoaded, Mode=OneWay}" Value="true">
                                         <Setter Property="Fill" Value="DarkGreen"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Ellipse.Style>
                     </Ellipse>
-                    <fluent:Button Header="Load" Command="{Binding LoadLimitsDefinitionsCommand}" Size="Large"
+                    <fluent:Button Header="Open" Command="{Binding LoadMissionCommand}" Size="Large"
                                    Icon="{StaticResource OpenVecIcon}"/>
                 </fluent:RibbonGroupBox>
 
-                <fluent:RibbonGroupBox Header="User Limits Definitions">
-                    <Ellipse StrokeThickness="0" Width="16" Height="16" Margin="0 16 16 0" 
-                             VerticalAlignment="Center">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="Red"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding UserDefinitionsLoaded, Mode=OneWay}" Value="true">
-                                        <Setter Property="Fill" Value="DarkGreen"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-                    <fluent:Button Header="Load" Command="{Binding LoadUserDefinitionsCommand}" Size="Large"
-                                   Icon="{StaticResource OpenVecIcon}"/>
-                    <fluent:Button Header="Create New" Icon="{StaticResource NewFlagsVecIcon}"
-                                   Command="{Binding NewTabCommand}" 
-                                   CommandParameter="{x:Static viewmodels:NewTabOptions.NewUserDefinitions}"/>
-                    <fluent:Button Header="Open Edit" Icon="{StaticResource EditFlagsVecIcon}"
+                <fluent:RibbonGroupBox Header="User Limits Definitions" MinWidth="80" HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Open External" Icon="{StaticResource OpenFlagsVecIcon}"
                                    Command="{Binding NewTabCommand}" 
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenUserDefinitions}"/>
+                    <fluent:Button Header="Open Edit" Icon="{StaticResource EditFlagsVecIcon}"
+                                   Command="{Binding EditUserDefinitionsCommand}" />
                 </fluent:RibbonGroupBox>
-                <fluent:RibbonGroupBox Header="Random Presets">
-                    <Ellipse StrokeThickness="0" Width="16" Height="16" Margin="0 16 16 0" 
-                             VerticalAlignment="Center">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="Red"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RandomPresetsLoaded, Mode=OneWay}" Value="true">
-                                        <Setter Property="Fill" Value="DarkGreen"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-                    <fluent:Button Header="Load" Command="{Binding LoadRandomPresetsCommand}" Size="Large"
-                                   Icon="{StaticResource OpenVecIcon}"/>
-                    <fluent:Button Header="Create New" Icon="{StaticResource NewRandomPresetsVecIcon}"
-                                   Command="{Binding NewTabCommand}"
-                                   CommandParameter="{x:Static viewmodels:NewTabOptions.NewRandomPresets}" />
-                    <fluent:Button Header="Open Edit" Icon="{StaticResource OpenRandomPresetsVecIcon}"
+
+                <fluent:RibbonGroupBox Header="Random Presets" MinWidth="80" HorizontalContentAlignment="Center">
+                    <fluent:Button Header="Open External" Icon="{StaticResource OpenRandomPresetsVecIcon}"
                                    Command="{Binding NewTabCommand}"
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenRandomPresets}"/>
+                    <fluent:Button Header="Open Edit" Icon="{StaticResource EditRandomPresetsVecIcon}"
+                                   Command="{Binding EditRandomPresetsCommand}" />
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Types">
                     <fluent:Button Header="New" Icon="{StaticResource NewItemTypesVecIcon}"
@@ -448,7 +414,7 @@
                                    Size="Middle"
                                    Command="{Binding ActiveFile.SelectedItem.AddNewPresetCommand}"
                                    CommandParameter="{x:Static spawnablesVMs:PresetType.Attachments}"/>
-                    </fluent:RibbonGroupBox>
+                </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Edit">
                     <fluent:Button Header="Set Min Damage" Icon="{StaticResource EditVecIcon}"
                                    Command="{Binding ActiveFile.SetMinDamageCommand}"
