@@ -127,7 +127,10 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var viewModels = list.Cast<ItemTypeViewModel>();
 
         var items = viewModels.Select(vm => vm.Model);
-        _workspace.CreateItemTypes(items);
+        var newVM = (ItemTypesViewModel)_viewModelFactory.Create("types.xml", new());
+        newVM.CopyItemTypes(items);
+        // TODO: Inject Messenger
+        WeakReferenceMessenger.Default.Send<IProjectFileTab>(newVM);
     }
     protected void ExportToSpawnableTypes(object cmdParam)
     {

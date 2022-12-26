@@ -39,7 +39,8 @@ public enum NewTabOptions
     OpenTraderConfig
 }
 
-public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsProvider, IRandomPresetsProvider
+public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsProvider, IRandomPresetsProvider,
+    IRecipient<IProjectFileTab>
 {
     private readonly ProjectFileViewModelFactory _fileViewModelFactory;
     private readonly IDialogFactory _dialogFactory;
@@ -135,6 +136,8 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
 
         NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
         SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
+        // TODO: Inject Messenger
+        WeakReferenceMessenger.Default.Register(this);
     }
 
     public async Task LoadMission()
@@ -206,20 +209,6 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     }
     public void SaveAll()
         => Tabs.AsParallel().ForAll(tab => tab.SaveCommand.Execute(null));
-
-    public void CreateItemTypes(IEnumerable<ItemType> items)
-    {
-        var newItemTypesVM = (ItemTypesViewModel)_fileViewModelFactory.Create<ItemTypesModel>("types.xml", null);
-        newItemTypesVM.CopyItemTypes(items);
-        Tabs.Add(newItemTypesVM);
-    }
-
-    public void CreateSpawnableTypes(IEnumerable<SpawnableType> items)
-    {
-        var newVM = (SpawnableTypesViewModel)_fileViewModelFactory.Create<SpawnableTypesModel>("cfgspawnabletypes.xml", null);
-        newVM.CopySpawnableTypes(items);
-        Tabs.Add(newVM);
-    }
 
     private IProjectFileTab OpenTraderConfig()
     {
@@ -303,5 +292,13 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             ActiveFile = null;
         }
         base.OnTabCloseRequested(sender, e);
+    }
+
+    public void Receive(IProjectFileTab tab)
+    {
+        if (tab != null && !Tabs.Contains(tab))
+        {
+            Tabs.Add(tab);
+        }
     }
 }

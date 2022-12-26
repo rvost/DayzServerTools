@@ -22,8 +22,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
     private readonly SpawnableTypesViewModelsFactory _viewModelsFactory;
 
     [ObservableProperty]
-    private WorkspaceViewModel workspace;
-    [ObservableProperty]
     private SpawnableTypeViewModel selectedItem;
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ExportToNewFileCommand),
@@ -80,7 +78,10 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         var viewModels = list.Cast<SpawnableTypeViewModel>();
 
         var items = viewModels.Select(vm => vm.Model);
-        Workspace.CreateSpawnableTypes(items);
+        var newVM = (SpawnableTypesViewModel)_viewModelsFactory.Create("cfgspawnabletypes.xml", new());
+        newVM.CopySpawnableTypes(items);
+        // TODO: Inject Messenger
+        WeakReferenceMessenger.Default.Send<IProjectFileTab>(newVM);
     }
     protected void SetMinDamage(double value)
     {

@@ -5,7 +5,6 @@ using DayzServerTools.Library.Xml;
 using DayzServerTools.Library.Xml.Validators;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using ItemTypesModel = DayzServerTools.Library.Xml.ItemTypes;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
