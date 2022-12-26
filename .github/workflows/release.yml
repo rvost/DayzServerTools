@@ -1,0 +1,49 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+       - "*.*.*"
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore
+        run: dotnet restore --packages packages
+
+      - name: Build
+        run: dotnet build -c Release -o ".\publish" --no-restore
+      
+      - name: Fetch previous release
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          packages\clowd.squirrel\2.9.42\tools\Squirrel.exe github-down`
+          --repoUrl "https://github.com/rvost/DayzServerTools"
+      - name: Publish
+        shell: pwsh
+        run: |
+          packages\clowd.squirrel\2.9.42\tools\Squirrel.exe  pack `
+          --framework net6 `
+          --packId "DayzServerTools" `
+          --packVersion "${{github.ref_name}}" `
+          --packAuthors "rvost" `
+          --packDir ".\publish"
+      - name: Create release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          draft: true
+          files: |
+            Releases/RELEASES
+            Releases/*.exe
+            Releases/*.nupkg
