@@ -49,7 +49,7 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(MissionLoaded))]
     [NotifyCanExecuteChangedFor(nameof(LoadMissionCommand), nameof(EditUserDefinitionsCommand),
-        nameof(EditRandomPresetsCommand))]
+        nameof(EditRandomPresetsCommand), nameof(EditTypesCommand), nameof(EditSpawnableTypesCommand))]
     private MpMission _mission;
 
     private LimitsDefinitions limitsDefinitions = null;
@@ -118,6 +118,8 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
     public IAsyncRelayCommand LoadMissionCommand { get; }
     public IRelayCommand EditUserDefinitionsCommand { get; }
     public IRelayCommand EditRandomPresetsCommand { get; }
+    public IRelayCommand EditTypesCommand { get; }
+    public IRelayCommand EditSpawnableTypesCommand { get; }
     public IRelayCommand<NewTabOptions> NewTabCommand { get; }
     public IRelayCommand SaveAllCommand { get; }
 
@@ -133,6 +135,8 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         LoadMissionCommand = new AsyncRelayCommand(LoadMission, () => Mission is null);
         EditUserDefinitionsCommand = new RelayCommand(EditUserDefinitions, () => Mission is not null);
         EditRandomPresetsCommand = new RelayCommand(EditRandomPresets, () => Mission is not null);
+        EditTypesCommand = new RelayCommand(EditTypes, () => Mission is not null);
+        EditSpawnableTypesCommand = new RelayCommand(EditSpawnableTypes, () => Mission is not null);
 
         NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
         SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
@@ -184,6 +188,42 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.RandomPresets);
         var tab = _fileViewModelFactory.Create(fullPath, Mission.RandomPresets);
         Tabs.Add(tab);
+    }
+    public void EditTypes()
+    {
+        var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.Types);
+        try
+        {
+            var model = ItemTypesModel.ReadFromFile(fullPath);
+            var tab = _fileViewModelFactory.Create(fullPath, model);
+            Tabs.Add(tab);
+        }
+        catch (Exception e)
+        {
+            var errorDialog = _dialogFactory.CreateMessageDialog();
+            errorDialog.Title = "File error";
+            errorDialog.Message = e.InnerException?.Message ?? e.Message;
+            errorDialog.Image = MessageDialogImage.Error;
+            errorDialog.Show();
+        }
+    }
+    public void EditSpawnableTypes()
+    {
+        var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.SpawnableTypes);
+        try
+        {
+            var model = SpawnableTypesModel.ReadFromFile(fullPath);
+            var tab = _fileViewModelFactory.Create(fullPath, model);
+            Tabs.Add(tab);
+        }
+        catch (Exception e)
+        {
+            var errorDialog = _dialogFactory.CreateMessageDialog();
+            errorDialog.Title = "File error";
+            errorDialog.Message = e.InnerException?.Message ?? e.Message;
+            errorDialog.Image = MessageDialogImage.Error;
+            errorDialog.Show();
+        }
     }
 
     public void NewTab(NewTabOptions options)

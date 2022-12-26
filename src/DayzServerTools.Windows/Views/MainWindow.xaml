@@ -204,17 +204,21 @@
                     <fluent:Button Header="New" Icon="{StaticResource NewItemTypesVecIcon}"
                                    Command="{Binding NewTabCommand}" 
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.NewTypes}" />
-                    <fluent:Button Header="Open" Icon="{StaticResource OpenItemTypesVecIcon}"
+                    <fluent:Button Header="Open External" Icon="{StaticResource OpenItemTypesVecIcon}"
                                    Command="{Binding NewTabCommand}"
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenTypes}"/>
+                    <fluent:Button Header="Open Edit" Icon="{StaticResource EditItemTypesVecIcon}"
+                                   Command="{Binding EditTypesCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Spawnable Types" HorizontalContentAlignment="Center">
                     <fluent:Button Header="New" Icon="{StaticResource NewSpawnableTypesVecIcon}"
                                    Command="{Binding NewTabCommand}" 
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.NewSpawnableTypes}" />
-                    <fluent:Button Header="Open" Icon="{StaticResource OpenSpawnableTypesVecIcon}"
+                    <fluent:Button Header="Open External" Icon="{StaticResource OpenSpawnableTypesVecIcon}"
                                    Command="{Binding NewTabCommand}"
                                    CommandParameter="{x:Static viewmodels:NewTabOptions.OpenSpawnableTypes}"/>
+                    <fluent:Button Header="Open Edit" Icon="{StaticResource EditSpawnableTypesVecIcon}"
+                                   Command="{Binding EditSpawnableTypesCommand}"/>
                 </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Trader Config">
                     <fluent:Button Header="Open Trader Config" Icon="{StaticResource OpenTraderConfigVecIcon}"
