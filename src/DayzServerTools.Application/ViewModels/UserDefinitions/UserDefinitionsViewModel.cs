@@ -30,10 +30,6 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
     public IEnumerable<UserDefinableFlag> AvailableUsageFlags
         => limitsDefinitions?.UsageFlags ?? Enumerable.Empty<UserDefinableFlag>();
 
-
-    public IRelayCommand NewValueFlagCommand { get; }
-    public IRelayCommand NewUsageFlagCommand { get; }
-
     public UserDefinitionsViewModel(string fileName, UserDefinitionsModel model, IValidator<UserDefinitionsModel> validator,
         IDialogFactory dialogFactory) : base(fileName, model, validator, dialogFactory)
     {
@@ -42,13 +38,6 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
             );
         UsageFlags.AddRange(
             model.UsageFlags.Select<UserDefinition, UserDefinitionViewModel>(flag => new(flag, () => AvailableUsageFlags))
-            );
-
-        NewValueFlagCommand = new RelayCommand(
-            () => ValueFlags.Add(new(new ValueUserDefinition(), () => AvailableValueFlags))
-            );
-        NewUsageFlagCommand = new RelayCommand(
-            () => UsageFlags.Add(new(new UsageUserDefinition(), () => AvailableUsageFlags))
             );
 
         ValueFlags.CollectionChanged += FlagsCollectionChanged;
@@ -75,6 +64,14 @@ public partial class UserDefinitionsViewModel : ProjectFileViewModel<UserDefinit
 
         return res.IsValid && !usagesHaveErrors && !valuesHaveErrors;
     }
+
+    [RelayCommand]
+    private void NewValueFlag()
+        => ValueFlags.Add(new(new ValueUserDefinition(), () => AvailableValueFlags));
+    
+    [RelayCommand]
+    private void NewUsageFlag()
+        => UsageFlags.Add(new(new UsageUserDefinition(), () => AvailableUsageFlags));
 
     private void FlagsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {

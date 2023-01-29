@@ -10,7 +10,7 @@ using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.ItemTypes;
 
-public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeValidator>
+public partial class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeValidator>
 {
     private readonly IDispatcherService _dispatcher;
 
@@ -103,29 +103,13 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
     public ObservableCollection<UserDefinableFlag> Value { get => _model.Value; }
     public ObservableCollection<VanillaFlag> Tags { get => _model.Tags; }
 
-    public IRelayCommand AddUsageFlagCommand { get; }
-    public IRelayCommand RemoveUsageFlagCommand { get; }
-    public IRelayCommand AddValueFlagCommand { get; }
-    public IRelayCommand RemoveValueFlagCommand { get; }
-    public IRelayCommand AddTagCommand { get; }
-    public IRelayCommand RemoveTagCommand { get; }
-    public IRelayCommand ClearFlagsCommand { get; }
-
-    public ItemTypeViewModel(ItemType model, ItemTypeValidator validator, IDispatcherService dispatcher) 
+    public ItemTypeViewModel(ItemType model, ItemTypeValidator validator, IDispatcherService dispatcher)
         : base(model, validator)
     {
         _dispatcher = dispatcher;
         _model.Value.RemoveAllEmpty();
         _model.Usages.RemoveAllEmpty();
         _model.Tags.RemoveAllEmpty();
-
-        AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag);
-        RemoveUsageFlagCommand = new RelayCommand<UserDefinableFlag>(RemoveUsageFlag);
-        AddValueFlagCommand = new RelayCommand<UserDefinableFlag>(AddValueFlag);
-        RemoveValueFlagCommand = new RelayCommand<UserDefinableFlag>(RemoveValueFlag);
-        AddTagCommand = new RelayCommand<VanillaFlag>(AddTag);
-        RemoveTagCommand = new RelayCommand<VanillaFlag>(RemoveTag);
-        ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags);
     }
 
     public void AdjustQuantity(float factor)
@@ -133,39 +117,43 @@ public class ItemTypeViewModel : ObservableFluentValidator<ItemType, ItemTypeVal
         Nominal = (int)Math.Round(Nominal * factor);
         Min = (int)Math.Round(Min * factor);
     }
+
     public void AdjustLifetime(float factor)
     {
         Lifetime = (int)Math.Round(Lifetime * factor);
     }
+
     public void AdjustRestock(float factor)
     {
         Restock = (int)Math.Round(Restock * factor);
     }
-    protected void AddUsageFlag(UserDefinableFlag flag)
-    {
-        _dispatcher.BeginInvoke(() => Usages.Add(flag));
-    }
-    protected void RemoveUsageFlag(UserDefinableFlag flag)
-    {
-        Usages.Remove(flag);
-    }
-    protected void AddValueFlag(UserDefinableFlag flag)
-    {
-        _dispatcher.BeginInvoke(() => Value.Add(flag));
-    }
-    protected void RemoveValueFlag(UserDefinableFlag flag)
-    {
-        Value.Remove(flag);
-    }
-    protected void AddTag(VanillaFlag tag)
-    {
-        _dispatcher.BeginInvoke(() => Tags.Add(tag));
-    }
-    protected void RemoveTag(VanillaFlag tag)
-    {
-        Tags.Remove(tag);
-    }
-    protected void ClearFlags(ClearTarget target)
+
+    [RelayCommand]
+    private void AddUsageFlag(UserDefinableFlag flag)
+        => _dispatcher.BeginInvoke(() => Usages.Add(flag));
+
+    [RelayCommand]
+    private void RemoveUsageFlag(UserDefinableFlag flag)
+        => Usages.Remove(flag);
+
+    [RelayCommand]
+    private void AddValueFlag(UserDefinableFlag flag)
+        => _dispatcher.BeginInvoke(() => Value.Add(flag));
+
+    [RelayCommand]
+    private void RemoveValueFlag(UserDefinableFlag flag) 
+        => Value.Remove(flag);
+
+    [RelayCommand]
+    private void AddTag(VanillaFlag tag) 
+        => _dispatcher.BeginInvoke(() => Tags.Add(tag));
+
+    [RelayCommand]
+    private void RemoveTag(VanillaFlag tag) 
+        => Tags.Remove(tag);
+
+    [RelayCommand]
+    private void ClearFlags(ClearTarget target)
     {
         switch (target)
         {

@@ -32,11 +32,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
 
     public ObservableCollection<SpawnableTypeViewModel> Spawnables { get; set; } = new();
 
-    public IRelayCommand AddSpawnableTypeCommand { get; }
-    public IRelayCommand<object> ExportToNewFileCommand { get; }
-    public IRelayCommand<double> SetMinDamageCommand { get; }
-    public IRelayCommand<double> SetMaxDamageCommand { get; }
-
     public SpawnableTypesViewModel(string fileName, SpawnableTypesModel model, IValidator<SpawnableTypesModel> validator,
         IDialogFactory dialogFactory, SpawnableTypesViewModelsFactory viewModelsFactory) : base(fileName, model, validator, dialogFactory)
     {
@@ -45,13 +40,6 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         Spawnables.AddRange(
             model.Spawnables.Select(type => _viewModelsFactory.CreateSpawnableTypeViewModel(type))
             );
-
-        AddSpawnableTypeCommand = new RelayCommand(() =>
-            Spawnables.Add(viewModelsFactory.CreateSpawnableTypeViewModel(new()))
-        );
-        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
-        SetMinDamageCommand = new RelayCommand<double>(SetMinDamage, (param) => CanExecuteBatchCommand());
-        SetMaxDamageCommand = new RelayCommand<double>(SetMaxDamage, (param) => CanExecuteBatchCommand());
 
         Spawnables.CollectionChanged += OnSpawnablesCollectionChanged;
     }
@@ -69,10 +57,16 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         Spawnables.AddRange(viewModels);
     }
 
-    protected bool CanExecuteBatchCommand() => SelectedItems is not null;
-    protected bool CanExecuteExportCommand(object cmdParam)
+    private bool CanExecuteBatchCommand() => SelectedItems is not null;
+    private bool CanExecuteExportCommand(object cmdParam)
         => cmdParam is not null || SelectedItems is not null;
-    protected void ExportToNewFile(object cmdParam)
+
+    [RelayCommand]
+    private void AddSpawnableType()
+        => Spawnables.Add(_viewModelsFactory.CreateSpawnableTypeViewModel(new()));
+
+    [RelayCommand(CanExecute =nameof(CanExecuteExportCommand))]
+    private void ExportToNewFile(object cmdParam)
     {
         var list = (IList)cmdParam ?? SelectedItems;
         var viewModels = list.Cast<SpawnableTypeViewModel>();
@@ -83,7 +77,9 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         // TODO: Inject Messenger
         WeakReferenceMessenger.Default.Send<IProjectFileTab>(newVM);
     }
-    protected void SetMinDamage(double value)
+
+    [RelayCommand(CanExecute =nameof(CanExecuteBatchCommand))]
+    private void SetMinDamage(double value)
     {
         if (SelectedItems is null)
         {
@@ -92,7 +88,9 @@ public partial class SpawnableTypesViewModel : ProjectFileViewModel<SpawnableTyp
         var viewModels = SelectedItems.Cast<SpawnableTypeViewModel>();
         viewModels.AsParallel().ForAll(spawnable => spawnable.MinDamage = value);
     }
-    protected void SetMaxDamage(double value)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void SetMaxDamage(double value)
     {
         if (SelectedItems is null)
         {

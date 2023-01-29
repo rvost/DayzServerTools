@@ -35,15 +35,6 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
     }
     public ObservableCollection<TraderItemViewModel> Items { get; }
 
-    public IRelayCommand ClassnamesImportCommand { get; }
-    public IRelayCommand CopyItemsCommand { get; }
-    public IRelayCommand MoveItemsCommand { get; }
-    public IRelayCommand ProhibitSellingCommand { get; }
-    public IRelayCommand ProhibitBuyingCommand { get; }
-    public IRelayCommand<double> SetBuyPriceCommand { get; }
-    public IRelayCommand<double> SetSellPriceCommand { get; }
-    public IRelayCommand<string> SetQuantityModifierCommand { get; }
-
     public TraderCategoryViewModel(TraderCategory model, IDialogFactory dialogFactory, WorkspaceViewModel workspace) 
         : base(model, new())
     {
@@ -51,15 +42,6 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         _workspace = workspace;
 
         Items = new(model.TraderItems.Select(m => new TraderItemViewModel(m)));
-
-        ClassnamesImportCommand = new RelayCommand(ClassnamesImport);
-        CopyItemsCommand = new RelayCommand(CopyItems, () => CanExecuteBatchCommand());
-        MoveItemsCommand = new RelayCommand(MoveItems, () => CanExecuteBatchCommand());
-        ProhibitBuyingCommand = new RelayCommand(ProhibitBuying, () => CanExecuteBatchCommand());
-        ProhibitSellingCommand = new RelayCommand(ProhibitSelling, () => CanExecuteBatchCommand());
-        SetBuyPriceCommand = new RelayCommand<double>(SetBuyPrice, (param) => CanExecuteBatchCommand());
-        SetSellPriceCommand = new RelayCommand<double>(SetSellPrice, (param) => CanExecuteBatchCommand());
-        SetQuantityModifierCommand = new RelayCommand<string>(SetQuantityModifier, (param) => CanExecuteBatchCommand());
 
         Items.CollectionChanged += OnItemsCollectionChanged;
     }
@@ -85,14 +67,18 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         }
     }
 
-    protected bool CanExecuteBatchCommand() => SelectedItems is not null;
-    protected void ClassnamesImport()
+    private bool CanExecuteBatchCommand() => SelectedItems is not null;
+
+    [RelayCommand]
+    private void ClassnamesImport()
     {
         var dialog = _dialogFactory.CreateClassnameImportDialog();
         dialog.Store = new TraderCategoryClassnameImportStore(this);
         dialog.ShowDialog();
     }
-    protected void CopyItems()
+
+    [RelayCommand(CanExecute =nameof(CanExecuteBatchCommand))]
+    private void CopyItems()
     {
         if (SelectedItems is null)
         {
@@ -112,7 +98,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
-    protected void MoveItems()
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void MoveItems()
     {
         if (SelectedItems is null)
         {
@@ -137,7 +125,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
             }
         }
     }
-    protected void ProhibitBuying()
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void ProhibitBuying()
     {
         if (SelectedItems is null)
         {
@@ -147,7 +137,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
 
         items.AsParallel().ForAll(item => item.ProhibitBuyingCommand.Execute(null));
     }
-    protected void ProhibitSelling()
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void ProhibitSelling()
     {
         if (SelectedItems is null)
         {
@@ -157,7 +149,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
 
         items.AsParallel().ForAll(item => item.ProhibitSellingCommand.Execute(null));
     }
-    protected void SetBuyPrice(double price)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void SetBuyPrice(double price)
     {
         if (SelectedItems is null)
         {
@@ -167,7 +161,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
 
         items.AsParallel().ForAll(item => item.BuyPrice = price);
     }
-    protected void SetSellPrice(double price)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void SetSellPrice(double price)
     {
         if (SelectedItems is null)
         {
@@ -177,7 +173,9 @@ public partial class TraderCategoryViewModel : ObservableFluentValidator<TraderC
 
         items.AsParallel().ForAll(item => item.SellPrice = price);
     }
-    protected void SetQuantityModifier(string modifier)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void SetQuantityModifier(string modifier)
     {
         if (SelectedItems is null || string.IsNullOrWhiteSpace(modifier))
         {

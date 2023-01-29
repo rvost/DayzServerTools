@@ -9,20 +9,18 @@ public partial class ExportViewModel<T> : ObservableObject, IExportViewModel
 
     public IEnumerable<object> Options { get; }
 
-    public IRelayCommand<object> ExportCommand { get; }
-
     public event EventHandler CloseRequested;
 
     public ExportViewModel(T exportedObj, IEnumerable<object> options)
     {
         _exportedObj = exportedObj;
         Options = options;
-
-        ExportCommand = new RelayCommand<object>(Export, CanExport);
     }
 
     public bool CanExport(object param)
         => param is not null && param is IImporter<T>;
+    
+    [RelayCommand(CanExecute =nameof(CanExport))]
     public void Export(object param)
     {
         if (param is IImporter<T> target)

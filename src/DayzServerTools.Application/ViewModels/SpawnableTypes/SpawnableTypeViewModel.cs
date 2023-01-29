@@ -50,9 +50,6 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
     public ObservableCollection<SpawnablePresetViewModel> Cargo { get; } = new();
     public ObservableCollection<SpawnablePresetViewModel> Attachments { get; } = new();
 
-    public IRelayCommand<PresetType> AddNewPresetCommand { get; }
-    public IRelayCommand<PresetType> ImportClassnamesAsPresetsCommand { get; }
-
     public SpawnableTypeViewModel(SpawnableType model, IDialogFactory dialogFactory,
         IRandomPresetsProvider randomPresetsProvider, SpawnableTypesViewModelsFactory viewModelsFactory) : base(model, new(randomPresetsProvider))
     {
@@ -70,14 +67,12 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
             _viewModelsFactory.CreatePresetsCollectionProxy(PresetType.Attachments, "Attachments", Attachments)
         };
 
-        AddNewPresetCommand = new RelayCommand<PresetType>(AddNewPreset);
-        ImportClassnamesAsPresetsCommand = new RelayCommand<PresetType>(ImportClassnamesAsPresets);
-
         Cargo.CollectionChanged += OnPresetsCollectionChanged;
         Attachments.CollectionChanged += OnPresetsCollectionChanged;
     }
 
-    protected void AddNewPreset(PresetType type)
+    [RelayCommand]
+    private void AddNewPreset(PresetType type)
     {
         switch (type)
         {
@@ -95,7 +90,9 @@ public partial class SpawnableTypeViewModel : ObservableFluentValidator<Spawnabl
                 break;
         }
     }
-    protected void ImportClassnamesAsPresets(PresetType type)
+
+    [RelayCommand]
+    private void ImportClassnamesAsPresets(PresetType type)
     {
         var target = type == PresetType.Cargo ? Cargo : Attachments;
 

@@ -41,21 +41,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         nameof(ExportToRandomPresetsCommand))]
     private IList selectedItems;
 
-    public IRelayCommand AddEmptyItemCommand { get; }
-    public IRelayCommand<float?> AdjustQuantityCommand { get; }
-    public IRelayCommand<float?> AdjustLifetimeCommand { get; }
-    public IRelayCommand<float?> AdjustRestockCommand { get; }
-    public IRelayCommand ExportToNewFileCommand { get; }
-    public IRelayCommand ExportToSpawnableTypesCommand { get; }
-    public IRelayCommand ExportToRandomPresetsCommand { get; }
-    public IRelayCommand ExportToTraderCommand { get; }
-    public IRelayCommand ClassnamesImportCommand { get; }
-    public IRelayCommand<VanillaFlag> SetCategoryCommand { get; }
-    public IRelayCommand<UserDefinableFlag> AddValueFlagCommand { get; }
-    public IRelayCommand<UserDefinableFlag> AddUsageFlagCommand { get; }
-    public IRelayCommand<VanillaFlag> AddTagCommand { get; }
-    public IRelayCommand<ClearTarget> ClearFlagsCommand { get; }
-
     public ItemTypesViewModel(string fileName, ItemTypesModel model, IDialogFactory dialogFactory, IValidator<ItemTypesModel> validator, 
         WorkspaceViewModel workspace, ItemTypesViewModelsFactory viewModelFactory): base(fileName, model, validator, dialogFactory)
     {
@@ -63,21 +48,6 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         _workspace = workspace;
 
         Items.AddRange(model.Types.Select(obj => _viewModelFactory.Create(obj)));
-
-        AddEmptyItemCommand = new RelayCommand(AddEmptyItem);
-        AdjustQuantityCommand = new RelayCommand<float?>(AdjustQuantity, (param) => CanExecuteBatchCommand());
-        AdjustLifetimeCommand = new RelayCommand<float?>(AdjustLifetime, (param) => CanExecuteBatchCommand());
-        AdjustRestockCommand = new RelayCommand<float?>(AdjustRestock, (param) => CanExecuteBatchCommand());
-        ExportToNewFileCommand = new RelayCommand<object>(ExportToNewFile, CanExecuteExportCommand);
-        ExportToSpawnableTypesCommand = new RelayCommand<object>(ExportToSpawnableTypes, CanExecuteExportCommand);
-        ExportToRandomPresetsCommand = new RelayCommand<object>(ExportToRandomPresets, CanExecuteExportCommand);
-        ExportToTraderCommand = new RelayCommand<object>(ExportToTrader, CanExecuteExportCommand);
-        ClassnamesImportCommand = new RelayCommand(ClassnamesImport);
-        SetCategoryCommand = new RelayCommand<VanillaFlag>(SetCategory, (param) => CanExecuteBatchCommand());
-        AddValueFlagCommand = new RelayCommand<UserDefinableFlag>(AddValueFlag, (param) => CanExecuteBatchCommand());
-        AddUsageFlagCommand = new RelayCommand<UserDefinableFlag>(AddUsageFlag, (param) => CanExecuteBatchCommand());
-        AddTagCommand = new RelayCommand<VanillaFlag>(AddTag, (param) => CanExecuteBatchCommand());
-        ClearFlagsCommand = new RelayCommand<ClearTarget>(ClearFlags, (param) => CanExecuteBatchCommand());
 
         Items.CollectionChanged += ItemsCollectionChanged;
     }
@@ -88,12 +58,16 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
             source.Select(obj => _viewModelFactory.Create(obj.Copy()))
         );
     }
-
-    protected void AddEmptyItem()
+    
+    [RelayCommand]
+    private void AddEmptyItem()
         => Items.Add(_viewModelFactory.Create(new ItemType()));
-    protected bool CanExecuteBatchCommand() => SelectedItems is not null;
-    protected bool CanExecuteExportCommand(object param) => param is not null;
-    protected void AdjustQuantity(float? factor)
+
+    private bool CanExecuteBatchCommand() => SelectedItems is not null;
+    private bool CanExecuteExportCommand(object param) => param is not null;
+
+    [RelayCommand(CanExecute =nameof(CanExecuteBatchCommand))]
+    private void AdjustQuantity(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -102,7 +76,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         }
         QuantityPercentage = 1;
     }
-    protected void AdjustLifetime(float? factor)
+   
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void AdjustLifetime(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -111,7 +87,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         }
         LifetimePercentage = 1;
     }
-    protected void AdjustRestock(float? factor)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void AdjustRestock(float? factor)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         foreach (var item in viewModels)
@@ -121,7 +99,8 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         RestockPercentage = 1;
     }
 
-    protected void ExportToNewFile(object cmdParam)
+    [RelayCommand(CanExecute = nameof(CanExecuteExportCommand))]
+    private void ExportToNewFile(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -132,7 +111,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         // TODO: Inject Messenger
         WeakReferenceMessenger.Default.Send<IProjectFileTab>(newVM);
     }
-    protected void ExportToSpawnableTypes(object cmdParam)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteExportCommand))]
+    private void ExportToSpawnableTypes(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -145,7 +126,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
-    protected void ExportToRandomPresets(object cmdParam)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteExportCommand))]
+    private void ExportToRandomPresets(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -158,7 +141,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
-    protected void ExportToTrader(object cmdParam)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteExportCommand))]
+    private void ExportToTrader(object cmdParam)
     {
         var list = (IList)cmdParam;
         var viewModels = list.Cast<ItemTypeViewModel>();
@@ -174,13 +159,17 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var dialog = _dialogFactory.CreateExportDialog();
         dialog.ShowDialog(vm);
     }
-    protected void ClassnamesImport()
+
+    [RelayCommand]
+    private void ClassnamesImport()
     {
         var dialog = _dialogFactory.CreateClassnameImportDialog();
         dialog.Store = new ItemTypesClassnameImportStore(this);
         dialog.ShowDialog();
     }
-    protected void SetCategory(VanillaFlag category)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void SetCategory(VanillaFlag category)
     {
         if (category == null)
         {
@@ -189,7 +178,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         viewModels.AsParallel().ForAll(vm => vm.Category = category);
     }
-    protected void AddValueFlag(UserDefinableFlag flag)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void AddValueFlag(UserDefinableFlag flag)
     {
         if (flag == null)
         {
@@ -198,7 +189,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         viewModels.AsParallel().ForAll(vm => vm.AddValueFlagCommand.Execute(flag));
     }
-    protected void AddUsageFlag(UserDefinableFlag flag)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void AddUsageFlag(UserDefinableFlag flag)
     {
         if (flag == null)
         {
@@ -207,7 +200,9 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         viewModels.AsParallel().ForAll(vm => vm.AddUsageFlagCommand.Execute(flag));
     }
-    protected void AddTag(VanillaFlag flag)
+
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
+    private void AddTag(VanillaFlag flag)
     {
         if (flag == null)
         {
@@ -216,6 +211,8 @@ public partial class ItemTypesViewModel : ProjectFileViewModel<ItemTypesModel>, 
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();
         viewModels.AsParallel().ForAll(vm => vm.AddTagCommand.Execute(flag));
     }
+    
+    [RelayCommand(CanExecute = nameof(CanExecuteBatchCommand))]
     protected void ClearFlags(ClearTarget target)
     {
         var viewModels = SelectedItems.Cast<ItemTypeViewModel>();

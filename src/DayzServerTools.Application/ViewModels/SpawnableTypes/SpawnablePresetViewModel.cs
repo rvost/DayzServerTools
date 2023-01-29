@@ -11,7 +11,7 @@ using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.SpawnableTypes;
 
-public class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePreset, SpawnablePresetValidator>,
+public partial class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePreset, SpawnablePresetValidator>,
     IImporter<IEnumerable<string>>
 {
     private readonly IDialogFactory _dialogFactory;
@@ -36,14 +36,10 @@ public class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePrese
     public SpawnableItem DefaultItem => _model.Items.FirstOrDefault();
     public ObservableCollection<SpawnableItem> Items => _model.Items;
 
-    public RelayCommand ImportClassnamesCommand { get; }
-
     public SpawnablePresetViewModel(SpawnablePreset model, SpawnablePresetValidator validator, IDialogFactory dialogFactory)
         : base(model, validator)
     {
         _dialogFactory = dialogFactory;
-
-        ImportClassnamesCommand = new RelayCommand(ImportClassnames);
     }
 
     public void Import(IEnumerable<string> classnames)
@@ -54,7 +50,9 @@ public class SpawnablePresetViewModel : ObservableFluentValidator<SpawnablePrese
         );
         Items.AddRange(items);
     }
-    protected void ImportClassnames()
+    
+    [RelayCommand]
+    private void ImportClassnames()
     {
         var dialog = _dialogFactory.CreateClassnameImportDialog();
         dialog.Store = new PresetImportStore(Items);

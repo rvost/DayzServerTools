@@ -26,9 +26,6 @@ public partial class TraderViewModel : ObservableFluentValidator<TraderModel, Tr
 
     public ObservableCollection<TraderCategoryViewModel> Categories { get; }
 
-    public IRelayCommand<string> AddCategoryCommand { get; }
-    public IRelayCommand<TraderCategoryViewModel> RemoveCategoryCommand { get; }
-
     public TraderViewModel(TraderModel trader, TraderViewModelsFactory viewModelsFactory) : base(trader, new())
     {
         _viewModelsFactory = viewModelsFactory;
@@ -37,17 +34,17 @@ public partial class TraderViewModel : ObservableFluentValidator<TraderModel, Tr
             trader.TraderCategories.Select(c => _viewModelsFactory.CreateTraderCategoryViewModel(c))
             );
 
-        AddCategoryCommand = new RelayCommand<string>(AddCategory);
-        RemoveCategoryCommand = new RelayCommand<TraderCategoryViewModel>(RemoveCategory, CanRemoveCategory);
-
         Categories.CollectionChanged += CategoriesCollectionChanged;
     }
-   
-    protected void AddCategory(string categoryName)
+
+    [RelayCommand]
+    private void AddCategory(string categoryName)
            => Categories.Add(_viewModelsFactory.CreateTraderCategoryViewModel(new() { CategoryName = categoryName }));
-    protected bool CanRemoveCategory(TraderCategoryViewModel category)
+    private bool CanRemoveCategory(TraderCategoryViewModel category)
         => category is not null || SelectedCategory is not null;
-    protected void RemoveCategory(TraderCategoryViewModel category)
+
+    [RelayCommand(CanExecute = nameof(CanRemoveCategory))]
+    private void RemoveCategory(TraderCategoryViewModel category)
     {
         if (category is not null)
         {

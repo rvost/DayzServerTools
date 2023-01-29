@@ -11,7 +11,7 @@ using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.RandomPresets;
 
-public class RandomPresetViewModel : ObservableFluentValidator<RandomPreset, RandomPresetValidator>,
+public partial class RandomPresetViewModel : ObservableFluentValidator<RandomPreset, RandomPresetValidator>,
     IImporter<IEnumerable<string>>
 {
     private readonly IDialogFactory _dialogFactory;
@@ -28,13 +28,9 @@ public class RandomPresetViewModel : ObservableFluentValidator<RandomPreset, Ran
     }
     public ObservableCollection<SpawnableItem> Items => _model.Items;
 
-    public RelayCommand ImportClassnamesCommand { get; }
-
     public RandomPresetViewModel(RandomPreset model, IDialogFactory dialogFactory) : base(model, new())
     {
         _dialogFactory = dialogFactory;
-
-        ImportClassnamesCommand = new RelayCommand(ImportClassnames);
     }
 
     public void Import(IEnumerable<string> classnames)
@@ -46,7 +42,8 @@ public class RandomPresetViewModel : ObservableFluentValidator<RandomPreset, Ran
         Items.AddRange(items);
     }
 
-    protected void ImportClassnames()
+    [RelayCommand]
+    private void ImportClassnames()
     {
         var dialog = _dialogFactory.CreateClassnameImportDialog();
         dialog.Store = new PresetImportStore(Items);

@@ -6,7 +6,7 @@ using DayzServerTools.Library.Trader.Validators;
 
 namespace DayzServerTools.Application.ViewModels.Trader;
 
-public class TraderItemViewModel : ObservableFluentValidator<TraderItem,TraderItemValidator>
+public partial class TraderItemViewModel : ObservableFluentValidator<TraderItem,TraderItemValidator>
 {
     public string Name
     {
@@ -28,20 +28,19 @@ public class TraderItemViewModel : ObservableFluentValidator<TraderItem,TraderIt
         get => _model.SellPrice;
         set => SetProperty(_model.SellPrice, value, _model, (m, v) => m.SellPrice = v, true);
     }
-
-    public IRelayCommand ProhibitBuyingCommand { get; }
-    public IRelayCommand ProhibitSellingCommand { get; }
     
     public TraderItemViewModel(TraderItem model):base(model, new())
     {
-        ProhibitBuyingCommand = new RelayCommand(ProhibitBuying);
-        ProhibitSellingCommand = new RelayCommand(ProhibitSelling);
+
     }
 
+    [RelayCommand]
     protected void ProhibitBuying()
     {
         BuyPrice = -1;
     }
+
+    [RelayCommand]
     protected void ProhibitSelling()
     {
         SellPrice = -1;

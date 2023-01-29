@@ -24,9 +24,6 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
     public ObservableCollection<RandomPresetViewModel> CargoPresets { get; } = new();
     public ObservableCollection<RandomPresetViewModel> AttachmentsPresets { get; } = new();
 
-    public IRelayCommand NewCargoPresetCommand { get; }
-    public IRelayCommand NewAttachmentsPresetCommand { get; }
-
     public RandomPresetsViewModel(string fileName, RandomPresetsModel model, IValidator<RandomPresetsModel> validator,
         IDialogFactory dialogFactory) : base(fileName, model, validator, dialogFactory)
     {
@@ -42,9 +39,6 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
             new RandomPresetsCollectionProxy( "Cargo", CargoPresets),
             new RandomPresetsCollectionProxy("Attachments", AttachmentsPresets)
         };
-
-        NewCargoPresetCommand = new RelayCommand(() => CargoPresets.Add(new(new(), _dialogFactory)));
-        NewAttachmentsPresetCommand = new RelayCommand(() => AttachmentsPresets.Add(new(new(), _dialogFactory)));
 
         CargoPresets.CollectionChanged += OnPresetsCollectionChanged;
         AttachmentsPresets.CollectionChanged += OnPresetsCollectionChanged;
@@ -68,6 +62,14 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
         return res.IsValid && !cargoHaveErrors && !attachmentsHaveErrors;
     }
 
+    [RelayCommand]
+    private void NewCargoPreset()
+        => CargoPresets.Add(new(new(), _dialogFactory));
+
+    [RelayCommand]
+    private void NewAttachmentsPreset()
+        => AttachmentsPresets.Add(new(new(), _dialogFactory));
+
     private bool ReportPresetsErrors(string colName, ICollection<RandomPresetViewModel> presets)
     {
         var errorInfos = presets.AsParallel()
@@ -80,6 +82,7 @@ public partial class RandomPresetsViewModel : ProjectFileViewModel<RandomPresets
 
         return errorInfos.Any();
     }
+    
     private void OnPresetsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         ObservableCollection<RandomPreset> target =

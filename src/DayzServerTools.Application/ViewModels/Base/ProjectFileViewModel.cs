@@ -20,9 +20,7 @@ namespace DayzServerTools.Application.ViewModels.Base
         protected T _model;
 
         public string Name => Path.GetFileName(FileName);
-        public IRelayCommand SaveCommand { get; }
-        public IRelayCommand SaveAsCommand { get; }
-        public IRelayCommand CloseCommand { get; }
+
         public IRelayCommand ValidateCommand { get; }
 
         public event EventHandler CloseRequested;
@@ -34,12 +32,10 @@ namespace DayzServerTools.Application.ViewModels.Base
             _dialogFactory = dialogService;
             _validator = validator;
 
-            SaveCommand = new RelayCommand(Save);
-            SaveAsCommand = new RelayCommand(SaveAs);
-            CloseCommand = new RelayCommand(Close);
             ValidateCommand = new RelayCommand(() => Validate());
         }
 
+        [RelayCommand]
         public void Save()
         {
             if (CanSave())
@@ -47,6 +43,8 @@ namespace DayzServerTools.Application.ViewModels.Base
                 SaveTo(FileName);
             }
         }
+        
+        [RelayCommand]
         public void SaveAs()
         {
             if (CanSave())
@@ -61,6 +59,8 @@ namespace DayzServerTools.Application.ViewModels.Base
                 }
             }
         }
+        
+        [RelayCommand]
         public void Close()
         {
             CloseRequested?.Invoke(this, EventArgs.Empty);

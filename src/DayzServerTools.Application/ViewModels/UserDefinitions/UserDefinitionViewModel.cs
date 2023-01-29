@@ -8,7 +8,7 @@ using DayzServerTools.Library.Xml.Validators;
 
 namespace DayzServerTools.Application.ViewModels.UserDefinitions;
 
-public class UserDefinitionViewModel : ObservableFluentValidator<UserDefinition, UserDefinitionValidator>
+public partial class UserDefinitionViewModel : ObservableFluentValidator<UserDefinition, UserDefinitionValidator>
 {
     public string Name
     {
@@ -17,17 +17,16 @@ public class UserDefinitionViewModel : ObservableFluentValidator<UserDefinition,
     }
     public ObservableCollection<UserDefinableFlag> Definitions { get => _model.Definitions; }
 
-    public IRelayCommand<UserDefinableFlag> AddDefinitionCommand { get; }
-    public IRelayCommand<UserDefinableFlag> RemoveDefinitionCommand { get; }
-
     public UserDefinitionViewModel(UserDefinition model, Func<IEnumerable<UserDefinableFlag>> getAvailableDefinitions)
         : base(model, new(getAvailableDefinitions))
     {
-        AddDefinitionCommand = new RelayCommand<UserDefinableFlag>(
-            flag => Definitions.Add(flag)
-            );
-        RemoveDefinitionCommand = new RelayCommand<UserDefinableFlag>(
-            flag => Definitions.Remove(flag)
-            );
     }
+
+    [RelayCommand]
+    private void AddDefinition(UserDefinableFlag flag)
+        => Definitions.Add(flag);
+
+    [RelayCommand]
+    private void RemoveDefinition(UserDefinableFlag flag)
+        => Definitions.Remove(flag);
 }

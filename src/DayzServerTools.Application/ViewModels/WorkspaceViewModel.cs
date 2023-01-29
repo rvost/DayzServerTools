@@ -115,14 +115,6 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
 
     public IEnumerable<IPane> Panes { get; }
 
-    public IAsyncRelayCommand LoadMissionCommand { get; }
-    public IRelayCommand EditUserDefinitionsCommand { get; }
-    public IRelayCommand EditRandomPresetsCommand { get; }
-    public IRelayCommand EditTypesCommand { get; }
-    public IRelayCommand EditSpawnableTypesCommand { get; }
-    public IRelayCommand<NewTabOptions> NewTabCommand { get; }
-    public IRelayCommand SaveAllCommand { get; }
-
     public WorkspaceViewModel(IDialogFactory dialogFactory, ErrorsPaneViewModel errorsPaneViewModel,
         ProjectFileViewModelFactory fileViewModelFactory) : base()
     {
@@ -132,18 +124,13 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
         _errorsPaneViewModel = errorsPaneViewModel;
         Panes = new List<IPane>() { _errorsPaneViewModel };
 
-        LoadMissionCommand = new AsyncRelayCommand(LoadMission, () => Mission is null);
-        EditUserDefinitionsCommand = new RelayCommand(EditUserDefinitions, () => Mission is not null);
-        EditRandomPresetsCommand = new RelayCommand(EditRandomPresets, () => Mission is not null);
-        EditTypesCommand = new RelayCommand(EditTypes, () => Mission is not null);
-        EditSpawnableTypesCommand = new RelayCommand(EditSpawnableTypes, () => Mission is not null);
-
-        NewTabCommand = new RelayCommand<NewTabOptions>(NewTab);
-        SaveAllCommand = new RelayCommand(SaveAll, () => Tabs.Count > 0);
         // TODO: Inject Messenger
         WeakReferenceMessenger.Default.Register(this);
     }
-
+    public bool CanLoadMission() => Mission is null;
+    public bool CanEditMissionFiles() => Mission is not null;
+    
+    [RelayCommand(CanExecute =nameof(CanLoadMission))]
     public async Task LoadMission()
     {
         var dialog = _dialogFactory.CreateOpenFolderDialog();
@@ -177,18 +164,24 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             errorDialog.Show();
         }
     }
+    
+    [RelayCommand(CanExecute =nameof(CanEditMissionFiles))]
     public void EditUserDefinitions()
     {
         var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.UserDefinitions);
         var tab = _fileViewModelFactory.Create(fullPath, Mission.UserDefinitions);
         Tabs.Add(tab);
     }
+    
+    [RelayCommand(CanExecute = nameof(CanEditMissionFiles))]
     public void EditRandomPresets()
     {
         var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.RandomPresets);
         var tab = _fileViewModelFactory.Create(fullPath, Mission.RandomPresets);
         Tabs.Add(tab);
     }
+    
+    [RelayCommand(CanExecute = nameof(CanEditMissionFiles))]
     public void EditTypes()
     {
         var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.Types);
@@ -207,6 +200,8 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             errorDialog.Show();
         }
     }
+    
+    [RelayCommand(CanExecute = nameof(CanEditMissionFiles))]
     public void EditSpawnableTypes()
     {
         var fullPath = Path.Combine(Mission.MissionFolder, MissionFiles.SpawnableTypes);
@@ -225,7 +220,8 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             errorDialog.Show();
         }
     }
-
+    
+    [RelayCommand]
     public void NewTab(NewTabOptions options)
     {
         IProjectFileTab tab = options switch
@@ -247,6 +243,10 @@ public partial class WorkspaceViewModel : TabbedViewModel, ILimitsDefinitionsPro
             Tabs.Add(tab);
         }
     }
+
+    public bool CanSaveAll() => Tabs.Count > 0;
+
+    [RelayCommand(CanExecute =nameof(CanSaveAll))]
     public void SaveAll()
         => Tabs.AsParallel().ForAll(tab => tab.SaveCommand.Execute(null));
 

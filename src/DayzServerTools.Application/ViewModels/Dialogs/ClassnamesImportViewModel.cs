@@ -25,18 +25,17 @@ public partial class ClassnamesImportViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand<IEnumerable<string>> ImportCommand { get; }
     public event EventHandler CloseRequested;
 
     public ClassnamesImportViewModel(IClassnameImportStore importStore)
     {
         _importStore = importStore;
-
-        ImportCommand = new RelayCommand<IEnumerable<string>>(Import, CanImport);
     }
 
     protected bool CanImport(IEnumerable<string> classnames)
         => classnames?.Any() ?? false;
+
+    [RelayCommand(CanExecute =nameof(CanImport))]
     protected void Import(IEnumerable<string> classnames)
     {
         _importStore.Accept(classnames);
