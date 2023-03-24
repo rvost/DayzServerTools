@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using DayzServerTools.Application.Models;
 using DayzServerTools.Application.Services;
 using DayzServerTools.Library.Common;
 using FluentValidation;
@@ -68,7 +68,25 @@ namespace DayzServerTools.Application.ViewModels.Base
 
         protected abstract bool Validate();
 
-        protected virtual bool CanSave() => Validate();
+        protected virtual bool CanSave()
+        {
+            var isValid =  Validate();
+            
+            if (!isValid)
+            {
+                var confirmationDialog = _dialogFactory.CreateConfirmationDialog();
+                confirmationDialog.Title = "Validation Errors";
+                confirmationDialog.Message = "The file contains validation errors! Do you want to save it?";
+                confirmationDialog.Button = ConfirmationDialogButton.YesNo;
+                confirmationDialog.Image = MessageDialogImage.Warning;
+
+                var res = confirmationDialog.Show();
+                return res == ConfirmationDialogResult.Yes;
+            }
+            
+            return true;
+        }
+
         protected void SaveTo(string filePath)
         {
             if (!string.IsNullOrEmpty(filePath))

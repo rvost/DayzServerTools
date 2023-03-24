@@ -13,6 +13,6 @@ public interface IMessageDialog
     string Message { get; set; }
     string Title { get; set; }
     MessageDialogImage Image { get; set; }
-    
+
     bool? Show();
 }

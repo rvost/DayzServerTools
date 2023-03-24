@@ -4,6 +4,7 @@ namespace DayzServerTools.Application.Services;
 
 public interface IDialogFactory
 {
+    IConfirmationDialog CreateConfirmationDialog();
     IMessageDialog CreateMessageDialog();
     IFileDialog CreateOpenFileDialog();
     IFileDialog CreateSaveFileDialog();

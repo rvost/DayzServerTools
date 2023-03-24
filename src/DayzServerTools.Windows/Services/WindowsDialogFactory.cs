@@ -11,6 +11,9 @@ internal class WindowsDialogFactory : IDialogFactory
     public IClassnameImportDialog CreateClassnameImportDialog()
         => new WindowsClassnameImportDialog();
 
+    public IConfirmationDialog CreateConfirmationDialog() 
+        => new WindowsConfirmationDialog();
+
     public IExportDialog CreateExportDialog()
         => new WindowsExportDialog();
 
