@@ -61,15 +61,6 @@
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
-      "WindowsAPICodePack-Shell": {
-        "type": "Direct",
-        "requested": "[1.1.1, )",
-        "resolved": "1.1.1",
-        "contentHash": "CPFamhL3jPo8O6+ErGsLS4LK3DWP5ncxqhbzpPnYkIW9rjatunUij35iTjprbr9mlYR/5Pbguw21MwSmTOKR4g==",
-        "dependencies": {
-          "WindowsAPICodePack-Core": "1.1.1"
-        }
-      },
       "ControlzEx": {
         "type": "Transitive",
         "resolved": "5.0.1",
@@ -108,11 +99,6 @@
         "type": "Transitive",
         "resolved": "5.0.1",
         "contentHash": "/UM3UK1dXKl8Ybysg/21gM4S8DJgkR+yLU8JwqCVbuNqQNImelntgYFAN5QxR8sJJ1kMx//hOUdf0lltosi8cQ=="
-      },
-      "WindowsAPICodePack-Core": {
-        "type": "Transitive",
-        "resolved": "1.1.1",
-        "contentHash": "GoURoQuE7ea7B7q24YRTBfZbsNO7ZtwSyBHbM8zO0ynwfjAGC0bbAmVrDvZ6HbWtqqOt6QTzdmYnj2WJglb5JQ=="
       },
       "dayzservertools.application": {
         "type": "Project",
